@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include <fcntl.h>
 
 #define GREEN "\033[0;32m"
 #define RED "\033[0;31m"
@@ -707,22 +708,168 @@ void test_ft_striteri(void)
 
 void test_ft_putchar_fd(void)
 {
-	g_tests_passed++;
+	char buf[10];
+	int fd = open("/tmp/test_putchar", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	int passed[2];
+
+	ft_putchar_fd('A', fd);
+	ft_putchar_fd('B', fd);
+	close(fd);
+	fd = open("/tmp/test_putchar", O_RDONLY);
+	read(fd, buf, 2);
+	buf[2] = '\0';
+	close(fd);
+	unlink("/tmp/test_putchar");
+	passed[0] = strcmp(buf, "AB") == 0;
+
+	fd = open("/tmp/test_putchar2", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putchar_fd('0', fd);
+	close(fd);
+	fd = open("/tmp/test_putchar2", O_RDONLY);
+	read(fd, buf, 1);
+	buf[1] = '\0';
+	close(fd);
+	unlink("/tmp/test_putchar2");
+	passed[1] = buf[0] == '0';
+
+	for (int i = 0, all_passed = 1; i < 2; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 1)
+			return;
+	print_test_header("ft_putchar_fd");
+	print_result("Test 'A' and 'B'", passed[0]);
+	print_result("Test '0'", passed[1]);
 }
 
 void test_ft_putstr_fd(void)
 {
-	g_tests_passed++;
+	char buf[20];
+	int fd = open("/tmp/test_putstr", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	int passed[2];
+
+	ft_putstr_fd("Hello, World!", fd);
+	close(fd);
+	fd = open("/tmp/test_putstr", O_RDONLY);
+	read(fd, buf, 13);
+	buf[13] = '\0';
+	close(fd);
+	unlink("/tmp/test_putstr");
+	passed[0] = strcmp(buf, "Hello, World!") == 0;
+
+	fd = open("/tmp/test_putstr2", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putstr_fd("42", fd);
+	close(fd);
+	fd = open("/tmp/test_putstr2", O_RDONLY);
+	read(fd, buf, 2);
+	buf[2] = '\0';
+	close(fd);
+	unlink("/tmp/test_putstr2");
+	passed[1] = strcmp(buf, "42") == 0;
+
+	for (int i = 0, all_passed = 1; i < 2; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 1)
+			return;
+	print_test_header("ft_putstr_fd");
+	print_result("Test 'Hello, World!'", passed[0]);
+	print_result("Test '42'", passed[1]);
 }
 
 void test_ft_putendl_fd(void)
 {
-	g_tests_passed++;
+	char buf[20];
+	int fd = open("/tmp/test_putendl", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	int passed[2];
+
+	ft_putendl_fd("Hello", fd);
+	close(fd);
+	fd = open("/tmp/test_putendl", O_RDONLY);
+	read(fd, buf, 6);
+	buf[6] = '\0';
+	close(fd);
+	unlink("/tmp/test_putendl");
+	passed[0] = strcmp(buf, "Hello\n") == 0;
+
+	fd = open("/tmp/test_putendl2", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putendl_fd("", fd);
+	close(fd);
+	fd = open("/tmp/test_putendl2", O_RDONLY);
+	read(fd, buf, 1);
+	buf[1] = '\0';
+	close(fd);
+	unlink("/tmp/test_putendl2");
+	passed[1] = buf[0] == '\n';
+
+	for (int i = 0, all_passed = 1; i < 2; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 1)
+			return;
+	print_test_header("ft_putendl_fd");
+	print_result("Test 'Hello' with newline", passed[0]);
+	print_result("Test empty string with newline", passed[1]);
 }
 
 void test_ft_putnbr_fd(void)
 {
-	g_tests_passed++;
+	char buf[20];
+	int fd = open("/tmp/test_putnbr", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	int passed[5];
+
+	ft_putnbr_fd(42, fd);
+	close(fd);
+	fd = open("/tmp/test_putnbr", O_RDONLY);
+	read(fd, buf, 2);
+	buf[2] = '\0';
+	close(fd);
+	unlink("/tmp/test_putnbr");
+	passed[0] = strcmp(buf, "42") == 0;
+
+	fd = open("/tmp/test_putnbr2", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putnbr_fd(-42, fd);
+	close(fd);
+	fd = open("/tmp/test_putnbr2", O_RDONLY);
+	read(fd, buf, 3);
+	buf[3] = '\0';
+	close(fd);
+	unlink("/tmp/test_putnbr2");
+	passed[1] = strcmp(buf, "-42") == 0;
+
+	fd = open("/tmp/test_putnbr3", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putnbr_fd(0, fd);
+	close(fd);
+	fd = open("/tmp/test_putnbr3", O_RDONLY);
+	read(fd, buf, 1);
+	buf[1] = '\0';
+	close(fd);
+	unlink("/tmp/test_putnbr3");
+	passed[2] = strcmp(buf, "0") == 0;
+
+	fd = open("/tmp/test_putnbr4", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putnbr_fd(-2147483648, fd);
+	close(fd);
+	fd = open("/tmp/test_putnbr4", O_RDONLY);
+	read(fd, buf, 11);
+	buf[11] = '\0';
+	close(fd);
+	unlink("/tmp/test_putnbr4");
+	passed[3] = strcmp(buf, "-2147483648") == 0;
+
+	fd = open("/tmp/test_putnbr5", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	ft_putnbr_fd(2147483647, fd);
+	close(fd);
+	fd = open("/tmp/test_putnbr5", O_RDONLY);
+	read(fd, buf, 10);
+	buf[10] = '\0';
+	close(fd);
+	unlink("/tmp/test_putnbr5");
+	passed[4] = strcmp(buf, "2147483647") == 0;
+
+	for (int i = 0, all_passed = 1; i < 5; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 4)
+			return;
+	print_test_header("ft_putnbr_fd");
+	print_result("Test 42", passed[0]);
+	print_result("Test -42", passed[1]);
+	print_result("Test 0", passed[2]);
+	print_result("Test INT_MIN", passed[3]);
+	print_result("Test INT_MAX", passed[4]);
 }
 
 void test_ft_lstnew(void)
