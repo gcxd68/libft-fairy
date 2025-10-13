@@ -1,75 +1,67 @@
 #!/bin/bash
 
-# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
 RESET='\033[0m'
 
-# Paths
 LIBFT_DIR=".."
 TESTER_NAME="libft-assassin"
 
-# Function to print colored messages
 print_message() {
     echo -e "${2}${1}${RESET}"
 }
 
-# Function to cleanup
 cleanup() {
-    print_message "🧹 Cleaning up..." "$YELLOW"
+    echo -n "🧹 Cleaning up... "
     rm -f *.o $TESTER_NAME
     make -C $LIBFT_DIR fclean > /dev/null 2>&1
-    print_message "✓ Cleanup complete!" "$GREEN"
+    echo "Done"
+    echo ""
 }
 
-# Trap to ensure cleanup on exit
 trap cleanup EXIT INT TERM
 
-# Main execution
 main() {
-    print_message "╔═════════════════════════╗" "$BLUE"
-    print_message "║     LIBFT-ASSASSIN      ║" "$BLUE"
-    print_message "╚═════════════════════════╝" "$BLUE"
+    echo ""
+    print_message "╔════════════════════════╗" "$PURPLE"
+    print_message "║     LIBFT-ASSASSIN     ║" "$PURPLE"
+    print_message "╚════════════════════════╝" "$PURPLE"
     echo ""
 
-    # Step 1: Compile libft
-    print_message "📦 Step 1: Compiling libft..." "$YELLOW"
+    echo -n "📦 Compiling libft... "
     if make -C $LIBFT_DIR bonus > /dev/null 2>&1; then
-        print_message "✓ Libft compiled successfully!" "$GREEN"
+        echo "Done"
     else
-        print_message "✗ Failed to compile libft!" "$RED"
+        echo "Failed"
         exit 1
     fi
-    echo ""
 
-    # Step 2: Compile tester
-    print_message "🔨 Step 2: Compiling libft-assassin..." "$YELLOW"
+    echo -n "🔨 Compiling libft-assassin... "
     if gcc -Wall -Wextra -Werror tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $TESTER_NAME 2>&1; then
-        print_message "✓ libft-assassin compiled successfully!" "$GREEN"
+        echo "Done"
     else
-        print_message "✗ Failed to compile libft-assassin!" "$RED"
+        echo "Failed!"
         exit 1
     fi
-    echo ""
 
-    # Step 3: Run tests
-    print_message "🧪 Step 3: Running tests..." "$YELLOW"
+    echo "🧪 Running tests..."
     echo ""
     ./$TESTER_NAME
     TEST_RESULT=$?
-    echo ""
+    if [ $TEST_RESULT -ne 0 ]; then
+        echo ""
+    fi
 
     # Step 4: Report final result
     if [ $TEST_RESULT -eq 0 ]; then
-        print_message "╔════════════════════════════════════════╗" "$GREEN"
-        print_message "║    🎉 ALL TESTS PASSED! 🎉             ║" "$GREEN"
-        print_message "╚════════════════════════════════════════╝" "$GREEN"
+        print_message "╔════════════════════════╗" "$GREEN"
+        print_message "║         PASSED         ║" "$GREEN"
+        print_message "╚════════════════════════╝" "$GREEN"
     else
-        print_message "╔════════════════════════════════════════╗" "$RED"
-        print_message "║    ⚠️  SOME TESTS FAILED ⚠️              ║" "$RED"
-        print_message "╚════════════════════════════════════════╝" "$RED"
+        print_message "╔════════════════════════╗" "$RED"
+        print_message "║      ASSASSINATED      ║" "$RED"
+        print_message "╚════════════════════════╝" "$RED"
     fi
     echo ""
 
