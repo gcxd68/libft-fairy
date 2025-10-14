@@ -7,8 +7,9 @@ RESET='\033[0m'
 
 LIBFT_DIR=".."
 TESTER_NAME="libft-assassin"
+TESTER_DIR=$(basename "$(pwd)")
 
-print_message() {
+echo_color() {
     echo -e "${2}${1}${RESET}"
 }
 
@@ -24,24 +25,36 @@ trap cleanup EXIT INT TERM
 
 main() {
     echo ""
-    print_message "╔════════════════════════╗" "$PURPLE"
-    print_message "║     LIBFT-ASSASSIN     ║" "$PURPLE"
-    print_message "╚════════════════════════╝" "$PURPLE"
+    echo_color "╔════════════════════════╗" "$PURPLE"
+    echo_color "║     LIBFT-ASSASSIN     ║" "$PURPLE"
+    echo_color "╚════════════════════════╝" "$PURPLE"
     echo ""
+
+    echo -n "📝 Checking Norminette... "
+    NORM_OUTPUT=$(find $LIBFT_DIR -type d -name "$TESTER_DIR" -prune -o \( -name "*.c" -o -name "*.h" \) -type f -print | xargs norminette 2>&1)
+    if echo "$NORM_OUTPUT" | grep -q "Error"; then
+        echo_color "Failed" "$RED"
+        echo ""
+        echo "$NORM_OUTPUT" | grep "Error"
+        echo ""
+        exit 1
+    else
+        echo "Done"
+    fi
 
     echo -n "📦 Compiling libft... "
     if make -C $LIBFT_DIR bonus > /dev/null 2>&1; then
         echo "Done"
     else
-        echo "Failed"
+        echo_color "Failed" "$RED"
         exit 1
     fi
 
     echo -n "🔨 Compiling libft-assassin... "
-    if gcc -Wall -Wextra -Werror tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $TESTER_NAME 2>&1; then
+    if gcc -Wall -Wextra -Werror -no-pie tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $TESTER_NAME 2>&1; then
         echo "Done"
     else
-        echo "Failed!"
+        echo_color "Failed" "$RED"
         exit 1
     fi
 
@@ -53,21 +66,19 @@ main() {
         echo ""
     fi
 
-    # Step 4: Report final result
     if [ $TEST_RESULT -eq 0 ]; then
-        print_message "╔════════════════════════╗" "$GREEN"
-        print_message "║         PASSED         ║" "$GREEN"
-        print_message "╚════════════════════════╝" "$GREEN"
+        echo_color "╔════════════════════════╗" "$GREEN"
+        echo_color "║         PASSED         ║" "$GREEN"
+        echo_color "╚════════════════════════╝" "$GREEN"
     else
-        print_message "╔════════════════════════╗" "$RED"
-        print_message "║      ASSASSINATED      ║" "$RED"
-        print_message "╚════════════════════════╝" "$RED"
+        echo_color "╔════════════════════════╗" "$RED"
+        echo_color "║      ASSASSINATED      ║" "$RED"
+        echo_color "╚════════════════════════╝" "$RED"
     fi
     echo ""
 
     return $TEST_RESULT
 }
 
-# Run main function
 main
 exit $?
