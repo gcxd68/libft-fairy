@@ -1,9 +1,11 @@
 #include "libft.h"
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
-#include <assert.h>
+#include <ctype.h>//?
 #include <fcntl.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <limits.h>
 
 #define GREEN "\033[0;32m"
 #define RED "\033[0;31m"
@@ -23,6 +25,24 @@ static void	print_result(const char *test_name, int passed)
 	printf("%s" RESET "%s\n", passed ? GREEN "✓ " : RED "✗ ", test_name);
 	if (!passed)
 		g_tests_failed++;
+}
+
+static  int ft_forked_test(void (*test_func)(void))
+{
+	pid_t pid;
+	int status;
+
+	if ((pid = fork()) == -1)
+		exit(EXIT_FAILURE);
+	if (pid == 0)
+	{
+		test_func();
+		exit(0);
+	}
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGSEGV)
+		return 1;
+	return 0;
 }
 
 static void	test_ft_isalpha(void)
@@ -429,27 +449,40 @@ static void	test_ft_strnstr(void)
 	print_result("Test len too short", passed[4]);
 }
 
+static void atoi_null_test(void)
+{
+	ft_atoi(NULL);
+}
+
 static void	test_ft_atoi(void)
 {
-	const int	passed[6] = {
-		ft_atoi("42") == 42,
-		ft_atoi("-42") == -42,
-		ft_atoi("   42") == 42,
-		ft_atoi("+42") == 42,
+	const int	passed[10] = {
+		ft_atoi("  \t\n\v\f\r +42") == 42,
+		ft_atoi("     -42*") == -42,
 		!ft_atoi("0"),
-		ft_atoi("  -123abc") == -123
+		!ft_atoi("++2"),
+		!ft_atoi("--4"),
+		!ft_atoi("-+9"),
+		!ft_atoi("+-8"),
+		ft_atoi("2147483647") == 2147483647,
+		ft_atoi("-2147483648") == -2147483648,
+		ft_forked_test(atoi_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 6; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 5)
+	for (int i = 0, all_passed = 1; i < 10; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 9)
 			return;
 	print_test_header("ft_atoi");
-	print_result("Test '42'", passed[0]);
-	print_result("Test '-42'", passed[1]);
-	print_result("Test '   42'", passed[2]);
-	print_result("Test '+42'", passed[3]);
-	print_result("Test '0'", passed[4]);
-	print_result("Test '  -123abc'", passed[5]);
+	print_result("Test '  \t\n\v\f\r +42'", passed[0]);
+	print_result("Test '-42*'", passed[1]);
+	print_result("Test '0'", passed[2]);
+	print_result("Test '++2'", passed[3]);
+	print_result("Test '--4'", passed[4]);
+	print_result("Test '-+9'", passed[5]);
+	print_result("Test '+-8'", passed[6]);
+	print_result("Test INT_MAX", passed[7]);
+	print_result("Test INT_MIN", passed[8]);
+	print_result("Test NULL", passed[9]);
 }
 
 static void	test_ft_calloc(void)
