@@ -148,23 +148,30 @@ static void	test_ft_isprint(void)
 	print_result("Test 'a'", passed[4]);
 }
 
+static void ft_strlen_null_test(void)
+{
+	ft_strlen(NULL);
+}
+
 static void	test_ft_strlen(void)
 {
-	const int	passed[4] = {
+	const int	passed[5] = {
 		!ft_strlen(""),
 		ft_strlen("hello") == 5,
 		ft_strlen("42") == 2,
-		ft_strlen("Hello, World!") == 13
+		ft_strlen("Hello, World!") == 13,
+		ft_forked_test(ft_strlen_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
+	for (int i = 0, all_passed = 1; i < 5; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 4)
 			return;
 	print_test_header("ft_strlen");
 	print_result("Test empty string", passed[0]);
 	print_result("Test 'hello'", passed[1]);
 	print_result("Test '42'", passed[2]);
 	print_result("Test long string", passed[3]);
+	print_result("Test NULL", passed[4]);
 }
 
 static void	test_ft_memset(void)
@@ -325,58 +332,78 @@ static void	test_ft_tolower(void)
 	print_result("Test '0'", passed[3]);
 }
 
+static void ft_strchr_null_test(void)
+{
+	ft_strchr(NULL, 'a');
+}
+
 static void	test_ft_strchr(void)
 {
 	const char	*str = "Hello, World!";
-	const int	passed[4] = {
+	const int	passed[5] = {
 		ft_strchr(str, 'o') == strchr(str, 'o'),
 		ft_strchr(str, 'W') == strchr(str, 'W'),
 		ft_strchr(str, '\0') == strchr(str, '\0'),
-		!ft_strchr(str, 'x')
+		!ft_strchr(str, 'x'),
+		ft_forked_test(ft_strchr_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
+	for (int i = 0, all_passed = 1; i < 5; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 4)
 			return;
 	print_test_header("ft_strchr");
 	print_result("Test find 'o'", passed[0]);
 	print_result("Test find 'W'", passed[1]);
 	print_result("Test find '\\0'", passed[2]);
 	print_result("Test not found 'x'", passed[3]);
+	print_result("Test NULL", passed[4]);
+}
+
+static void ft_strrchr_null_test(void)
+{
+	ft_strrchr(NULL, 'a');
 }
 
 static void	test_ft_strrchr(void)
 {
 	const char	*str = "Hello, World!";
-	const int	passed[4] = {
+	const int	passed[5] = {
 		ft_strrchr(str, 'o') == strrchr(str, 'o'),
 		ft_strrchr(str, 'W') == strrchr(str, 'W'),
 		ft_strrchr(str, '\0') == strrchr(str, '\0'),
-		!ft_strrchr(str, 'x')
+		!ft_strrchr(str, 'x'),
+		ft_forked_test(ft_strrchr_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
+	for (int i = 0, all_passed = 1; i < 5; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 4)
 			return;
 	print_test_header("ft_strrchr");
 	print_result("Test find last 'o'", passed[0]);
 	print_result("Test find 'W'", passed[1]);
 	print_result("Test find '\\0'", passed[2]);
 	print_result("Test not found 'x'", passed[3]);
+	print_result("Test NULL", passed[4]);
+}
+
+static void ft_strncmp_null_test(void)
+{
+	ft_strncmp(NULL, "abc", 3);
 }
 
 static void	test_ft_strncmp(void)
 {
-	const int	passed[5] = {
+	const int	passed[6] = {
 		!ft_strncmp("Hello", "Hello", 5),
 		ft_strncmp("Hello", "World", 5),
 		!ft_strncmp("Hello", "Help", 3),
 		!ft_strncmp("Hello", "World", 0),
-		!ft_strncmp("Hello", "Hello\0test", 10)
+		!ft_strncmp("Hello", "Hello\0test", 10),
+		ft_forked_test(ft_strncmp_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
+	for (int i = 0, all_passed = 1; i < 6; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 5)
 			return;
 	print_test_header("ft_strncmp");
 	print_result("Test equal strings", passed[0]);
@@ -384,6 +411,7 @@ static void	test_ft_strncmp(void)
 	print_result("Test partial compare", passed[2]);
 	print_result("Test n=0", passed[3]);
 	print_result("Test with \\0", passed[4]);
+	print_result("Test NULL", passed[5]);
 }
 
 static void	test_ft_memchr(void)
@@ -449,7 +477,7 @@ static void	test_ft_strnstr(void)
 	print_result("Test len too short", passed[4]);
 }
 
-static void atoi_null_test(void)
+static void ft_atoi_null_test(void)
 {
 	ft_atoi(NULL);
 }
@@ -466,14 +494,14 @@ static void	test_ft_atoi(void)
 		!ft_atoi("+-8"),
 		ft_atoi("2147483647") == 2147483647,
 		ft_atoi("-2147483648") == -2147483648,
-		ft_forked_test(atoi_null_test)
+		ft_forked_test(ft_atoi_null_test)
 	};
 
 	for (int i = 0, all_passed = 1; i < 10; i++)
 		if ((all_passed = (all_passed && passed[i])) && i == 9)
 			return;
 	print_test_header("ft_atoi");
-	print_result("Test '  \t\n\v\f\r +42'", passed[0]);
+	print_result("Test '  \\t\\n\\v\\f\\r +42'", passed[0]);
 	print_result("Test '-42*'", passed[1]);
 	print_result("Test '0'", passed[2]);
 	print_result("Test '++2'", passed[3]);
