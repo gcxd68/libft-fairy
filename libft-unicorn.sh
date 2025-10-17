@@ -74,7 +74,7 @@ main() {
 		echo_color "╚══════════════════════════╝" "$GREEN"
 	else
 		echo_color "╔══════════════════════════╗" "$RED"
-		echo_color "║   OH NO! YOU FAILED...   ║" "$RED"
+		echo_color "║   OH NO... YOU FAILED!   ║" "$RED"
 		echo_color "╚══════════════════════════╝" "$RED"
 	fi
 	echo ""

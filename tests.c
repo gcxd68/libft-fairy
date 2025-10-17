@@ -328,7 +328,6 @@ static void	test_ft_strlcat(void)
 	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, "X", 6);
 	passed[7] = !strcmp(dst, "Hello") && len == 6;
-	
 	for (int i = 0, all_passed = 1; i < 8; i++)
 		if ((all_passed = (all_passed && passed[i])) && i == 7)
 			return;
@@ -626,7 +625,7 @@ static void ft_substr_null_test(void)
 static void	test_ft_substr(void)
 {
 	char	*sub = ft_substr("Hello, World!", 7, 5);
-	int		passed[5];
+	int		passed[6];
 
 	passed[0] = !strcmp(sub, "World");
 	free(sub);
@@ -638,17 +637,21 @@ static void	test_ft_substr(void)
 	free(sub);
 	sub = ft_substr("Hello", 2, 100);
 	passed[3] = !strcmp(sub, "llo");
-	passed[4] = !ft_forked_test(ft_substr_null_test);
 	free(sub);
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
+	sub = ft_substr("test", 0, 0);
+	passed[4] = !strcmp(sub, "");
+	free(sub);
+	passed[5] = !ft_forked_test(ft_substr_null_test);
+	for (int i = 0, all_passed = 1; i < 6; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 5)
 			return;
 	print_test_header("ft_substr");
 	print_result("Test basic substr", passed[0]);
 	print_result("Test from start", passed[1]);
 	print_result("Test start > len", passed[2]);
 	print_result("Test len too long", passed[3]);
-	print_result("Test NULL", passed[4]);
+	print_result("Test len = 0", passed[4]);
+	print_result("Test NULL", passed[5]);
 }
 
 static void	test_ft_strjoin(void)
@@ -677,10 +680,20 @@ static void	test_ft_strjoin(void)
 	print_result("Test short strings", passed[3]);
 }
 
+static void ft_strtrim_null_input_test(void)
+{
+	ft_strtrim(NULL, " ");
+}
+
+static void ft_strtrim_null_set_test(void)
+{
+	ft_strtrim("test", NULL);
+}
+
 static void	test_ft_strtrim(void)
 {
 	char	*trimmed = ft_strtrim("   Hello   ", " ");
-	int		passed[4];
+	int		passed[7];
 
 	passed[0] = !strcmp(trimmed, "Hello");
 	free(trimmed);
@@ -693,14 +706,22 @@ static void	test_ft_strtrim(void)
 	trimmed = ft_strtrim("", " ");
 	passed[3] = !strcmp(trimmed, "");
 	free(trimmed);
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
+	trimmed = ft_strtrim("xxxxx", "x");
+	passed[4] = !strcmp(trimmed, "");
+	free(trimmed);
+	passed[5] = !ft_forked_test(ft_strtrim_null_input_test);
+	passed[6] = !ft_forked_test(ft_strtrim_null_set_test);
+	for (int i = 0, all_passed = 1; i < 7; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 6)
 			return;
 	print_test_header("ft_strtrim");
 	print_result("Test spaces", passed[0]);
 	print_result("Test custom set", passed[1]);
 	print_result("Test no trim", passed[2]);
 	print_result("Test empty string", passed[3]);
+	print_result("Test all trim", passed[4]);
+	print_result("Test NULL input", passed[5]);
+	print_result("Test NULL set", passed[6]);
 }
 
 static void	ft_free_arr(char **arr)
@@ -745,7 +766,6 @@ static void	test_ft_split(void)
 	arr = ft_split("Hello   World", ' ');
 	passed[8] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
 	ft_free_arr(arr);
-
 	for (int i = 0, all_passed = 1; i < 9; i++)
 		if ((all_passed = (all_passed && passed[i])) && i == 8)
 			return;
