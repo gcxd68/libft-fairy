@@ -37,7 +37,7 @@ static  int ft_forked_test(void (*test_func)(void))
 	if (pid == 0)
 	{
 		test_func();
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGSEGV)
@@ -174,30 +174,38 @@ static void	test_ft_strlen(void)
 	print_result("Test NULL", passed[4]);
 }
 
+static void ft_memset_null_test(void)
+{
+	ft_memset(NULL, 0, 5);
+}
+
 static void	test_ft_memset(void)
 {
-	int		passed[2];
 	char	str1[10] = {0};
 	char	str2[10] = {0};
 	void	*ret;
+	int		passed[3];
 
 	ret = ft_memset(str1, 'A', 5);
 	memset(str2, 'A', 5);
 	passed[0] = !memcmp(str1, str2, 10) && ret == str1;
 	ret = ft_memset(str1, 0, 10);
-	passed[1] = !str1[0] && !str1[9] && ret == str1;
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
+	memset(str2, 0, 10);
+	passed[1] = !memcmp(str1, str2, 10) && ret == str1;
+	passed[2] = ft_forked_test(ft_memset_null_test);
+	for (int i = 0, all_passed = 1; i < 3; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 2)
 			return;
 	print_test_header("ft_memset");
 	print_result("Test basic memset", passed[0]);
 	print_result("Test memset with 0", passed[1]);
+	print_result("Test memset with NULL", passed[2]);
 }
 
 static void	test_ft_bzero(void)
 {
-	int		passed[2];
 	char	str1[10];
+	int		passed[2];
 
 	memset(str1, 'A', 10);
 	ft_bzero(str1, 5);
@@ -212,31 +220,47 @@ static void	test_ft_bzero(void)
 	print_result("Test bzero all", passed[1]);
 }
 
+static void ft_memcpy_null_test(void)
+{
+	char	buffer[10];
+
+	ft_memcpy((void *)buffer, NULL, 5);
+}
+
 static void	test_ft_memcpy(void)
 {
 	char	src[] = "Hello, World!";
 	char	dst1[20] = {0};
 	char	dst2[20] = {0};
-	int		passed[2];
+	int		passed[3];
 
 	ft_memcpy(dst1, src, strlen(src) + 1);
 	memcpy(dst2, src, strlen(src) + 1);
 	passed[0] = !strcmp(dst1, dst2);
 	ft_memcpy(dst1, "42", 2);
 	passed[1] = dst1[0] == '4' && dst1[1] == '2';
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
+	passed[2] = ft_forked_test(ft_memcpy_null_test);
+	for (int i = 0, all_passed = 1; i < 3; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 2)
 			return;
 	print_test_header("ft_memcpy");
 	print_result("Test basic memcpy", passed[0]);
 	print_result("Test partial copy", passed[1]);
+	print_result("Test NULL", passed[2]);
+}
+
+static void ft_memmove_null_test(void)
+{
+	char	buffer[10];
+
+	ft_memmove((void *)buffer, NULL, 5);
 }
 
 static void	test_ft_memmove(void)
 {
 	char	str1[] = "Hello, World!";
 	char	str2[] = "Hello, World!";
-	int		passed[2];
+	int		passed[3];
 
 	ft_memmove(str1 + 2, str1, 5);
 	memmove(str2 + 2, str2, 5);
@@ -246,12 +270,14 @@ static void	test_ft_memmove(void)
 	ft_memmove(str1, str1 + 2, 5);
 	memmove(str2, str2 + 2, 5);
 	passed[1] = !strcmp(str1, str2);
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
+	passed[2] = ft_forked_test(ft_memmove_null_test);
+	for (int i = 0, all_passed = 1; i < 3; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 2)
 			return;
 	print_test_header("ft_memmove");
 	print_result("Test overlapping forward", passed[0]);
 	print_result("Test overlapping backward", passed[1]);
+	print_result("Test NULL", passed[2]);
 }
 
 static void	test_ft_strlcpy(void)
