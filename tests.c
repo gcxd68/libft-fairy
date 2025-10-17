@@ -10,29 +10,27 @@
 
 int g_tests_failed = 0;
 
-static void	print_test_header(const char *function_name)
-{
+static void	print_test_header(const char *function_name) {
 	printf("\n========================================\n");
 	printf("Testing: %s\n", function_name);
 	printf("========================================\n");
 }
 
-static void	print_result(const char *test_name, int passed)
-{
+static void	print_result(const char *test_name, int passed) {
 	printf("%s" RESET "%s\n", passed ? GREEN "✓ " : RED "✗ ", test_name);
 	if (!passed)
 		g_tests_failed++;
 }
 
-static  int ft_forked_test(void (*test_func)(void))
-{
+static  int ft_forked_test(void (*test_func)(void)) {
 	pid_t pid;
 	int status;
 
-	if ((pid = fork()) == -1)
+	if ((pid = fork()) == -1) {
+		perror("libft-unicorn: fork");
 		exit(EXIT_FAILURE);
-	if (pid == 0)
-	{
+	}
+	if (pid == 0) {
 		test_func();
 		exit(EXIT_SUCCESS);
 	}
@@ -42,8 +40,7 @@ static  int ft_forked_test(void (*test_func)(void))
 	return 0;
 }
 
-static void	test_ft_isalpha(void)
-{
+static void	test_ft_isalpha(void) {
 	const int	passed[5] = {
 		ft_isalpha('a'),
 		ft_isalpha('Z'),
@@ -63,8 +60,7 @@ static void	test_ft_isalpha(void)
 	print_result("Test '@'", passed[4]);
 }
 
-static void	test_ft_isdigit(void)
-{
+static void	test_ft_isdigit(void) {
 	const int	passed[4] = {
 		ft_isdigit('0'),
 		ft_isdigit('9'),
@@ -82,8 +78,7 @@ static void	test_ft_isdigit(void)
 	print_result("Test ' '", passed[3]);
 }
 
-static void	test_ft_isalnum(void)
-{
+static void	test_ft_isalnum(void) {
 	const int	passed[5] = {
 		ft_isalnum('a'),
 		ft_isalnum('Z'),
@@ -103,8 +98,7 @@ static void	test_ft_isalnum(void)
 	print_result("Test '@'", passed[4]);
 }
 
-static void	test_ft_isascii(void)
-{
+static void	test_ft_isascii(void) {
 	const int	passed[5] = {
 		ft_isascii(0),
 		ft_isascii(127),
@@ -124,8 +118,7 @@ static void	test_ft_isascii(void)
 	print_result("Test 'a'", passed[4]);
 }
 
-static void	test_ft_isprint(void)
-{
+static void	test_ft_isprint(void) {
 	const int	passed[5] = {
 		ft_isprint(' '),
 		ft_isprint('~'),
@@ -145,13 +138,11 @@ static void	test_ft_isprint(void)
 	print_result("Test 'a'", passed[4]);
 }
 
-static void ft_strlen_null_test(void)
-{
+static void ft_strlen_null_test(void) {
 	ft_strlen(NULL);
 }
 
-static void	test_ft_strlen(void)
-{
+static void	test_ft_strlen(void) {
 	const int	passed[5] = {
 		!ft_strlen(""),
 		ft_strlen("hello") == 5,
@@ -171,13 +162,11 @@ static void	test_ft_strlen(void)
 	print_result("Test NULL", passed[4]);
 }
 
-static void ft_memset_null_test(void)
-{
+static void ft_memset_null_test(void) {
 	ft_memset(NULL, 0, 5);
 }
 
-static void	test_ft_memset(void)
-{
+static void	test_ft_memset(void) {
 	char	str1[10] = {0};
 	char	str2[10] = {0};
 	void	*ret;
@@ -199,8 +188,7 @@ static void	test_ft_memset(void)
 	print_result("Test memset with NULL", passed[2]);
 }
 
-static void	test_ft_bzero(void)
-{
+static void	test_ft_bzero(void) {
 	char	str1[10];
 	int		passed[2];
 
@@ -217,15 +205,13 @@ static void	test_ft_bzero(void)
 	print_result("Test bzero all", passed[1]);
 }
 
-static void ft_memcpy_null_test(void)
-{
+static void ft_memcpy_null_test(void) {
 	char	buffer[10];
 
 	ft_memcpy((void *)buffer, NULL, 5);
 }
 
-static void	test_ft_memcpy(void)
-{
+static void	test_ft_memcpy(void) {
 	char	src[] = "Hello, World!";
 	char	dst1[20] = {0};
 	char	dst2[20] = {0};
@@ -246,15 +232,13 @@ static void	test_ft_memcpy(void)
 	print_result("Test NULL", passed[2]);
 }
 
-static void ft_memmove_null_test(void)
-{
+static void ft_memmove_null_test(void) {
 	char	buffer[10];
 
 	ft_memmove((void *)buffer, NULL, 5);
 }
 
-static void	test_ft_memmove(void)
-{
+static void	test_ft_memmove(void) {
 	char	str1[] = "Hello, World!";
 	char	str2[] = "Hello, World!";
 	int		passed[3];
@@ -277,8 +261,7 @@ static void	test_ft_memmove(void)
 	print_result("Test NULL", passed[2]);
 }
 
-static void	test_ft_strlcpy(void)
-{
+static void	test_ft_strlcpy(void) {
 	char	dst[20];
 	size_t	len;
 	int		passed[3];
@@ -298,8 +281,7 @@ static void	test_ft_strlcpy(void)
 	print_result("Test size 0", passed[2]);
 }
 
-static void	test_ft_strlcat(void)
-{
+static void	test_ft_strlcat(void) {
 	char	dst[20];
 	size_t	len;
 	int		passed[8];
@@ -342,8 +324,7 @@ static void	test_ft_strlcat(void)
 	print_result("Test no room for concat", passed[7]);
 }
 
-static void	test_ft_toupper(void)
-{
+static void	test_ft_toupper(void) {
 	const int	passed[4] = {
 		ft_toupper('a') == 'A',
 		ft_toupper('z') == 'Z',
@@ -361,8 +342,7 @@ static void	test_ft_toupper(void)
 	print_result("Test '0'", passed[3]);
 }
 
-static void	test_ft_tolower(void)
-{
+static void	test_ft_tolower(void) {
 	const int	passed[4] = {
 		ft_tolower('A') == 'a',
 		ft_tolower('Z') == 'z',
@@ -380,8 +360,7 @@ static void	test_ft_tolower(void)
 	print_result("Test '0'", passed[3]);
 }
 
-static void ft_strchr_null_test(void)
-{
+static void ft_strchr_null_test(void) {
 	ft_strchr(NULL, 'a');
 }
 
@@ -407,13 +386,11 @@ static void	test_ft_strchr(void)
 	print_result("Test NULL", passed[4]);
 }
 
-static void ft_strrchr_null_test(void)
-{
+static void ft_strrchr_null_test(void) {
 	ft_strrchr(NULL, 'a');
 }
 
-static void	test_ft_strrchr(void)
-{
+static void	test_ft_strrchr(void) {
 	const char	*str = "Hello, World!";
 	const int	passed[5] = {
 		ft_strrchr(str, 'o') == strrchr(str, 'o'),
@@ -434,13 +411,11 @@ static void	test_ft_strrchr(void)
 	print_result("Test NULL", passed[4]);
 }
 
-static void ft_strncmp_null_test(void)
-{
+static void ft_strncmp_null_test(void) {
 	ft_strncmp(NULL, "abc", 3);
 }
 
-static void	test_ft_strncmp(void)
-{
+static void	test_ft_strncmp(void) {
 	const int	passed[8] = {
 		!ft_strncmp("Hello", "Hello", 5),
 		ft_strncmp("Hello", "World", 5),
@@ -466,8 +441,7 @@ static void	test_ft_strncmp(void)
 	print_result("Test NULL", passed[7]);
 }
 
-static void	test_ft_memchr(void)
-{
+static void	test_ft_memchr(void) {
 	const char	*str = "Hello, World!";
 	const int	passed[4] = {
 		ft_memchr(str, 'o', 13) == memchr(str, 'o', 13),
@@ -486,8 +460,7 @@ static void	test_ft_memchr(void)
 	print_result("Test n=0", passed[3]);
 }
 
-static void	test_ft_memcmp(void)
-{
+static void	test_ft_memcmp(void) {
 	char	buf1[] = {1, 2, 3, 4, 5};
 	char	buf2[] = {1, 2, 3, 4, 6};
 	const int passed[4] = {
@@ -507,8 +480,7 @@ static void	test_ft_memcmp(void)
 	print_result("Test binary data", passed[3]);
 }
 
-static void	test_ft_strnstr(void)
-{
+static void	test_ft_strnstr(void) {
 	const char	*haystack = "Hello, World!";
 	const int	passed[5] = {
 		ft_strnstr(haystack, "World", 13) != NULL,
@@ -529,18 +501,15 @@ static void	test_ft_strnstr(void)
 	print_result("Test len too short", passed[4]);
 }
 
-static void ft_atoi_overflow_test(void)
-{
+static void ft_atoi_overflow_test(void) {
 	ft_atoi("9999999999999999999");
 }
 
-static void ft_atoi_null_test(void)
-{
+static void ft_atoi_null_test(void) {
 	ft_atoi(NULL);
 }
 
-static void	test_ft_atoi(void)
-{
+static void	test_ft_atoi(void) {
 	const int	passed[12] = {
 		ft_atoi("  \t\n\v\f\r +42") == 42,
 		ft_atoi("     -42*") == -42,
@@ -574,20 +543,17 @@ static void	test_ft_atoi(void)
 	print_result("Test NULL", passed[11]);
 }
 
-static void ft_calloc_zero_count_test(void)
-{
+static void ft_calloc_zero_count_test(void) {
 	void *ptr = ft_calloc(0, 5);
 	free(ptr);
 }
 
-static void ft_calloc_zero_size_test(void)
-{
+static void ft_calloc_zero_size_test(void) {
 	void *ptr = ft_calloc(5, 0);
 	free(ptr);
 }
 
-static void	test_ft_calloc(void)
-{
+static void	test_ft_calloc(void) {
 	int	*arr = ft_calloc(5, sizeof(int));
 	int	passed[5];
 
@@ -615,8 +581,7 @@ static void	test_ft_calloc(void)
 	print_result("Test size = 0", passed[4]);
 }
 
-static void	test_ft_strdup(void)
-{
+static void	test_ft_strdup(void) {
 	char	*dup = ft_strdup("Hello");
 	int		passed[3];
 
@@ -637,13 +602,11 @@ static void	test_ft_strdup(void)
 	print_result("Test short string", passed[2]);
 }
 
-static void ft_substr_null_test(void)
-{
+static void ft_substr_null_test(void) {
 	ft_substr(NULL, 0, 5);
 }
 
-static void	test_ft_substr(void)
-{
+static void	test_ft_substr(void) {
 	char	*sub = ft_substr("Hello, World!", 7, 5);
 	int		passed[6];
 
@@ -674,8 +637,7 @@ static void	test_ft_substr(void)
 	print_result("Test NULL", passed[5]);
 }
 
-static void	test_ft_strjoin(void)
-{
+static void	test_ft_strjoin(void) {
 	char	*joined = ft_strjoin("Hello", " World");
 	int		passed[4];
 
@@ -700,18 +662,15 @@ static void	test_ft_strjoin(void)
 	print_result("Test short strings", passed[3]);
 }
 
-static void ft_strtrim_null_input_test(void)
-{
+static void ft_strtrim_null_input_test(void) {
 	ft_strtrim(NULL, " ");
 }
 
-static void ft_strtrim_null_set_test(void)
-{
+static void ft_strtrim_null_set_test(void) {
 	ft_strtrim("test", NULL);
 }
 
-static void	test_ft_strtrim(void)
-{
+static void	test_ft_strtrim(void) {
 	char	*trimmed = ft_strtrim("   Hello   ", " ");
 	int		passed[7];
 
@@ -744,18 +703,15 @@ static void	test_ft_strtrim(void)
 	print_result("Test NULL set", passed[6]);
 }
 
-static void	ft_free_arr(char **arr)
-{
-	if (arr)
-	{
+static void	ft_free_arr(char **arr) {
+	if (arr) {
 		for (int i = 0; arr[i]; i++)
 			free(arr[i]);
 		free(arr);
 	}
 }
 
-static void	test_ft_split(void)
-{
+static void	test_ft_split(void) {
 	char	**arr;
 	int		passed[9];
 
@@ -802,8 +758,7 @@ static void	test_ft_split(void)
 }
 
 
-static void	test_ft_itoa(void)
-{
+static void	test_ft_itoa(void) {
 	char	*str = ft_itoa(42);
 	int		passed[5];
 
@@ -832,23 +787,19 @@ static void	test_ft_itoa(void)
 	print_result("Test INT_MAX", passed[4]);
 }
 
-static char test_mapi_func(unsigned int i, char c)
-{
+static char test_mapi_func(unsigned int i, char c) {
 	return c + i;
 }
 
-static void test_strmapi_null_func(void)
-{
+static void test_strmapi_null_func(void) {
 	ft_strmapi("test", NULL);
 }
 
-static void test_striteri_null_func(void)
-{
+static void test_striteri_null_func(void) {
 	ft_striteri("test", NULL);
 }
 
-static void test_ft_strmapi(void)
-{
+static void test_ft_strmapi(void) {
 	char	*result = ft_strmapi("abc", test_mapi_func);
 	int		passed[4];
 
@@ -869,13 +820,11 @@ static void test_ft_strmapi(void)
 	print_result("Test f = NULL (striteri)", passed[3]);
 }
 
-static void	test_iteri_func(unsigned int i, char *c)
-{
+static void	test_iteri_func(unsigned int i, char *c) {
 	*c = *c + i;
 }
 
-static void	test_ft_striteri(void)
-{
+static void	test_ft_striteri(void) {
 	char	str[] = "abc";
 	int		passed[1];
 
@@ -889,9 +838,8 @@ static void	test_ft_striteri(void)
 }
 
 static int	test_fd_output(void (*func)(void *, int), void *input, 
-							const char *expected, size_t read_len)
-{
-	char	buf[50];
+							const char *expected, size_t read_len) {
+	char	buf[50] = {0};
 	int		fd;
 	int		result;
 
@@ -907,28 +855,23 @@ static int	test_fd_output(void (*func)(void *, int), void *input,
 	return (result);
 }
 
-static void	wrapper_putchar(void *c, int fd)
-{
+static void	wrapper_putchar(void *c, int fd) {
 	ft_putchar_fd(*(char *)c, fd);
 }
 
-static void	wrapper_putstr(void *s, int fd)
-{
+static void	wrapper_putstr(void *s, int fd) {
 	ft_putstr_fd((char *)s, fd);
 }
 
-static void	wrapper_putendl(void *s, int fd)
-{
+static void	wrapper_putendl(void *s, int fd) {
 	ft_putendl_fd((char *)s, fd);
 }
 
-static void	wrapper_putnbr(void *n, int fd)
-{
+static void	wrapper_putnbr(void *n, int fd) {
 	ft_putnbr_fd(*(int *)n, fd);
 }
 
-static void	test_ft_putchar_fd(void)
-{
+static void	test_ft_putchar_fd(void) {
 	char	c = '0';
 	int		passed[2];
 
@@ -952,8 +895,7 @@ static void	test_ft_putchar_fd(void)
 	print_result("Test '0'", passed[1]);
 }
 
-static void	test_ft_putstr_fd(void)
-{
+static void	test_ft_putstr_fd(void) {
 	int	passed[2];
 
 	passed[0] = test_fd_output(wrapper_putstr, "Hello, World!", "Hello, World!", 13);
@@ -966,8 +908,7 @@ static void	test_ft_putstr_fd(void)
 	print_result("Test '42'", passed[1]);
 }
 
-static void	test_ft_putendl_fd(void)
-{
+static void	test_ft_putendl_fd(void) {
 	int	passed[2];
 
 	passed[0] = test_fd_output(wrapper_putendl, "Hello", "Hello\n", 6);
@@ -980,8 +921,7 @@ static void	test_ft_putendl_fd(void)
 	print_result("Test empty string with newline", passed[1]);
 }
 
-static void	test_ft_putnbr_fd(void)
-{
+static void	test_ft_putnbr_fd(void) {
 	int	n1 = 42, n2 = -42, n3 = 0, n4 = -2147483648, n5 = 2147483647;
 	int	passed[5];
 
@@ -1001,8 +941,7 @@ static void	test_ft_putnbr_fd(void)
 	print_result("Test INT_MAX", passed[4]);
 }
 
-static void	test_ft_lstnew(void)
-{
+static void	test_ft_lstnew(void) {
 	int		content = 42;
 	t_list	*node = ft_lstnew(&content);
 	int		passed[1];
@@ -1016,8 +955,7 @@ static void	test_ft_lstnew(void)
 	print_result("Test node creation", passed[0]);
 }
 
-static void	test_ft_lstadd_front(void)
-{
+static void	test_ft_lstadd_front(void) {
 	int c1 = 1, c2 = 2;
 	t_list *lst = ft_lstnew(&c1);
 	t_list *new = ft_lstnew(&c2);
@@ -1035,8 +973,7 @@ static void	test_ft_lstadd_front(void)
 	print_result("Test add front", passed[0]);
 }
 
-static void	test_ft_lstsize(void)
-{
+static void	test_ft_lstsize(void) {
 	int		c1 = 1, c2 = 2, c3 = 3;
 	t_list	*n1 = ft_lstnew(&c1);
 	t_list	*n2 = ft_lstnew(&c2);
@@ -1058,8 +995,7 @@ static void	test_ft_lstsize(void)
 	print_result("Test size NULL", passed[1]);
 }
 
-static void	test_ft_lstlast(void)
-{
+static void	test_ft_lstlast(void) {
 	int		c1 = 1, c2 = 2, c3 = 3;
 	t_list	*n1 = ft_lstnew(&c1);
 	t_list	*n2 = ft_lstnew(&c2);
@@ -1081,8 +1017,7 @@ static void	test_ft_lstlast(void)
 	print_result("Test NULL", passed[1]);
 }
 
-static void	test_ft_lstadd_back(void)
-{
+static void	test_ft_lstadd_back(void) {
 	int		c1 = 1, c2 = 2;
 	t_list	*lst = ft_lstnew(&c1);
 	t_list	*new = ft_lstnew(&c2);
@@ -1100,21 +1035,59 @@ static void	test_ft_lstadd_back(void)
 	print_result("Test add back", passed[0]);
 }
 
-static void	del_content(void *content)
-{
+static void	del_content(void *content) {
 	(void)content;
 }
 
-static void	test_ft_lstdelone(void)
-{
-	int		c = 42;
-	t_list	*node = ft_lstnew(&c);
+static int freed_count; // ???
 
-	ft_lstdelone(node, del_content);
+static void del_count(void *content) {
+	free(content);
+	freed_count++;
 }
 
-static void	test_ft_lstclear(void)
-{
+static void test_ft_lstdelone(void) {
+	int		*value1 = malloc(sizeof(int));
+	int		*value2 = malloc(sizeof(int));
+	int		*value3 = malloc(sizeof(int));
+	int		passed[3];
+	t_list	*lst = NULL;
+	t_list	*node1, *node2, *node3;
+
+	if (!value1 || !value2 || !value3) {
+		free(value1); free(value2); free(value3);
+		perror("libft-unicorn: malloc");
+		exit(EXIT_FAILURE);
+	}
+	*value1 = 1; *value2 = 2; *value3 = 3;
+	node1 = ft_lstnew(value1);
+	node2 = ft_lstnew(value2);
+	node3 = ft_lstnew(value3);
+	ft_lstadd_back(&lst, node1);
+	ft_lstadd_back(&lst, node2);
+	ft_lstadd_back(&lst, node3);
+	node1->next = node3;
+	freed_count = 0;
+	ft_lstdelone(node2, del_count);
+	passed[0] = (freed_count == 1);
+	int correct = (*(int *)lst->content == 1)
+		&& (*(int *)lst->next->content == 3)
+		&& lst->next->next == NULL;
+	passed[1] = correct;
+	freed_count = 0;
+	ft_lstclear(&lst, del_count);
+	passed[2] = (freed_count == 2 && lst == NULL);
+	for (int i = 0, all_passed = 1; i < 3; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 2)
+			return;
+	print_test_header("ft_lstdelone / ft_lstclear");
+	print_result("Test delone calls free once", passed[0]);
+	print_result("Test delone leaves correct remaining nodes", passed[1]);
+	print_result("Test lstclear frees all and sets list to NULL", passed[2]);
+}
+
+
+static void	test_ft_lstclear(void) {
 	int 	c1 = 1, c2 = 2, c3 = 3;
 	t_list	*n1 = ft_lstnew(&c1);
 	t_list	*n2 = ft_lstnew(&c2);
@@ -1132,13 +1105,11 @@ static void	test_ft_lstclear(void)
 	print_result("Test clear (no crash)", passed[0]);
 }
 
-static void	iter_func(void *content)
-{
+static void	iter_func(void *content) {
 	(*(int *)content)++;
 }
 
-static void	test_ft_lstiter(void)
-{
+static void	test_ft_lstiter(void) {
 	int 	c1 = 1, c2 = 2, c3 = 3;
 	t_list	*n1 = ft_lstnew(&c1);
 	t_list	*n2 = ft_lstnew(&c2);
@@ -1159,8 +1130,7 @@ static void	test_ft_lstiter(void)
 	print_result("Test iter", passed[0]);
 }
 
-static void	*map_func(void *content)
-{
+static void	*map_func(void *content) {
 	int *new = malloc(sizeof(int));
 	if (!new)
 		return NULL;
@@ -1168,14 +1138,12 @@ static void	*map_func(void *content)
 	return new;
 }
 
-static void	*map_func_fail(void *content)
-{
+static void	*map_func_fail(void *content) {
 	(void)content;
 	return NULL;
 }
 
-static void	test_ft_lstmap(void)
-{
+static void	test_ft_lstmap(void) {
 	int		c1 = 1, c2 = 2, c3 = 3;
 	t_list	*n1 = ft_lstnew(&c1);
 	t_list	*n2 = ft_lstnew(&c2);
