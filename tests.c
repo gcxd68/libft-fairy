@@ -612,7 +612,7 @@ static void	test_ft_calloc(void)
 	print_result("Test allocated", passed[1]);
 	print_result("Test overflow", passed[2]);
 	print_result("Test count = 0", passed[3]);
-    print_result("Test size = 0", passed[4]);
+	print_result("Test size = 0", passed[4]);
 }
 
 static void	test_ft_strdup(void)
@@ -1147,12 +1147,17 @@ static void	test_ft_lstiter(void)
 
 static void	*map_func(void *content)
 {
-	int	*new = malloc(sizeof(int));
-
+	int *new = malloc(sizeof(int));
 	if (!new)
 		return NULL;
 	*new = *(int *)content * 2;
 	return new;
+}
+
+static void	*map_func_fail(void *content)
+{
+	(void)content;
+	return NULL;
 }
 
 static void	test_ft_lstmap(void)
@@ -1162,22 +1167,27 @@ static void	test_ft_lstmap(void)
 	t_list	*n2 = ft_lstnew(&c2);
 	t_list	*n3 = ft_lstnew(&c3);
 	t_list	*new_lst;
-	int		passed[1];
+	int		passed[2];
 
 	n1->next = n2;
 	n2->next = n3;
 	new_lst = ft_lstmap(n1, map_func, free);
-	passed[0] = new_lst && *(int *)new_lst->content == 2 && 
-				*(int *)new_lst->next->content == 4 && *(int *)new_lst->next->next->content == 6;
+	passed[0] = new_lst && *(int *)new_lst->content == 2 &&
+				*(int *)new_lst->next->content == 4 &&
+				*(int *)new_lst->next->next->content == 6;
+	ft_lstclear(&new_lst, free);
+	new_lst = ft_lstmap(n1, map_func_fail, free);
+	passed[1] = !new_lst;
 	ft_lstclear(&new_lst, free);
 	free(n3);
 	free(n2);
 	free(n1);
-	for (int i = 0, all_passed = 1; i < 1; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 0)
+	for (int i = 0, all_passed = 1; i < 2; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 1)
 			return;
 	print_test_header("ft_lstmap");
-	print_result("Test map", passed[0]);
+	print_result("Test map normal", passed[0]);
+	print_result("Test malloc fail", passed[1]);
 }
 
 int main(void)
