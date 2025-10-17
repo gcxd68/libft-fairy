@@ -3,7 +3,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/wait.h>
-#include <unistd.h>
 
 #define GREEN "\033[0;32m"
 #define RED "\033[0;31m"
@@ -704,40 +703,64 @@ static void	test_ft_strtrim(void)
 	print_result("Test empty string", passed[3]);
 }
 
+static void	ft_free_arr(char **arr)
+{
+	if (arr)
+	{
+		for (int i = 0; arr[i]; i++)
+			free(arr[i]);
+		free(arr);
+	}
+}
+
 static void	test_ft_split(void)
 {
-	char	**arr = ft_split("Hello World 42", ' ');
-	int		passed[3];
+	char	**arr;
+	int		passed[9];
 
-	passed[0] = arr && !strcmp(arr[0], "Hello") && 
-		!strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
-	if (arr)
-	{
-		for (int i = 0; arr[i]; i++)
-			free(arr[i]);
-		free(arr);
-	}
+	arr = ft_split("Hello World 42", ' ');
+	passed[0] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
+	ft_free_arr(arr);
 	arr = ft_split("   Hello   World   ", ' ');
-	passed[1] = arr && !strcmp(arr[0], "Hello") && 
-		!strcmp(arr[1], "World") && !arr[2];
-	if (arr)
-	{
-		for (int i = 0; arr[i]; i++)
-			free(arr[i]);
-		free(arr);
-	}
+	passed[1] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
+	ft_free_arr(arr);
 	arr = ft_split("", ' ');
 	passed[2] = arr && !arr[0];
-	if (arr)
-		free(arr);
-	for (int i = 0, all_passed = 1; i < 3; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 2)
+	ft_free_arr(arr);
+	arr = ft_split("", 'x');
+	passed[3] = arr && !arr[0];
+	ft_free_arr(arr);
+	arr = ft_split("xxx", 'x');
+	passed[4] = arr && !arr[0];
+	ft_free_arr(arr);
+	arr = ft_split("Hello", '\0');
+	passed[5] = arr && !strcmp(arr[0], "Hello") && !arr[1];
+	ft_free_arr(arr);
+	arr = ft_split("   ", ' ');
+	passed[6] = arr && !arr[0];
+	ft_free_arr(arr);
+	arr = ft_split("HelloWorld", ' ');
+	passed[7] = arr && !strcmp(arr[0], "HelloWorld") && !arr[1];
+	ft_free_arr(arr);
+	arr = ft_split("Hello   World", ' ');
+	passed[8] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
+	ft_free_arr(arr);
+
+	for (int i = 0, all_passed = 1; i < 9; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 8)
 			return;
 	print_test_header("ft_split");
 	print_result("Test basic split", passed[0]);
 	print_result("Test multiple delimiters", passed[1]);
 	print_result("Test empty string", passed[2]);
+	print_result("Test empty string with 'x'", passed[3]);
+	print_result("Test all delimiters", passed[4]);
+	print_result("Test delimiter = '\\0'", passed[5]);
+	print_result("Test only spaces", passed[6]);
+	print_result("Test no delimiter found", passed[7]);
+	print_result("Test consecutive delimiters", passed[8]);
 }
+
 
 static void	test_ft_itoa(void)
 {
