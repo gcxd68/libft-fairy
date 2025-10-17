@@ -1,11 +1,9 @@
 #include "libft.h"
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>//?
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <limits.h>
 
 #define GREEN "\033[0;32m"
 #define RED "\033[0;31m"

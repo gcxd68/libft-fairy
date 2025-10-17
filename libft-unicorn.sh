@@ -45,6 +45,8 @@ main() {
 	echo -n "📦 Compiling libft... "
 	if make -C $LIBFT_DIR bonus > /dev/null 2>&1; then
 		echo "Done"
+	elif make -C $LIBFT_DIR > /dev/null 2>&1; then
+		echo "Done"
 	else
 		echo_color "Failed" "$RED"
 		exit 1
