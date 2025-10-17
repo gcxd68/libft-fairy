@@ -303,21 +303,47 @@ static void	test_ft_strlcpy(void)
 
 static void	test_ft_strlcat(void)
 {
-	char	dst[20] = "Hello";
+	char	dst[20];
 	size_t	len;
-	int		passed[2];
-
+	int		passed[8];
+	
+	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, " World", 20);
 	passed[0] = !strcmp(dst, "Hello World") && len == 11;
 	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, " World!", 10);
-	passed[1] = !strcmp(dst, "Hello Wor");
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
+	passed[1] = !strcmp(dst, "Hello Wor") && len == 12;
+	strcpy(dst, "Hello");
+	len = ft_strlcat(dst, " World", 5);
+	passed[2] = !strcmp(dst, "Hello") && len == 11;
+	strcpy(dst, "Hello");
+	len = ft_strlcat(dst, " World", 3);
+	passed[3] = !strcmp(dst, "Hello") && len == 9;
+	strcpy(dst, "Hello");
+	len = ft_strlcat(dst, " World", 0);
+	passed[4] = !strcmp(dst, "Hello") && len == 6;
+	strcpy(dst, "Hello");
+	len = ft_strlcat(dst, "", 20);
+	passed[5] = !strcmp(dst, "Hello") && len == 5;
+	dst[0] = '\0';
+	len = ft_strlcat(dst, "Hello", 20);
+	passed[6] = !strcmp(dst, "Hello") && len == 5;
+	strcpy(dst, "Hello");
+	len = ft_strlcat(dst, "X", 6);
+	passed[7] = !strcmp(dst, "Hello") && len == 6;
+	
+	for (int i = 0, all_passed = 1; i < 8; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 7)
 			return;
 	print_test_header("ft_strlcat");
 	print_result("Test basic concat", passed[0]);
 	print_result("Test truncation", passed[1]);
+	print_result("Test dstsize = strlen(dst)", passed[2]);
+	print_result("Test dstsize < strlen(dst)", passed[3]);
+	print_result("Test dstsize = 0", passed[4]);
+	print_result("Test empty src", passed[5]);
+	print_result("Test empty dst", passed[6]);
+	print_result("Test no room for concat", passed[7]);
 }
 
 static void	test_ft_toupper(void)
@@ -419,17 +445,19 @@ static void ft_strncmp_null_test(void)
 
 static void	test_ft_strncmp(void)
 {
-	const int	passed[6] = {
+	const int	passed[8] = {
 		!ft_strncmp("Hello", "Hello", 5),
 		ft_strncmp("Hello", "World", 5),
 		!ft_strncmp("Hello", "Help", 3),
 		!ft_strncmp("Hello", "World", 0),
 		!ft_strncmp("Hello", "Hello\0test", 10),
+		ft_strncmp("test\200", "test\0", 6) > 0,
+		ft_strncmp("abc", "abcd", 5) < 0,
 		ft_forked_test(ft_strncmp_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 6; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 5)
+	for (int i = 0, all_passed = 1; i < 8; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 7)
 			return;
 	print_test_header("ft_strncmp");
 	print_result("Test equal strings", passed[0]);
@@ -437,7 +465,9 @@ static void	test_ft_strncmp(void)
 	print_result("Test partial compare", passed[2]);
 	print_result("Test n=0", passed[3]);
 	print_result("Test with \\0", passed[4]);
-	print_result("Test NULL", passed[5]);
+	print_result("Test unsigned char comparison", passed[5]);
+	print_result("Test n > strlen", passed[6]);
+	print_result("Test NULL", passed[7]);
 }
 
 static void	test_ft_memchr(void)
@@ -503,6 +533,11 @@ static void	test_ft_strnstr(void)
 	print_result("Test len too short", passed[4]);
 }
 
+static void ft_atoi_overflow_test(void)
+{
+	ft_atoi("9999999999999999999");
+}
+
 static void ft_atoi_null_test(void)
 {
 	ft_atoi(NULL);
@@ -510,7 +545,7 @@ static void ft_atoi_null_test(void)
 
 static void	test_ft_atoi(void)
 {
-	const int	passed[10] = {
+	const int	passed[12] = {
 		ft_atoi("  \t\n\v\f\r +42") == 42,
 		ft_atoi("     -42*") == -42,
 		!ft_atoi("0"),
@@ -518,13 +553,15 @@ static void	test_ft_atoi(void)
 		!ft_atoi("--4"),
 		!ft_atoi("-+9"),
 		!ft_atoi("+-8"),
+		!ft_atoi(" \t-R66"),
 		ft_atoi("2147483647") == 2147483647,
 		ft_atoi("-2147483648") == -2147483648,
+		!ft_forked_test(ft_atoi_overflow_test),
 		ft_forked_test(ft_atoi_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 10; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 9)
+	for (int i = 0, all_passed = 1; i < 12; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 11)
 			return;
 	print_test_header("ft_atoi");
 	print_result("Test '  \\t\\n\\v\\f\\r +42'", passed[0]);
@@ -534,9 +571,11 @@ static void	test_ft_atoi(void)
 	print_result("Test '--4'", passed[4]);
 	print_result("Test '-+9'", passed[5]);
 	print_result("Test '+-8'", passed[6]);
-	print_result("Test INT_MAX", passed[7]);
-	print_result("Test INT_MIN", passed[8]);
-	print_result("Test NULL", passed[9]);
+	print_result("Test '\\t-R66'", passed[7]);
+	print_result("Test INT_MAX", passed[8]);
+	print_result("Test INT_MIN", passed[9]);
+	print_result("Test overflow", passed[10]);
+	print_result("Test NULL", passed[11]);
 }
 
 static void	test_ft_calloc(void)
@@ -582,10 +621,15 @@ static void	test_ft_strdup(void)
 	print_result("Test short string", passed[2]);
 }
 
+static void ft_substr_null_test(void)
+{
+	ft_substr(NULL, 0, 5);
+}
+
 static void	test_ft_substr(void)
 {
 	char	*sub = ft_substr("Hello, World!", 7, 5);
-	int		passed[4];
+	int		passed[5];
 
 	passed[0] = !strcmp(sub, "World");
 	free(sub);
@@ -597,15 +641,17 @@ static void	test_ft_substr(void)
 	free(sub);
 	sub = ft_substr("Hello", 2, 100);
 	passed[3] = !strcmp(sub, "llo");
+	passed[4] = !ft_forked_test(ft_substr_null_test);
 	free(sub);
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
+	for (int i = 0, all_passed = 1; i < 5; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 4)
 			return;
 	print_test_header("ft_substr");
 	print_result("Test basic substr", passed[0]);
 	print_result("Test from start", passed[1]);
 	print_result("Test start > len", passed[2]);
 	print_result("Test len too long", passed[3]);
+	print_result("Test NULL", passed[4]);
 }
 
 static void	test_ft_strjoin(void)
