@@ -832,27 +832,41 @@ static void	test_ft_itoa(void)
 	print_result("Test INT_MAX", passed[4]);
 }
 
-static char	test_mapi_func(unsigned int i, char c)
+static char test_mapi_func(unsigned int i, char c)
 {
 	return c + i;
 }
 
-static void	test_ft_strmapi(void)
+static void test_strmapi_null_func(void)
+{
+	ft_strmapi("test", NULL);
+}
+
+static void test_striteri_null_func(void)
+{
+	ft_striteri("test", NULL);
+}
+
+static void test_ft_strmapi(void)
 {
 	char	*result = ft_strmapi("abc", test_mapi_func);
-	int		passed[2];
+	int		passed[4];
 
 	passed[0] = result && result[0] == 'a' && result[1] == 'c' && result[2] == 'e';
 	free(result);
 	result = ft_strmapi("", test_mapi_func);
 	passed[1] = result && !strcmp(result, "");
 	free(result);
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
+	passed[2] = !ft_forked_test(test_strmapi_null_func);
+	passed[3] = !ft_forked_test(test_striteri_null_func);
+	for (int i = 0, all_passed = 1; i < 4; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 3)
 			return;
 	print_test_header("ft_strmapi");
 	print_result("Test basic strmapi", passed[0]);
 	print_result("Test empty string", passed[1]);
+	print_result("Test f = NULL (strmapi)", passed[2]);
+	print_result("Test f = NULL (striteri)", passed[3]);
 }
 
 static void	test_iteri_func(unsigned int i, char *c)
