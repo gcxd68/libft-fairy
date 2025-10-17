@@ -574,10 +574,22 @@ static void	test_ft_atoi(void)
 	print_result("Test NULL", passed[11]);
 }
 
+static void ft_calloc_zero_count_test(void)
+{
+	void *ptr = ft_calloc(0, 5);
+	free(ptr);
+}
+
+static void ft_calloc_zero_size_test(void)
+{
+	void *ptr = ft_calloc(5, 0);
+	free(ptr);
+}
+
 static void	test_ft_calloc(void)
 {
 	int	*arr = ft_calloc(5, sizeof(int));
-	int	passed[2];
+	int	passed[5];
 
 	passed[0] = 1;
 	for (int i = 0; i < 5; i++)
@@ -587,12 +599,20 @@ static void	test_ft_calloc(void)
 	char *str = ft_calloc(10, sizeof(char));
 	passed[1] = str != NULL;
 	free(str);
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
+	void *ptr = ft_calloc(SIZE_MAX / 2, SIZE_MAX / 2);
+	passed[2] = !ptr;
+	free(ptr);
+	passed[3] = !ft_forked_test(ft_calloc_zero_count_test);
+	passed[4] = !ft_forked_test(ft_calloc_zero_size_test);
+	for (int i = 0, all_passed = 1; i < 5; i++)
+		if ((all_passed = (all_passed && passed[i])) && i == 4)
 			return;
 	print_test_header("ft_calloc");
 	print_result("Test all zeros", passed[0]);
 	print_result("Test allocated", passed[1]);
+	print_result("Test overflow", passed[2]);
+	print_result("Test count = 0", passed[3]);
+    print_result("Test size = 0", passed[4]);
 }
 
 static void	test_ft_strdup(void)
