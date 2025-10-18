@@ -4,23 +4,13 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
-#define GREEN "\033[0;32m"
-#define RED "\033[0;31m"
-#define RESET "\033[0m"
+#define VERBOSE	0
+
+#define GREEN	"\033[0;32m"
+#define RED		"\033[0;31m"
+#define RESET	"\033[0m"
 
 int g_tests_failed = 0;
-
-static void	print_test_header(const char *function_name) {
-	printf("\n========================================\n");
-	printf("Testing: %s\n", function_name);
-	printf("========================================\n");
-}
-
-static void	print_result(const char *test_name, int passed) {
-	printf("%s" RESET "%s\n", passed ? GREEN "✓ " : RED "✗ ", test_name);
-	if (!passed)
-		g_tests_failed++;
-}
 
 static  int ft_forked_test(void (*test_func)(void)) {
 	pid_t pid;
@@ -40,6 +30,26 @@ static  int ft_forked_test(void (*test_func)(void)) {
 	return 0;
 }
 
+static int	all_tests_passed(const int *passed, size_t n) {
+	for (size_t i = 0; i < n; i++) {
+		if (passed[i] == 0)
+			return 0;
+	}
+	return 1;
+}
+
+static void	print_test_header(const char *function_name) {
+	printf("\n========================================\n");
+	printf("Testing: %s\n", function_name);
+	printf("========================================\n");
+}
+
+static void	print_result(const char *test_name, int passed) {
+	printf("%s" RESET "%s\n", passed ? GREEN "✓ " : RED "✗ ", test_name);
+	if (!passed)
+		g_tests_failed++;
+}
+
 static void	test_ft_isalpha(void) {
 	const int	passed[5] = {
 		ft_isalpha('a'),
@@ -49,9 +59,8 @@ static void	test_ft_isalpha(void) {
 		!ft_isalpha('@')
 	};
 
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_isalpha");
 	print_result("Test 'a'", passed[0]);
 	print_result("Test 'Z'", passed[1]);
@@ -68,9 +77,8 @@ static void	test_ft_isdigit(void) {
 		!ft_isdigit(' ')
 	};
 
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_isdigit");
 	print_result("Test '0'", passed[0]);
 	print_result("Test '9'", passed[1]);
@@ -87,9 +95,8 @@ static void	test_ft_isalnum(void) {
 		!ft_isalnum('@')
 	};
 
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_isalnum");
 	print_result("Test 'a'", passed[0]);
 	print_result("Test 'Z'", passed[1]);
@@ -107,9 +114,8 @@ static void	test_ft_isascii(void) {
 		ft_isascii('a')
 	};
 
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_isascii");
 	print_result("Test 0", passed[0]);
 	print_result("Test 127", passed[1]);
@@ -127,9 +133,8 @@ static void	test_ft_isprint(void) {
 		ft_isprint('a')
 	};
 
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_isprint");
 	print_result("Test ' '", passed[0]);
 	print_result("Test '~'", passed[1]);
@@ -151,9 +156,8 @@ static void	test_ft_strlen(void) {
 		ft_forked_test(ft_strlen_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strlen");
 	print_result("Test empty string", passed[0]);
 	print_result("Test 'hello'", passed[1]);
@@ -179,9 +183,8 @@ static void	test_ft_memset(void) {
 	memset(str2, 0, 10);
 	passed[1] = !memcmp(str1, str2, 10) && ret == str1;
 	passed[2] = ft_forked_test(ft_memset_null_test);
-	for (int i = 0, all_passed = 1; i < 3; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 2)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_memset");
 	print_result("Test basic memset", passed[0]);
 	print_result("Test memset with 0", passed[1]);
@@ -197,9 +200,8 @@ static void	test_ft_bzero(void) {
 	passed[0] = !str1[0] && !str1[4] && str1[5] == 'A';
 	ft_bzero(str1, 10);
 	passed[1] = !str1[0] && !str1[9];
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_bzero");
 	print_result("Test bzero 5 bytes", passed[0]);
 	print_result("Test bzero all", passed[1]);
@@ -223,9 +225,8 @@ static void	test_ft_memcpy(void) {
 	ft_memcpy(dst1, "42", 2);
 	passed[1] = dst1[0] == '4' && dst1[1] == '2';
 	passed[2] = ft_forked_test(ft_memcpy_null_test);
-	for (int i = 0, all_passed = 1; i < 3; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 2)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_memcpy");
 	print_result("Test basic memcpy", passed[0]);
 	print_result("Test partial copy", passed[1]);
@@ -252,9 +253,8 @@ static void	test_ft_memmove(void) {
 	memmove(str2, str2 + 2, 5);
 	passed[1] = !strcmp(str1, str2);
 	passed[2] = ft_forked_test(ft_memmove_null_test);
-	for (int i = 0, all_passed = 1; i < 3; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 2)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_memmove");
 	print_result("Test overlapping forward", passed[0]);
 	print_result("Test overlapping backward", passed[1]);
@@ -272,9 +272,8 @@ static void	test_ft_strlcpy(void) {
 	passed[1] = !strcmp(dst, "Hello") && len == 13;
 	len = ft_strlcpy(dst, "42", 0);
 	passed[2] = len == 2;
-	for (int i = 0, all_passed = 1; i < 3; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 2)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strlcpy");
 	print_result("Test basic copy", passed[0]);
 	print_result("Test truncation", passed[1]);
@@ -310,9 +309,8 @@ static void	test_ft_strlcat(void) {
 	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, "X", 6);
 	passed[7] = !strcmp(dst, "Hello") && len == 6;
-	for (int i = 0, all_passed = 1; i < 8; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 7)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strlcat");
 	print_result("Test basic concat", passed[0]);
 	print_result("Test truncation", passed[1]);
@@ -332,9 +330,8 @@ static void	test_ft_toupper(void) {
 		ft_toupper('0') == '0'
 	};
 
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_toupper");
 	print_result("Test 'a'", passed[0]);
 	print_result("Test 'z'", passed[1]);
@@ -350,9 +347,8 @@ static void	test_ft_tolower(void) {
 		ft_tolower('0') == '0'
 	};
 
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_tolower");
 	print_result("Test 'A'", passed[0]);
 	print_result("Test 'Z'", passed[1]);
@@ -375,9 +371,8 @@ static void	test_ft_strchr(void)
 		ft_forked_test(ft_strchr_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strchr");
 	print_result("Test find 'o'", passed[0]);
 	print_result("Test find 'W'", passed[1]);
@@ -400,9 +395,8 @@ static void	test_ft_strrchr(void) {
 		ft_forked_test(ft_strrchr_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strrchr");
 	print_result("Test find last 'o'", passed[0]);
 	print_result("Test find 'W'", passed[1]);
@@ -427,9 +421,8 @@ static void	test_ft_strncmp(void) {
 		ft_forked_test(ft_strncmp_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 8; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 7)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strncmp");
 	print_result("Test equal strings", passed[0]);
 	print_result("Test different strings", passed[1]);
@@ -450,9 +443,8 @@ static void	test_ft_memchr(void) {
 		!ft_memchr(str, 'H', 0)
 	};
 
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_memchr");
 	print_result("Test find 'o'", passed[0]);
 	print_result("Test find 'W'", passed[1]);
@@ -470,9 +462,8 @@ static void	test_ft_memcmp(void) {
 		ft_memcmp(buf1, buf2, 5) < 0
 	};
 
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_memcmp");
 	print_result("Test equal", passed[0]);
 	print_result("Test different", passed[1]);
@@ -490,9 +481,8 @@ static void	test_ft_strnstr(void) {
 		!ft_strnstr(haystack, "World", 5)
 	};
 
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strnstr");
 	print_result("Test find 'World'", passed[0]);
 	print_result("Test find 'o'", passed[1]);
@@ -525,9 +515,8 @@ static void	test_ft_atoi(void) {
 		ft_forked_test(ft_atoi_null_test)
 	};
 
-	for (int i = 0, all_passed = 1; i < 12; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 11)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_atoi");
 	print_result("Test '  \\t\\n\\v\\f\\r +42'", passed[0]);
 	print_result("Test '-42*'", passed[1]);
@@ -570,9 +559,8 @@ static void	test_ft_calloc(void) {
 	free(ptr);
 	passed[3] = !ft_forked_test(ft_calloc_zero_count_test);
 	passed[4] = !ft_forked_test(ft_calloc_zero_size_test);
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_calloc");
 	print_result("Test all zeros", passed[0]);
 	print_result("Test allocated", passed[1]);
@@ -593,9 +581,8 @@ static void	test_ft_strdup(void) {
 	dup = ft_strdup("42");
 	passed[2] = !strcmp(dup, "42");
 	free(dup);
-	for (int i = 0, all_passed = 1; i < 3; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 2)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strdup");
 	print_result("Test basic dup", passed[0]);
 	print_result("Test empty string", passed[1]);
@@ -625,9 +612,8 @@ static void	test_ft_substr(void) {
 	passed[4] = !strcmp(sub, "");
 	free(sub);
 	passed[5] = !ft_forked_test(ft_substr_null_test);
-	for (int i = 0, all_passed = 1; i < 6; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 5)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_substr");
 	print_result("Test basic substr", passed[0]);
 	print_result("Test from start", passed[1]);
@@ -652,9 +638,8 @@ static void	test_ft_strjoin(void) {
 	joined = ft_strjoin("42", "!");
 	passed[3] = !strcmp(joined, "42!");
 	free(joined);
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strjoin");
 	print_result("Test basic join", passed[0]);
 	print_result("Test empty s1", passed[1]);
@@ -690,9 +675,8 @@ static void	test_ft_strtrim(void) {
 	free(trimmed);
 	passed[5] = !ft_forked_test(ft_strtrim_null_input_test);
 	passed[6] = !ft_forked_test(ft_strtrim_null_set_test);
-	for (int i = 0, all_passed = 1; i < 7; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 6)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strtrim");
 	print_result("Test spaces", passed[0]);
 	print_result("Test custom set", passed[1]);
@@ -742,9 +726,8 @@ static void	test_ft_split(void) {
 	arr = ft_split("Hello   World", ' ');
 	passed[8] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
 	ft_free_arr(arr);
-	for (int i = 0, all_passed = 1; i < 9; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 8)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_split");
 	print_result("Test basic split", passed[0]);
 	print_result("Test multiple delimiters", passed[1]);
@@ -756,7 +739,6 @@ static void	test_ft_split(void) {
 	print_result("Test no delimiter found", passed[7]);
 	print_result("Test consecutive delimiters", passed[8]);
 }
-
 
 static void	test_ft_itoa(void) {
 	char	*str = ft_itoa(42);
@@ -776,9 +758,8 @@ static void	test_ft_itoa(void) {
 	str = ft_itoa(2147483647);
 	passed[4] = !strcmp(str, "2147483647");
 	free(str);
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_itoa");
 	print_result("Test 42", passed[0]);
 	print_result("Test -42", passed[1]);
@@ -810,9 +791,8 @@ static void test_ft_strmapi(void) {
 	free(result);
 	passed[2] = !ft_forked_test(test_strmapi_null_func);
 	passed[3] = !ft_forked_test(test_striteri_null_func);
-	for (int i = 0, all_passed = 1; i < 4; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 3)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_strmapi");
 	print_result("Test basic strmapi", passed[0]);
 	print_result("Test empty string", passed[1]);
@@ -830,9 +810,8 @@ static void	test_ft_striteri(void) {
 
 	ft_striteri(str, test_iteri_func);
 	passed[0] = str[0] == 'a' && str[1] == 'c' && str[2] == 'e';
-	for (int i = 0, all_passed = 1; i < 1; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 0)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_striteri");
 	print_result("Test basic striteri", passed[0]);
 }
@@ -887,9 +866,8 @@ static void	test_ft_putchar_fd(void) {
 	unlink("/tmp/test_putchar");
 	passed[0] = !strcmp(buf, "AB");
 	passed[1] = test_fd_output(wrapper_putchar, &c, "0", 1);
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_putchar_fd");
 	print_result("Test 'A' and 'B'", passed[0]);
 	print_result("Test '0'", passed[1]);
@@ -900,9 +878,8 @@ static void	test_ft_putstr_fd(void) {
 
 	passed[0] = test_fd_output(wrapper_putstr, "Hello, World!", "Hello, World!", 13);
 	passed[1] = test_fd_output(wrapper_putstr, "42", "42", 2);
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_putstr_fd");
 	print_result("Test 'Hello, World!'", passed[0]);
 	print_result("Test '42'", passed[1]);
@@ -913,9 +890,8 @@ static void	test_ft_putendl_fd(void) {
 
 	passed[0] = test_fd_output(wrapper_putendl, "Hello", "Hello\n", 6);
 	passed[1] = test_fd_output(wrapper_putendl, "", "\n", 1);
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_putendl_fd");
 	print_result("Test 'Hello' with newline", passed[0]);
 	print_result("Test empty string with newline", passed[1]);
@@ -930,9 +906,8 @@ static void	test_ft_putnbr_fd(void) {
 	passed[2] = test_fd_output(wrapper_putnbr, &n3, "0", 1);
 	passed[3] = test_fd_output(wrapper_putnbr, &n4, "-2147483648", 11);
 	passed[4] = test_fd_output(wrapper_putnbr, &n5, "2147483647", 10);
-	for (int i = 0, all_passed = 1; i < 5; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 4)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_putnbr_fd");
 	print_result("Test 42", passed[0]);
 	print_result("Test -42", passed[1]);
@@ -948,9 +923,8 @@ static void	test_ft_lstnew(void) {
 
 	passed[0] = node != NULL && *(int *)node->content == 42 && !node->next;
 	free(node);
-	for (int i = 0, all_passed = 1; i < 1; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 0)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_lstnew");
 	print_result("Test node creation", passed[0]);
 }
@@ -966,9 +940,8 @@ static void	test_ft_lstadd_front(void) {
 				*(int *)lst->next->content == 1;
 	free(lst->next);
 	free(lst);
-	for (int i = 0, all_passed = 1; i < 1; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 0)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_lstadd_front");
 	print_result("Test add front", passed[0]);
 }
@@ -987,9 +960,8 @@ static void	test_ft_lstsize(void) {
 	free(n3);
 	free(n2);
 	free(n1);
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_lstsize");
 	print_result("Test size 3", passed[0]);
 	print_result("Test size NULL", passed[1]);
@@ -1009,9 +981,8 @@ static void	test_ft_lstlast(void) {
 	free(n3);
 	free(n2);
 	free(n1);
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_lstlast");
 	print_result("Test last", passed[0]);
 	print_result("Test NULL", passed[1]);
@@ -1027,10 +998,8 @@ static void	test_ft_lstadd_back(void) {
 	passed[0] = lst->next == new && *(int *)new->content == 2;
 	free(new);
 	free(lst);
-
-	for (int i = 0, all_passed = 1; i < 1; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 0)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_lstadd_back");
 	print_result("Test add back", passed[0]);
 }
@@ -1039,7 +1008,7 @@ static void	del_content(void *content) {
 	(void)content;
 }
 
-static int freed_count; // ???
+static int freed_count;
 
 static void del_count(void *content) {
 	free(content);
@@ -1076,16 +1045,14 @@ static void test_ft_lstdelone(void) {
 	passed[1] = correct;
 	freed_count = 0;
 	ft_lstclear(&lst, del_count);
-	passed[2] = (freed_count == 2 && lst == NULL);
-	for (int i = 0, all_passed = 1; i < 3; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 2)
-			return;
+	passed[2] = (freed_count == 2 && !lst);
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_lstdelone / ft_lstclear");
 	print_result("Test delone calls free once", passed[0]);
 	print_result("Test delone leaves correct remaining nodes", passed[1]);
 	print_result("Test lstclear frees all and sets list to NULL", passed[2]);
 }
-
 
 static void	test_ft_lstclear(void) {
 	int 	c1 = 1, c2 = 2, c3 = 3;
@@ -1098,9 +1065,8 @@ static void	test_ft_lstclear(void) {
 	n2->next = n3;
 	ft_lstclear(&n1, del_content);
 	passed[0] = !n1;
-	for (int i = 0, all_passed = 1; i < 1; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 0)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_lstclear");
 	print_result("Test clear (no crash)", passed[0]);
 }
@@ -1123,9 +1089,8 @@ static void	test_ft_lstiter(void) {
 	free(n3);
 	free(n2);
 	free(n1);
-	for (int i = 0, all_passed = 1; i < 1; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 0)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_lstiter");
 	print_result("Test iter", passed[0]);
 }
@@ -1164,9 +1129,8 @@ static void	test_ft_lstmap(void) {
 	free(n3);
 	free(n2);
 	free(n1);
-	for (int i = 0, all_passed = 1; i < 2; i++)
-		if ((all_passed = (all_passed && passed[i])) && i == 1)
-			return;
+	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+		return;
 	print_test_header("ft_lstmap");
 	print_result("Test map normal", passed[0]);
 	print_result("Test malloc fail", passed[1]);

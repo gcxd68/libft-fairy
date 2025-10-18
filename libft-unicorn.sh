@@ -61,12 +61,9 @@ main() {
 	fi
 
 	echo "🧪 Running tests..."
-	echo ""
 	./$TESTER_NAME
 	TEST_RESULT=$?
-	if [ $TEST_RESULT -ne 0 ]; then
-		echo ""
-	fi
+	echo ""
 
 	if [ $TEST_RESULT -eq 0 ]; then
 		echo_color "╔══════════════════════════╗" "$GREEN"
