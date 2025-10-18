@@ -2,11 +2,12 @@
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-PURPLE='\033[0;35m'
+PINK='\033[0;95m'
 RESET='\033[0m'
 
 LIBFT_DIR=".."
 TESTER_NAME="libft-unicorn"
+LEAK_TESTER="leak_tester"
 TESTER_DIR=$(basename "$(pwd)")
 
 echo_color() {
@@ -15,7 +16,7 @@ echo_color() {
 
 cleanup() {
 	echo -n "🧹 Cleaning up... "
-	rm -f *.o $TESTER_NAME
+	rm -f *.o $TESTER_NAME $LEAK_TESTER
 	make -C $LIBFT_DIR fclean > /dev/null 2>&1
 	echo "Done"
 	echo ""
@@ -25,9 +26,9 @@ trap cleanup EXIT INT TERM
 
 main() {
 	echo ""
-	echo_color "╔══════════════════════════╗" "$PURPLE"
-	echo_color "║     LIBFT-UNICORN 🦄     ║" "$PURPLE"
-	echo_color "╚══════════════════════════╝" "$PURPLE"
+	echo_color "╔════════════════════════════╗" "$PINK"
+	echo_color "║      LIBFT-UNICORN 🦄      ║" "$PINK"
+	echo_color "╚════════════════════════════╝" "$PINK"
 	echo ""
 
 	echo -n "📝 Checking Norminette... "
@@ -52,31 +53,41 @@ main() {
 		exit 1
 	fi
 
-	echo -n "🔨 Compiling libft-unicorn... "
-	if gcc -Wall -Wextra -Werror -no-pie tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $TESTER_NAME 2>&1; then
+	echo -n "🔨 Compiling tests... "
+	gcc -Wall -Wextra -Werror -no-pie basic_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $TESTER_NAME >/dev/null 2>&1
+	BASIC_TESTS_COMPILATION_RES=$?
+	gcc -Wall -Wextra -Werror leak_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER >/dev/null 2>&1
+	LEAK_TESTS_COMPILATION_RES=$?
+	if [ $BASIC_TESTS_COMPILATION_RES -eq 0 ] && [ $LEAK_TESTS_COMPILATION_RES -eq 0 ]; then
 		echo "Done"
 	else
 		echo_color "Failed" "$RED"
 		exit 1
 	fi
 
-	echo "🧪 Running tests..."
+	echo "🧪 Running tests... "
 	./$TESTER_NAME
-	TEST_RESULT=$?
+	BASIC_TESTS_RES=$?
+	valgrind --leak-check=full --show-leak-kinds=all \
+				--errors-for-leak-kinds=all --error-exitcode=1 \
+				--track-origins=yes --log-file=/tmp/valgrind_output.log \
+				./$LEAK_TESTER 2>&1 | tee /tmp/valgrind_output.log
+	LEAK_TESTS_RES=$?
 	echo ""
 
-	if [ $TEST_RESULT -eq 0 ]; then
-		echo_color "╔══════════════════════════╗" "$GREEN"
-		echo_color "║        NICE WORK!        ║" "$GREEN"
-		echo_color "╚══════════════════════════╝" "$GREEN"
+	if [ $BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ]; then
+		echo_color "╔════════════════════════════╗" "$GREEN"
+		echo_color "║     OH MY, YOU PASSED!     ║" "$GREEN"
+		echo_color "╚════════════════════════════╝" "$GREEN"
+		echo ""
+		return 0
 	else
-		echo_color "╔══════════════════════════╗" "$RED"
-		echo_color "║   OH NO... YOU FAILED!   ║" "$RED"
-		echo_color "╚══════════════════════════╝" "$RED"
+		echo_color "╔════════════════════════════╗" "$RED"
+		echo_color "║    OH NO... YOU FAILED!    ║" "$RED"
+		echo_color "╚════════════════════════════╝" "$RED"
+		echo ""
+		return 1
 	fi
-	echo ""
-
-	return $TEST_RESULT
 }
 
 main
