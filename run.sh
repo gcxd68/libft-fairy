@@ -6,8 +6,8 @@ PINK='\033[0;95m'
 RESET='\033[0m'
 
 LIBFT_DIR=".."
-TESTER_NAME="libft-unicorn"
-LEAK_TESTER="leak_tester"
+BASIC_TESTER_NAME="basic_tests"
+LEAK_TESTER_NAME="leak_tests"
 TESTER_DIR=$(basename "$(pwd)")
 
 echo_color() {
@@ -16,7 +16,7 @@ echo_color() {
 
 cleanup() {
 	echo -n "🧹 Cleaning up... "
-	rm -f *.o $TESTER_NAME $LEAK_TESTER
+	rm -f *.o $BASIC_TESTER_NAME $LEAK_TESTER_NAME
 	make -C $LIBFT_DIR fclean > /dev/null 2>&1
 	echo "Done"
 	echo ""
@@ -54,9 +54,9 @@ main() {
 	fi
 
 	echo -n "🔨 Compiling tests... "
-	gcc -Wall -Wextra -Werror -no-pie basic_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $TESTER_NAME >/dev/null 2>&1
+	gcc -Wall -Wextra -Werror -no-pie basic_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME >/dev/null 2>&1
 	BASIC_TESTS_COMPILATION_RES=$?
-	gcc -Wall -Wextra -Werror leak_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER >/dev/null 2>&1
+	gcc -Wall -Wextra -Werror leak_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME >/dev/null 2>&1
 	LEAK_TESTS_COMPILATION_RES=$?
 	if [ $BASIC_TESTS_COMPILATION_RES -eq 0 ] && [ $LEAK_TESTS_COMPILATION_RES -eq 0 ]; then
 		echo "Done"
@@ -66,12 +66,12 @@ main() {
 	fi
 
 	echo "🧪 Running tests... "
-	./$TESTER_NAME
+	./$BASIC_TESTER_NAME
 	BASIC_TESTS_RES=$?
 	valgrind --leak-check=full --show-leak-kinds=all \
 				--errors-for-leak-kinds=all --error-exitcode=1 \
 				--track-origins=yes --log-file=/tmp/valgrind_output.log \
-				./$LEAK_TESTER 2>&1 | tee /tmp/valgrind_output.log
+				./$LEAK_TESTER_NAME 2>&1 | tee /tmp/valgrind_output.log
 	LEAK_TESTS_RES=$?
 	echo ""
 
