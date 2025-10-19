@@ -553,6 +553,7 @@ static void ft_calloc_zero_size_test(void) {
 }
 
 static void	test_ft_calloc(void) {
+	const size_t size_max = ~(size_t)0;
 	int	*arr = ft_calloc(5, sizeof(int));
 	int	passed[5];
 
@@ -564,7 +565,7 @@ static void	test_ft_calloc(void) {
 	char *str = ft_calloc(10, sizeof(char));
 	passed[1] = str != NULL;
 	free(str);
-	void *ptr = ft_calloc(SIZE_MAX >> 1, SIZE_MAX >> 1);
+	void *ptr = ft_calloc(size_max >> 1, size_max >> 1);
 	passed[2] = !ptr;
 	free(ptr);
 	passed[3] = !ft_forked_test(ft_calloc_zero_count_test);
