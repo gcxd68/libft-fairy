@@ -17,7 +17,7 @@ static  int ft_forked_test(void (*test_func)(void)) {
 	int status;
 
 	if ((pid = fork()) == -1) {
-		perror("libft-unicorn: fork");
+		perror("libft-fairy: fork");
 		exit(EXIT_FAILURE);
 	}
 	if (pid == 0) {
@@ -615,7 +615,7 @@ static void	test_ft_calloc(void) {
 	print_result("Test all zeros", passed[0]);
 	print_result("Test allocated", passed[1]);
 	print_result("Test overflow write", passed[2]);
-	print_result("Test overflow free", passed[2]);
+	print_result("Test overflow free", passed[3]);
 	print_result("Test count = 0", passed[4]);
 	print_result("Test size = 0", passed[5]);
 }

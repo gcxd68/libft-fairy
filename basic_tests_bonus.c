@@ -138,7 +138,7 @@ static void test_ft_lstdelone(void) {
 
 	if (!value1 || !value2 || !value3) {
 		free(value1); free(value2); free(value3);
-		perror("libft-unicorn: malloc");
+		perror("libft-fairy: malloc");
 		exit(EXIT_FAILURE);
 	}
 	*value1 = 1; *value2 = 2; *value3 = 3;
