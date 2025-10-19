@@ -568,11 +568,18 @@ static void	test_ft_atoi(void) {
 	print_result("Test NULL", passed[11]);
 }
 
-static void ft_calloc_overflow_test(void) {
+static void ft_calloc_overflow_write_test(void) {
 	const size_t	size_max = ~(size_t)0;
 	char			*ptr = ft_calloc(size_max >> 1, size_max >> 1);
 
 	ptr[0] = 'x';
+	free(ptr);
+}
+
+static void ft_calloc_overflow_free_test(void) {
+	const size_t	size_max = ~(size_t)0;
+	char			*ptr = ft_calloc(size_max >> 1, size_max >> 1);
+
 	free(ptr);
 }
 
@@ -588,7 +595,7 @@ static void ft_calloc_zero_size_test(void) {
 
 static void	test_ft_calloc(void) {
 	int	*arr = ft_calloc(5, sizeof(int));
-	int	passed[5];
+	int	passed[6];
 
 	passed[0] = 1;
 	for (int i = 0; i < 5; i++)
@@ -598,17 +605,19 @@ static void	test_ft_calloc(void) {
 	char *str = ft_calloc(10, sizeof(char));
 	passed[1] = str != NULL;
 	free(str);
-	passed[2] = ft_forked_test(ft_calloc_overflow_test);
-	passed[3] = !ft_forked_test(ft_calloc_zero_count_test);
-	passed[4] = !ft_forked_test(ft_calloc_zero_size_test);
+	passed[2] = ft_forked_test(ft_calloc_overflow_write_test);
+	passed[3] = !ft_forked_test(ft_calloc_overflow_free_test);
+	passed[4] = !ft_forked_test(ft_calloc_zero_count_test);
+	passed[5] = !ft_forked_test(ft_calloc_zero_size_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_calloc");
 	print_result("Test all zeros", passed[0]);
 	print_result("Test allocated", passed[1]);
-	print_result("Test overflow", passed[2]);
-	print_result("Test count = 0", passed[3]);
-	print_result("Test size = 0", passed[4]);
+	print_result("Test overflow write", passed[2]);
+	print_result("Test overflow free", passed[2]);
+	print_result("Test count = 0", passed[4]);
+	print_result("Test size = 0", passed[5]);
 }
 
 static void ft_strdup_empty_test(void) {
