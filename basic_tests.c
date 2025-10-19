@@ -554,7 +554,7 @@ static void	test_ft_calloc(void) {
 	char *str = ft_calloc(10, sizeof(char));
 	passed[1] = str != NULL;
 	free(str);
-	void *ptr = ft_calloc(SIZE_MAX / 2, SIZE_MAX / 2);
+	void *ptr = ft_calloc(SIZE_MAX >> 1, SIZE_MAX >> 1);
 	passed[2] = !ptr;
 	free(ptr);
 	passed[3] = !ft_forked_test(ft_calloc_zero_count_test);
@@ -569,33 +569,48 @@ static void	test_ft_calloc(void) {
 	print_result("Test size = 0", passed[4]);
 }
 
+static void ft_strdup_empty_test(void) {
+	char	*dup = ft_strdup("");
+
+	dup[0] = 'a';
+	free(dup);
+}
+
 static void	test_ft_strdup(void) {
 	char	*dup = ft_strdup("Hello");
 	int		passed[3];
 
 	passed[0] = !strcmp(dup, "Hello");
 	free(dup);
-	dup = ft_strdup("");
-	passed[1] = !strcmp(dup, "");
-	free(dup);
 	dup = ft_strdup("42");
-	passed[2] = !strcmp(dup, "42");
+	passed[1] = !strcmp(dup, "42");
 	free(dup);
+	passed[2] = !ft_forked_test(ft_strdup_empty_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strdup");
 	print_result("Test basic dup", passed[0]);
-	print_result("Test empty string", passed[1]);
-	print_result("Test short string", passed[2]);
+	print_result("Test short string", passed[1]);
+	print_result("Test empty string", passed[2]);
 }
 
 static void ft_substr_null_test(void) {
 	ft_substr(NULL, 0, 5);
 }
 
+static void ft_substr_empty_test(void) {
+	char	*sub1 = ft_substr("Hello", 10, 5);
+	char	*sub2 = ft_substr("test", 0, 0);
+
+	sub1[0] = 'a';
+	free(sub1);
+	sub2[0] = 'a';
+	free(sub2);
+}
+
 static void	test_ft_substr(void) {
 	char	*sub = ft_substr("Hello, World!", 7, 5);
-	int		passed[6];
+	int		passed[7];
 
 	passed[0] = !strcmp(sub, "World");
 	free(sub);
@@ -612,6 +627,7 @@ static void	test_ft_substr(void) {
 	passed[4] = !strcmp(sub, "");
 	free(sub);
 	passed[5] = !ft_forked_test(ft_substr_null_test);
+	passed[6] = !ft_forked_test(ft_substr_empty_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_substr");
@@ -621,6 +637,7 @@ static void	test_ft_substr(void) {
 	print_result("Test len too long", passed[3]);
 	print_result("Test len = 0", passed[4]);
 	print_result("Test NULL", passed[5]);
+	print_result("Test empty string alloc", passed[6]);
 }
 
 static void	test_ft_strjoin(void) {

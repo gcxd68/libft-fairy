@@ -73,21 +73,26 @@ main() {
 				--track-origins=yes --log-file=/tmp/valgrind_output.log \
 				./$LEAK_TESTER_NAME 2>&1 | tee /tmp/valgrind_output.log
 	LEAK_TESTS_RES=$?
+	if [ $LEAK_TESTS_RES -ne 0 ]; then
+		echo ""
+		echo_color "🔍 Valgrind output:" "$PINK"
+		cat /tmp/valgrind_output.log
+	fi
 	echo ""
 
-	if [ $BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ]; then
+	[ $BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ]
+	EXIT_CODE=$?
+	if [ $EXIT_CODE -eq 0 ]; then
 		echo_color "╔════════════════════════════╗" "$GREEN"
 		echo_color "║     OH MY, YOU PASSED!     ║" "$GREEN"
 		echo_color "╚════════════════════════════╝" "$GREEN"
-		echo ""
-		return 0
 	else
 		echo_color "╔════════════════════════════╗" "$RED"
 		echo_color "║    OH NO... YOU FAILED!    ║" "$RED"
 		echo_color "╚════════════════════════════╝" "$RED"
-		echo ""
-		return 1
 	fi
+	echo ""
+	return $EXIT_CODE
 }
 
 main
