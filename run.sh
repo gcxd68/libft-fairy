@@ -29,7 +29,7 @@ trap cleanup EXIT INT TERM
 main() {
 	echo ""
 	echo_color "╔════════════════════════════╗" "$PINK"
-	echo_color "║      LIBFT-UNICORN 🦄      ║" "$PINK"
+	echo_color "║       LIBFT-FAIRY 🧚       ║" "$PINK"
 	echo_color "╚════════════════════════════╝" "$PINK"
 	echo ""
 
