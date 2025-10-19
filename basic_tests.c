@@ -249,10 +249,12 @@ static void ft_memmove_null_test(void) {
 	ft_memmove((void *)buffer, NULL, 5);
 }
 
-static void	test_ft_memmove(void) {
+static void test_ft_memmove(void) {
 	char	str1[] = "Hello, World!";
 	char	str2[] = "Hello, World!";
-	int		passed[3];
+	char	dst1[20] = {0};
+	char	dst2[20] = {0};
+	int		passed[7];
 
 	ft_memmove(str1 + 2, str1, 5);
 	memmove(str2 + 2, str2, 5);
@@ -262,17 +264,39 @@ static void	test_ft_memmove(void) {
 	ft_memmove(str1, str1 + 2, 5);
 	memmove(str2, str2 + 2, 5);
 	passed[1] = !strcmp(str1, str2);
-	passed[2] = ft_forked_test(ft_memmove_null_test);
+	ft_memmove(dst1, "Hello", 5);
+	memmove(dst2, "Hello", 5);
+	passed[2] = !memcmp(dst1, dst2, 5);
+	strcpy(str1, "Hello");
+	strcpy(str2, "Hello");
+	ft_memmove(str1, str1, 5);
+	memmove(str2, str2, 5);
+	passed[3] = !strcmp(str1, str2);
+	strcpy(str1, "Hello");
+	strcpy(str2, "Hello");
+	ft_memmove(str1 + 2, str1, 0);
+	memmove(str2 + 2, str2, 0);
+	passed[4] = !strcmp(str1, str2);
+	strcpy(str1, "abcdef");
+	strcpy(str2, "abcdef");
+	ft_memmove(str1 + 1, str1, 5);
+	memmove(str2 + 1, str2, 5);
+	passed[5] = !strcmp(str1, str2);
+	passed[6] = ft_forked_test(ft_memmove_null_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_memmove");
 	print_result("Test overlapping forward", passed[0]);
 	print_result("Test overlapping backward", passed[1]);
-	print_result("Test NULL", passed[2]);
+	print_result("Test no overlap", passed[2]);
+	print_result("Test dst == src", passed[3]);
+	print_result("Test n = 0", passed[4]);
+	print_result("Test minimal overlap", passed[5]);
+	print_result("Test NULL", passed[6]);
 }
 
 static void	test_ft_strlcpy(void) {
-	char	dst[20];
+	char	dst[10];
 	size_t	len;
 	int		passed[3];
 
@@ -446,11 +470,12 @@ static void	test_ft_strncmp(void) {
 
 static void	test_ft_memchr(void) {
 	const char	*str = "Hello, World!";
-	const int	passed[4] = {
+	const int	passed[5] = {
 		ft_memchr(str, 'o', 13) == memchr(str, 'o', 13),
 		ft_memchr(str, 'W', 13) == memchr(str, 'W', 13),
 		!ft_memchr(str, 'x', 13),
-		!ft_memchr(str, 'H', 0)
+		!ft_memchr(str, 'H', 0),
+		ft_memchr(str, '\0', 14) == memchr(str, '\0', 14)
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -460,6 +485,7 @@ static void	test_ft_memchr(void) {
 	print_result("Test find 'W'", passed[1]);
 	print_result("Test not found", passed[2]);
 	print_result("Test n=0", passed[3]);
+	print_result("Test find '\\0'", passed[4]);
 }
 
 static void	test_ft_memcmp(void) {
@@ -730,7 +756,7 @@ static void	test_ft_split(void) {
 	arr = ft_split("Hello World 42", ' ');
 	passed[0] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
 	ft_free_arr(arr);
-	arr = ft_split("   Hello   World   ", ' ');
+	arr = ft_split("___Hello___World___", '_');
 	passed[1] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
 	ft_free_arr(arr);
 	arr = ft_split("", ' ');
