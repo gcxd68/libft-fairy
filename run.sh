@@ -6,8 +6,10 @@ PINK='\033[0;95m'
 RESET='\033[0m'
 
 LIBFT_DIR=".."
-BASIC_TESTER_NAME="basic_tests"
-LEAK_TESTER_NAME="leak_tests"
+BASIC_TESTER_NAME=".basic_tests"
+LEAK_TESTER_NAME=".leak_tests"
+BONUS_BASIC_TESTER_NAME=".basic_tests_bonus"
+BONUS_LEAK_TESTER_NAME=".leak_tests_bonus"
 TESTER_DIR=$(basename "$(pwd)")
 
 echo_color() {
@@ -16,7 +18,7 @@ echo_color() {
 
 cleanup() {
 	echo -n "🧹 Cleaning up... "
-	rm -f *.o $BASIC_TESTER_NAME $LEAK_TESTER_NAME
+	rm -f *.o $BASIC_TESTER_NAME $LEAK_TESTER_NAME $BONUS_BASIC_TESTER_NAME $BONUS_LEAK_TESTER_NAME
 	make -C $LIBFT_DIR fclean > /dev/null 2>&1
 	echo "Done"
 	echo ""
@@ -45,8 +47,10 @@ main() {
 
 	echo -n "📦 Compiling libft... "
 	if make -C $LIBFT_DIR bonus > /dev/null 2>&1; then
+		BONUS_VERSION=1
 		echo "Done"
 	elif make -C $LIBFT_DIR > /dev/null 2>&1; then
+		BONUS_VERSION=0
 		echo "Done"
 	else
 		echo_color "Failed" "$RED"
@@ -56,9 +60,18 @@ main() {
 	echo -n "🔨 Compiling tests... "
 	gcc -Wall -Wextra -Werror -no-pie basic_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME >/dev/null 2>&1
 	BASIC_TESTS_COMPILATION_RES=$?
-	gcc -Wall -Wextra -Werror leak_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME >/dev/null 2>&1
+	gcc -Wall -Wextra -Werror -no-pie leak_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME >/dev/null 2>&1
 	LEAK_TESTS_COMPILATION_RES=$?
-	if [ $BASIC_TESTS_COMPILATION_RES -eq 0 ] && [ $LEAK_TESTS_COMPILATION_RES -eq 0 ]; then
+	BONUS_BASIC_TESTS_COMPILATION_RES=0
+	BONUS_LEAK_TESTS_COMPILATION_RES=0
+	if [ $BONUS_VERSION -eq 1 ]; then
+		gcc -Wall -Wextra -Werror -no-pie basic_tests_bonus.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_BASIC_TESTER_NAME >/dev/null 2>&1
+		BONUS_BASIC_TESTS_COMPILATION_RES=$?
+		gcc -Wall -Wextra -Werror -no-pie leak_tests_bonus.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_LEAK_TESTER_NAME >/dev/null 2>&1
+		BONUS_LEAK_TESTS_COMPILATION_RES=$?
+	fi
+	if [ $BASIC_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_COMPILATION_RES -eq 0 ] \
+		&& [ $LEAK_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_COMPILATION_RES -eq 0 ]; then
 		echo "Done"
 	else
 		echo_color "Failed" "$RED"
@@ -68,19 +81,31 @@ main() {
 	echo "🧪 Running tests... "
 	./$BASIC_TESTER_NAME
 	BASIC_TESTS_RES=$?
-	valgrind --leak-check=full --show-leak-kinds=all \
-				--errors-for-leak-kinds=all --error-exitcode=1 \
-				--track-origins=yes --log-file=/tmp/valgrind_output.log \
-				./$LEAK_TESTER_NAME 2>&1 | tee /tmp/valgrind_output.log
+	BONUS_BASIC_TESTS_RES=0
+	if [ $BONUS_VERSION -eq 1 ]; then
+		./$BONUS_BASIC_TESTER_NAME
+		BONUS_BASIC_TESTS_RES=$?
+	fi
+	valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
+		--log-file=/tmp/valgrind_output.log ./$LEAK_TESTER_NAME 2>&1 | tee /tmp/valgrind_output.log
 	LEAK_TESTS_RES=$?
+	BONUS_LEAK_TESTS_RES=0
+	if [ $BONUS_VERSION -eq 1 ]; then
+		valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
+			--log-file=/tmp/bonus_valgrind_output.log ./$BONUS_LEAK_TESTER_NAME 2>&1 | tee /tmp/bonus_valgrind_output.log
+		BONUS_LEAK_TESTS_RES=$?
+	fi
 	if [ $LEAK_TESTS_RES -ne 0 ]; then
 		echo ""
-		echo_color "🔍 Valgrind output:" "$PINK"
 		cat /tmp/valgrind_output.log
+	fi
+	if [ $BONUS_LEAK_TESTS_RES -ne 0 ]; then
+		echo ""
+		cat /tmp/bonus_valgrind_output.log
 	fi
 	echo ""
 
-	[ $BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ]
+	[ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]
 	EXIT_CODE=$?
 	if [ $EXIT_CODE -eq 0 ]; then
 		echo_color "╔════════════════════════════╗" "$GREEN"
