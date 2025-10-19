@@ -36,12 +36,13 @@ main() {
 	echo -n "📝 Checking Norminette... "
 	NORM_OUTPUT=$(find $LIBFT_DIR -type d -name "$TESTER_DIR" -prune -o \( -name "*.c" -o -name "*.h" \) -type f -print | xargs norminette 2>&1)
 	if echo "$NORM_OUTPUT" | grep -q "Error"; then
+		NORM_TEST_RES=1
 		echo_color "Failed" "$RED"
 		echo ""
 		echo "$NORM_OUTPUT" | grep "Error"
 		echo ""
-		exit 1
 	else
+		NORM_TEST_RES=0
 		echo "Done"
 	fi
 
@@ -105,7 +106,7 @@ main() {
 	fi
 	echo ""
 
-	[ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]
+	[ $NORM_TEST_RES -eq 0 ] && [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]
 	EXIT_CODE=$?
 	if [ $EXIT_CODE -eq 0 ]; then
 		echo_color "╔════════════════════════════╗" "$GREEN"
