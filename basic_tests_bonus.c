@@ -249,8 +249,7 @@ static void	test_ft_lstmap(void) {
 	print_result("Test malloc fail", passed[1]);
 }
 
-int main(void)
-{
+int main(void) {
 	test_ft_lstnew();
 	test_ft_lstadd_front();
 	test_ft_lstsize();

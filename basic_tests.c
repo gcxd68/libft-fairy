@@ -12,15 +12,16 @@
 
 int g_tests_failed = 0;
 
-static  int ft_forked_test(void (*test_func)(void)) {
+static  int forked_test(void (*test_func)(void)) {
 	pid_t pid;
 	int status;
 
+	fflush(stdout);
 	if ((pid = fork()) == -1) {
-		perror("libft-fairy: fork");
+		perror("libft-fairy: fork failed");
 		exit(EXIT_FAILURE);
 	}
-	if (pid == 0) {
+	if (!pid) {
 		test_func();
 		exit(EXIT_SUCCESS);
 	}
@@ -153,7 +154,7 @@ static void	test_ft_strlen(void) {
 		ft_strlen("hello") == 5,
 		ft_strlen("42") == 2,
 		ft_strlen("Hello, World!") == 13,
-		ft_forked_test(ft_strlen_null_test)
+		forked_test(ft_strlen_null_test)
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -182,7 +183,7 @@ static void	test_ft_memset(void) {
 	ret = ft_memset(str1, 0, 10);
 	memset(str2, 0, 10);
 	passed[1] = !memcmp(str1, str2, 10) && ret == str1;
-	passed[2] = ft_forked_test(ft_memset_null_test);
+	passed[2] = forked_test(ft_memset_null_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_memset");
@@ -234,7 +235,7 @@ static void	test_ft_memcpy(void) {
 	passed[0] = !strcmp(dst1, dst2);
 	ft_memcpy(dst1, "42", 2);
 	passed[1] = dst1[0] == '4' && dst1[1] == '2';
-	passed[2] = ft_forked_test(ft_memcpy_null_test);
+	passed[2] = forked_test(ft_memcpy_null_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_memcpy");
@@ -282,7 +283,7 @@ static void test_ft_memmove(void) {
 	ft_memmove(str1 + 1, str1, 5);
 	memmove(str2 + 1, str2, 5);
 	passed[5] = !strcmp(str1, str2);
-	passed[6] = ft_forked_test(ft_memmove_null_test);
+	passed[6] = forked_test(ft_memmove_null_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_memmove");
@@ -402,7 +403,7 @@ static void	test_ft_strchr(void)
 		ft_strchr(str, 'W') == strchr(str, 'W'),
 		ft_strchr(str, '\0') == strchr(str, '\0'),
 		!ft_strchr(str, 'x'),
-		ft_forked_test(ft_strchr_null_test)
+		forked_test(ft_strchr_null_test)
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -426,7 +427,7 @@ static void	test_ft_strrchr(void) {
 		ft_strrchr(str, 'W') == strrchr(str, 'W'),
 		ft_strrchr(str, '\0') == strrchr(str, '\0'),
 		!ft_strrchr(str, 'x'),
-		ft_forked_test(ft_strrchr_null_test)
+		forked_test(ft_strrchr_null_test)
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -452,7 +453,7 @@ static void	test_ft_strncmp(void) {
 		!ft_strncmp("Hello", "Hello\0test", 10),
 		ft_strncmp("test\200", "test\0", 6) > 0,
 		ft_strncmp("abc", "abcd", 5) < 0,
-		ft_forked_test(ft_strncmp_null_test)
+		forked_test(ft_strncmp_null_test)
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -547,8 +548,8 @@ static void	test_ft_atoi(void) {
 		!ft_atoi(" \t-R66"),
 		ft_atoi("2147483647") == 2147483647,
 		ft_atoi("-2147483648") == -2147483648,
-		!ft_forked_test(ft_atoi_overflow_test),
-		ft_forked_test(ft_atoi_null_test)
+		!forked_test(ft_atoi_overflow_test),
+		forked_test(ft_atoi_null_test)
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -606,10 +607,10 @@ static void	test_ft_calloc(void) {
 	char *str = ft_calloc(10, sizeof(char));
 	passed[1] = str != NULL;
 	free(str);
-	passed[2] = ft_forked_test(ft_calloc_overflow_write_test);
-	passed[3] = !ft_forked_test(ft_calloc_overflow_free_test);
-	passed[4] = !ft_forked_test(ft_calloc_zero_count_test);
-	passed[5] = !ft_forked_test(ft_calloc_zero_size_test);
+	passed[2] = forked_test(ft_calloc_overflow_write_test);
+	passed[3] = !forked_test(ft_calloc_overflow_free_test);
+	passed[4] = !forked_test(ft_calloc_zero_count_test);
+	passed[5] = !forked_test(ft_calloc_zero_size_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_calloc");
@@ -637,7 +638,7 @@ static void	test_ft_strdup(void) {
 	dup = ft_strdup("42");
 	passed[1] = !strcmp(dup, "42");
 	free(dup);
-	passed[2] = !ft_forked_test(ft_strdup_empty_test);
+	passed[2] = !forked_test(ft_strdup_empty_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strdup");
@@ -678,8 +679,8 @@ static void	test_ft_substr(void) {
 	sub = ft_substr("test", 0, 0);
 	passed[4] = !strcmp(sub, "");
 	free(sub);
-	passed[5] = !ft_forked_test(ft_substr_null_test);
-	passed[6] = !ft_forked_test(ft_substr_empty_test);
+	passed[5] = !forked_test(ft_substr_null_test);
+	passed[6] = !forked_test(ft_substr_empty_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_substr");
@@ -744,10 +745,10 @@ static void	test_ft_strtrim(void) {
 	trimmed = ft_strtrim("Hello", "xyz");
 	passed[2] = !strcmp(trimmed, "Hello");
 	free(trimmed);
-	passed[3] = !ft_forked_test(ft_strtrim_empty_string_test);
-	passed[4] = !ft_forked_test(ft_strtrim_all_trim_test);
-	passed[5] = !ft_forked_test(ft_strtrim_null_input_test);
-	passed[6] = !ft_forked_test(ft_strtrim_null_set_test);
+	passed[3] = !forked_test(ft_strtrim_empty_string_test);
+	passed[4] = !forked_test(ft_strtrim_all_trim_test);
+	passed[5] = !forked_test(ft_strtrim_null_input_test);
+	passed[6] = !forked_test(ft_strtrim_null_set_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strtrim");
@@ -858,7 +859,7 @@ static void test_ft_strmapi(void) {
 	result = ft_strmapi("", test_mapi_func);
 	passed[1] = result && !strcmp(result, "");
 	free(result);
-	passed[2] = !ft_forked_test(test_strmapi_null_func);
+	passed[2] = !forked_test(test_strmapi_null_func);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strmapi");
@@ -881,7 +882,7 @@ static void	test_ft_striteri(void) {
 
 	ft_striteri(str, test_iteri_func);
 	passed[0] = str[0] == 'a' && str[1] == 'c' && str[2] == 'e';
-	passed[1] = !ft_forked_test(test_striteri_null_func);
+	passed[1] = !forked_test(test_striteri_null_func);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_striteri");
@@ -989,8 +990,7 @@ static void	test_ft_putnbr_fd(void) {
 	print_result("Test INT_MAX", passed[4]);
 }
 
-int main(void)
-{
+int main(void) {
 	test_ft_isalpha();
 	test_ft_isdigit();
 	test_ft_isalnum();

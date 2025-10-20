@@ -5,6 +5,15 @@ GREEN='\033[0;32m'
 PINK='\033[0;95m'
 RESET='\033[0m'
 
+VERBOSE=0
+for arg in "$@"; do
+    case $arg in
+        -v|--verbose)
+            VERBOSE=1
+            ;;
+    esac
+done
+
 LIBFT_DIR=".."
 BASIC_TESTER_NAME=".basic_tests"
 LEAK_TESTER_NAME=".leak_tests"
@@ -79,12 +88,12 @@ main() {
 		exit 1
 	fi
 
-	echo "🧪 Running tests... "
-	./$BASIC_TESTER_NAME
+	echo -n "🧪 Running tests... "
+	./$BASIC_TESTER_NAME > .results.log 2>&1
 	BASIC_TESTS_RES=$?
 	BONUS_BASIC_TESTS_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
-		./$BONUS_BASIC_TESTER_NAME
+		./$BONUS_BASIC_TESTER_NAME >> .results.log 2>&1
 		BONUS_BASIC_TESTS_RES=$?
 	fi
 	valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
@@ -97,13 +106,20 @@ main() {
 		BONUS_LEAK_TESTS_RES=$?
 	fi
 	if [ $LEAK_TESTS_RES -ne 0 ]; then
-		echo ""
-		cat /tmp/valgrind_output.log
+		echo "" >> .results.log
+		cat /tmp/valgrind_output.log >> .results.log
 	fi
 	if [ $BONUS_LEAK_TESTS_RES -ne 0 ]; then
-		echo ""
-		cat /tmp/bonus_valgrind_output.log
+		echo "" >> .results.log
+		cat /tmp/bonus_valgrind_output.log >> .results.log
 	fi
+	if [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]; then
+		echo "Done"
+	else
+		echo_color "Failed" "$RED"
+	fi
+
+	cat .results.log
 	echo ""
 
 	[ $NORM_TEST_RES -eq 0 ] && [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]
