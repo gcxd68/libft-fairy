@@ -1,5 +1,37 @@
 #include "libft.h"
 
+static void	safe_lstdelone(t_list *lst, void (*del)(void*)) {
+	if (!lst || !del)
+		return ;
+	del(lst->content);
+	free(lst);
+}
+
+static void	safe_lstclear(t_list **lst, void (*del)(void*)) {
+	t_list	*tmp;
+
+	if (!lst || !del)
+		return ;
+	while (*lst)
+	{
+		tmp = (*lst)->next;
+		safe_lstdelone(*lst, del);
+		*lst = tmp;
+	}
+	*lst = NULL;
+}
+
+static t_list	*safe_lstnew(void *content) {
+	t_list	*node;
+
+	node = malloc(sizeof(t_list));
+	if (!node)
+		return (NULL);
+	node->content = content;
+	node->next = NULL;
+	return (node);
+}
+
 static void *map_func(void *content) {
 	int	*new = malloc(sizeof(int));
 
@@ -25,7 +57,7 @@ static void leak_test_ft_lstdelone(void) {
 	t_list	*node;
 
 	*val = 42;
-	node = ft_lstnew(val);
+	node = safe_lstnew(val);
 	ft_lstdelone(node, del_content);
 }
 
@@ -38,9 +70,9 @@ static void leak_test_ft_lstclear(void) {
 	*v1 = 1;
 	*v2 = 2;
 	*v3 = 3;
-	n1 = ft_lstnew(v1);
-	n2 = ft_lstnew(v2);
-	n3 = ft_lstnew(v3);
+	n1 = safe_lstnew(v1);
+	n2 = safe_lstnew(v2);
+	n3 = safe_lstnew(v3);
 	n1->next = n2;
 	n2->next = n3;
 	ft_lstclear(&n1, del_content);
@@ -55,14 +87,14 @@ static void leak_test_ft_lstmap(void) {
 	*v1 = 1;
 	*v2 = 2;
 	*v3 = 3;
-	n1 = ft_lstnew(v1);
-	n2 = ft_lstnew(v2);
-	n3 = ft_lstnew(v3);
+	n1 = safe_lstnew(v1);
+	n2 = safe_lstnew(v2);
+	n3 = safe_lstnew(v3);
 	n1->next = n2;
 	n2->next = n3;
 	new_lst = ft_lstmap(n1, map_func, del_content);
-	ft_lstclear(&new_lst, del_content);
-	ft_lstclear(&n1, del_content);
+	safe_lstclear(&new_lst, del_content);
+	safe_lstclear(&n1, del_content);
 }
 
 int main(void) {

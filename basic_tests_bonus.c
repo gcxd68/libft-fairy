@@ -19,7 +19,7 @@ static int	all_tests_passed(const int *passed, size_t n) {
 
 static void	print_test_header(const char *function_name) {
 	printf("\n========================================\n");
-	printf("Testing: %s\n", function_name);
+	printf("%s\n", function_name);
 	printf("========================================\n");
 }
 
@@ -29,23 +29,76 @@ static void	print_result(const char *test_name, int passed) {
 		g_tests_failed++;
 }
 
-static void	test_ft_lstnew(void) {
+static t_list	*safe_lstlast(t_list *lst) {
+	if (!lst)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+
+static void	safe_lstadd_back(t_list **lst, t_list *new) {
+	if (!lst || !new)
+		return ;
+	if (*lst)
+		safe_lstlast(*lst)->next = new;
+	else
+		*lst = new;
+}
+
+static void	safe_lstdelone(t_list *lst, void (*del)(void*)) {
+	if (!lst || !del)
+		return ;
+	del(lst->content);
+	free(lst);
+}
+
+static void	safe_lstclear(t_list **lst, void (*del)(void*)) {
+	t_list	*tmp;
+
+	if (!lst || !del)
+		return ;
+	while (*lst)
+	{
+		tmp = (*lst)->next;
+		safe_lstdelone(*lst, del);
+		*lst = tmp;
+	}
+	*lst = NULL;
+}
+
+static t_list	*safe_lstnew(void *content) {
+	t_list	*node;
+
+	node = malloc(sizeof(t_list));
+	if (!node)
+		return (NULL);
+	node->content = content;
+	node->next = NULL;
+	return (node);
+}
+
+static void test_ft_lstnew(void) {
 	int		content = 42;
 	t_list	*node = ft_lstnew(&content);
-	int		passed[1];
-
-	passed[0] = node != NULL && *(int *)node->content == 42 && !node->next;
+	int		passed[3];
+	
+	passed[0] = (node != NULL);
+	passed[1] = (node && node->content == &content);
+	passed[2] = (node && node->next == NULL);
 	free(node);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstnew");
-	print_result("Test node creation", passed[0]);
+	print_result("Test node allocated", passed[0]);
+	print_result("Test content assigned", passed[1]);
+	print_result("Test next is NULL", passed[2]);
 }
 
 static void	test_ft_lstadd_front(void) {
 	int c1 = 1, c2 = 2;
-	t_list *lst = ft_lstnew(&c1);
-	t_list *new = ft_lstnew(&c2);
+	t_list *lst = safe_lstnew(&c1);
+	t_list *new = safe_lstnew(&c2);
 	int passed[1];
 
 	ft_lstadd_front(&lst, new);
@@ -61,9 +114,9 @@ static void	test_ft_lstadd_front(void) {
 
 static void	test_ft_lstsize(void) {
 	int		c1 = 1, c2 = 2, c3 = 3;
-	t_list	*n1 = ft_lstnew(&c1);
-	t_list	*n2 = ft_lstnew(&c2);
-	t_list	*n3 = ft_lstnew(&c3);
+	t_list	*n1 = safe_lstnew(&c1);
+	t_list	*n2 = safe_lstnew(&c2);
+	t_list	*n3 = safe_lstnew(&c3);
 	int		passed[2];
 
 	n1->next = n2;
@@ -82,9 +135,9 @@ static void	test_ft_lstsize(void) {
 
 static void	test_ft_lstlast(void) {
 	int		c1 = 1, c2 = 2, c3 = 3;
-	t_list	*n1 = ft_lstnew(&c1);
-	t_list	*n2 = ft_lstnew(&c2);
-	t_list	*n3 = ft_lstnew(&c3);
+	t_list	*n1 = safe_lstnew(&c1);
+	t_list	*n2 = safe_lstnew(&c2);
+	t_list	*n3 = safe_lstnew(&c3);
 	int		passed[2];
 
 	n1->next = n2;
@@ -103,8 +156,8 @@ static void	test_ft_lstlast(void) {
 
 static void	test_ft_lstadd_back(void) {
 	int		c1 = 1, c2 = 2;
-	t_list	*lst = ft_lstnew(&c1);
-	t_list	*new = ft_lstnew(&c2);
+	t_list	*lst = safe_lstnew(&c1);
+	t_list	*new = safe_lstnew(&c2);
 	int		passed[1];
 
 	ft_lstadd_back(&lst, new);
@@ -132,7 +185,7 @@ static void test_ft_lstdelone(void) {
 	int		*value1 = malloc(sizeof(int));
 	int		*value2 = malloc(sizeof(int));
 	int		*value3 = malloc(sizeof(int));
-	int		passed[3];
+	int		passed[2];
 	t_list	*lst = NULL;
 	t_list	*node1, *node2, *node3;
 
@@ -142,12 +195,12 @@ static void test_ft_lstdelone(void) {
 		exit(EXIT_FAILURE);
 	}
 	*value1 = 1; *value2 = 2; *value3 = 3;
-	node1 = ft_lstnew(value1);
-	node2 = ft_lstnew(value2);
-	node3 = ft_lstnew(value3);
-	ft_lstadd_back(&lst, node1);
-	ft_lstadd_back(&lst, node2);
-	ft_lstadd_back(&lst, node3);
+	node1 = safe_lstnew(value1);
+	node2 = safe_lstnew(value2);
+	node3 = safe_lstnew(value3);
+	safe_lstadd_back(&lst, node1);
+	safe_lstadd_back(&lst, node2);
+	safe_lstadd_back(&lst, node3);
 	node1->next = node3;
 	freed_count = 0;
 	ft_lstdelone(node2, del_count);
@@ -156,22 +209,19 @@ static void test_ft_lstdelone(void) {
 		&& (*(int *)lst->next->content == 3)
 		&& lst->next->next == NULL;
 	passed[1] = correct;
-	freed_count = 0;
-	ft_lstclear(&lst, del_count);
-	passed[2] = (freed_count == 2 && !lst);
+	safe_lstclear(&lst, del_count);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
-	print_test_header("ft_lstdelone / ft_lstclear");
+	print_test_header("ft_lstdelone");
 	print_result("Test delone calls free once", passed[0]);
 	print_result("Test delone leaves correct remaining nodes", passed[1]);
-	print_result("Test lstclear frees all and sets list to NULL", passed[2]);
 }
 
 static void	test_ft_lstclear(void) {
 	int 	c1 = 1, c2 = 2, c3 = 3;
-	t_list	*n1 = ft_lstnew(&c1);
-	t_list	*n2 = ft_lstnew(&c2);
-	t_list	*n3 = ft_lstnew(&c3);
+	t_list	*n1 = safe_lstnew(&c1);
+	t_list	*n2 = safe_lstnew(&c2);
+	t_list	*n3 = safe_lstnew(&c3);
 	int		passed[1];
 
 	n1->next = n2;
@@ -190,9 +240,9 @@ static void	iter_func(void *content) {
 
 static void	test_ft_lstiter(void) {
 	int 	c1 = 1, c2 = 2, c3 = 3;
-	t_list	*n1 = ft_lstnew(&c1);
-	t_list	*n2 = ft_lstnew(&c2);
-	t_list	*n3 = ft_lstnew(&c3);
+	t_list	*n1 = safe_lstnew(&c1);
+	t_list	*n2 = safe_lstnew(&c2);
+	t_list	*n3 = safe_lstnew(&c3);
 	int		passed[1];
 
 	n1->next = n2;
@@ -223,9 +273,9 @@ static void	*map_func_fail(void *content) {
 
 static void	test_ft_lstmap(void) {
 	int		c1 = 1, c2 = 2, c3 = 3;
-	t_list	*n1 = ft_lstnew(&c1);
-	t_list	*n2 = ft_lstnew(&c2);
-	t_list	*n3 = ft_lstnew(&c3);
+	t_list	*n1 = safe_lstnew(&c1);
+	t_list	*n2 = safe_lstnew(&c2);
+	t_list	*n3 = safe_lstnew(&c3);
 	t_list	*new_lst;
 	int		passed[2];
 
@@ -235,10 +285,10 @@ static void	test_ft_lstmap(void) {
 	passed[0] = new_lst && *(int *)new_lst->content == 2 &&
 				*(int *)new_lst->next->content == 4 &&
 				*(int *)new_lst->next->next->content == 6;
-	ft_lstclear(&new_lst, free);
+	safe_lstclear(&new_lst, free);
 	new_lst = ft_lstmap(n1, map_func_fail, free);
 	passed[1] = !new_lst;
-	ft_lstclear(&new_lst, free);
+	safe_lstclear(&new_lst, free);
 	free(n3);
 	free(n2);
 	free(n1);

@@ -7,11 +7,11 @@ RESET='\033[0m'
 
 VERBOSE=0
 for arg in "$@"; do
-    case $arg in
-        -v|--verbose)
-            VERBOSE=1
-            ;;
-    esac
+	case $arg in
+		-v|--verbose)
+			VERBOSE=1
+			;;
+	esac
 done
 
 LIBFT_DIR=".."
@@ -42,7 +42,7 @@ main() {
 	echo_color "╚════════════════════════════╝" "$PINK"
 	echo ""
 
-	echo -n "📝 Checking Norminette... "
+	echo -n "📝 Checking Norm... "
 	NORM_OUTPUT=$(find $LIBFT_DIR -type d -name "$TESTER_DIR" -prune -o \( -name "*.c" -o -name "*.h" \) -type f -print | xargs norminette 2>&1)
 	if echo "$NORM_OUTPUT" | grep -q "Error"; then
 		NORM_TEST_RES=1
@@ -96,13 +96,15 @@ main() {
 		./$BONUS_BASIC_TESTER_NAME >> .results.log 2>&1
 		BONUS_BASIC_TESTS_RES=$?
 	fi
-	valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
-		--log-file=/tmp/valgrind_output.log ./$LEAK_TESTER_NAME 2>&1 | tee /tmp/valgrind_output.log
+	valgrind --leak-check=full --show-leak-kinds=all \
+		--errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
+		--log-file=/tmp/valgrind_output.log ./$LEAK_TESTER_NAME > /dev/null 2>&1
 	LEAK_TESTS_RES=$?
 	BONUS_LEAK_TESTS_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
-		valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
-			--log-file=/tmp/bonus_valgrind_output.log ./$BONUS_LEAK_TESTER_NAME 2>&1 | tee /tmp/bonus_valgrind_output.log
+		valgrind --leak-check=full --show-leak-kinds=all \
+			--errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
+			--log-file=/tmp/bonus_valgrind_output.log ./$BONUS_LEAK_TESTER_NAME > /dev/null 2>&1
 		BONUS_LEAK_TESTS_RES=$?
 	fi
 	if [ $LEAK_TESTS_RES -ne 0 ]; then

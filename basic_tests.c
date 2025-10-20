@@ -41,7 +41,7 @@ static int	all_tests_passed(const int *passed, size_t n) {
 
 static void	print_test_header(const char *function_name) {
 	printf("\n========================================\n");
-	printf("Testing: %s\n", function_name);
+	printf("%s\n", function_name);
 	printf("========================================\n");
 }
 
@@ -761,7 +761,7 @@ static void	test_ft_strtrim(void) {
 	print_result("Test NULL set", passed[6]);
 }
 
-static void	ft_free_arr(char **arr) {
+static void	free_arr(char **arr) {
 	if (arr) {
 		for (int i = 0; arr[i]; i++)
 			free(arr[i]);
@@ -775,31 +775,31 @@ static void	test_ft_split(void) {
 
 	arr = ft_split("Hello World 42", ' ');
 	passed[0] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
-	ft_free_arr(arr);
+	free_arr(arr);
 	arr = ft_split("___Hello___World___", '_');
 	passed[1] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
-	ft_free_arr(arr);
+	free_arr(arr);
 	arr = ft_split("", ' ');
 	passed[2] = arr && !arr[0];
-	ft_free_arr(arr);
+	free_arr(arr);
 	arr = ft_split("", 'x');
 	passed[3] = arr && !arr[0];
-	ft_free_arr(arr);
+	free_arr(arr);
 	arr = ft_split("xxx", 'x');
 	passed[4] = arr && !arr[0];
-	ft_free_arr(arr);
+	free_arr(arr);
 	arr = ft_split("Hello", '\0');
 	passed[5] = arr && !strcmp(arr[0], "Hello") && !arr[1];
-	ft_free_arr(arr);
+	free_arr(arr);
 	arr = ft_split("   ", ' ');
 	passed[6] = arr && !arr[0];
-	ft_free_arr(arr);
+	free_arr(arr);
 	arr = ft_split("HelloWorld", ' ');
 	passed[7] = arr && !strcmp(arr[0], "HelloWorld") && !arr[1];
-	ft_free_arr(arr);
+	free_arr(arr);
 	arr = ft_split("Hello   World", ' ');
 	passed[8] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
-	ft_free_arr(arr);
+	free_arr(arr);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_split");
@@ -842,24 +842,24 @@ static void	test_ft_itoa(void) {
 	print_result("Test INT_MAX", passed[4]);
 }
 
-static char test_mapi_func(unsigned int i, char c) {
+static char mapi_func(unsigned int i, char c) {
 	return c + i;
 }
 
-static void test_strmapi_null_func(void) {
+static void ft_strmapi_null_func_test(void) {
 	ft_strmapi("test", NULL);
 }
 
 static void test_ft_strmapi(void) {
-	char	*result = ft_strmapi("abc", test_mapi_func);
+	char	*result = ft_strmapi("abc", mapi_func);
 	int		passed[3];
 
 	passed[0] = result && result[0] == 'a' && result[1] == 'c' && result[2] == 'e';
 	free(result);
-	result = ft_strmapi("", test_mapi_func);
+	result = ft_strmapi("", mapi_func);
 	passed[1] = result && !strcmp(result, "");
 	free(result);
-	passed[2] = !forked_test(test_strmapi_null_func);
+	passed[2] = !forked_test(ft_strmapi_null_func_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strmapi");
@@ -868,11 +868,11 @@ static void test_ft_strmapi(void) {
 	print_result("Test f = NULL", passed[2]);
 }
 
-static void	test_iteri_func(unsigned int i, char *c) {
+static void	iteri_func(unsigned int i, char *c) {
 	*c = *c + i;
 }
 
-static void test_striteri_null_func(void) {
+static void ft_striteri_null_func_test(void) {
 	ft_striteri("test", NULL);
 }
 
@@ -880,9 +880,9 @@ static void	test_ft_striteri(void) {
 	char	str[] = "abc";
 	int		passed[2];
 
-	ft_striteri(str, test_iteri_func);
+	ft_striteri(str, iteri_func);
 	passed[0] = str[0] == 'a' && str[1] == 'c' && str[2] == 'e';
-	passed[1] = !forked_test(test_striteri_null_func);
+	passed[1] = !forked_test(ft_striteri_null_func_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_striteri");

@@ -1,6 +1,6 @@
 #include "libft.h"
 
-static void ft_free_split(char **arr) {
+static void free_split(char **arr) {
 	if (!arr)
 		return;
 	for (int i = 0; arr[i]; i++)
@@ -45,7 +45,7 @@ static void leak_test_ft_strtrim(void) {
 static void leak_test_ft_split(void) {
 	char	**arr = ft_split("Hello World Test 42", ' ');
 
-	ft_free_split(arr);
+	free_split(arr);
 }
 
 static void leak_test_ft_itoa(void) {
