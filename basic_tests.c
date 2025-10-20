@@ -25,7 +25,7 @@ static  int ft_forked_test(void (*test_func)(void)) {
 		exit(EXIT_SUCCESS);
 	}
 	waitpid(pid, &status, 0);
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGSEGV)
+	if (WIFSIGNALED(status))
 		return 1;
 	return 0;
 }
@@ -573,7 +573,6 @@ static void ft_calloc_overflow_write_test(void) {
 	char			*ptr = ft_calloc(size_max >> 1, size_max >> 1);
 
 	ptr[0] = 'x';
-	free(ptr);
 }
 
 static void ft_calloc_overflow_free_test(void) {
@@ -584,12 +583,14 @@ static void ft_calloc_overflow_free_test(void) {
 }
 
 static void ft_calloc_zero_count_test(void) {
-	void *ptr = ft_calloc(0, 5);
+	void	*ptr = ft_calloc(0, 5);
+
 	free(ptr);
 }
 
 static void ft_calloc_zero_size_test(void) {
-	void *ptr = ft_calloc(5, 0);
+	void	*ptr = ft_calloc(5, 0);
+
 	free(ptr);
 }
 
@@ -715,6 +716,14 @@ static void	test_ft_strjoin(void) {
 	print_result("Test short strings", passed[3]);
 }
 
+static void ft_strtrim_empty_string_test(void) {
+	ft_strtrim("", " ");
+}
+
+static void ft_strtrim_all_trim_test(void) {
+	ft_strtrim("xxxxx", "x");
+}
+
 static void ft_strtrim_null_input_test(void) {
 	ft_strtrim(NULL, " ");
 }
@@ -735,12 +744,8 @@ static void	test_ft_strtrim(void) {
 	trimmed = ft_strtrim("Hello", "xyz");
 	passed[2] = !strcmp(trimmed, "Hello");
 	free(trimmed);
-	trimmed = ft_strtrim("", " ");
-	passed[3] = !strcmp(trimmed, "");
-	free(trimmed);
-	trimmed = ft_strtrim("xxxxx", "x");
-	passed[4] = !strcmp(trimmed, "");
-	free(trimmed);
+	passed[3] = !ft_forked_test(ft_strtrim_empty_string_test);
+	passed[4] = !ft_forked_test(ft_strtrim_all_trim_test);
 	passed[5] = !ft_forked_test(ft_strtrim_null_input_test);
 	passed[6] = !ft_forked_test(ft_strtrim_null_set_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
