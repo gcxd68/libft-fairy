@@ -1,84 +1,9 @@
-#include "libft.h"
+#include "libft_fairy.h"
 #include <stdio.h>
 
 #ifndef VERBOSE
 # define VERBOSE 0
 #endif
-
-#define GREEN	"\033[0;32m"
-#define RED		"\033[0;31m"
-#define RESET	"\033[0m"
-
-int g_tests_failed = 0;
-
-static int	all_tests_passed(const int *passed, size_t n) {
-	for (size_t i = 0; i < n; i++) {
-		if (passed[i] == 0)
-			return 0;
-	}
-	return 1;
-}
-
-static void	print_test_header(const char *function_name) {
-	printf("\n========================================\n");
-	printf("%s\n", function_name);
-	printf("========================================\n");
-}
-
-static void	print_result(const char *test_name, int passed) {
-	printf("%s" RESET "%s\n", passed ? GREEN "✓ " : RED "✗ ", test_name);
-	if (!passed)
-		g_tests_failed++;
-}
-
-static t_list	*safe_lstlast(t_list *lst) {
-	if (!lst)
-		return (NULL);
-	while (lst->next)
-		lst = lst->next;
-	return (lst);
-}
-
-static void	safe_lstadd_back(t_list **lst, t_list *new) {
-	if (!lst || !new)
-		return ;
-	if (*lst)
-		safe_lstlast(*lst)->next = new;
-	else
-		*lst = new;
-}
-
-static void	safe_lstdelone(t_list *lst, void (*del)(void*)) {
-	if (!lst || !del)
-		return ;
-	del(lst->content);
-	free(lst);
-}
-
-static void	safe_lstclear(t_list **lst, void (*del)(void*)) {
-	t_list	*tmp;
-
-	if (!lst || !del)
-		return ;
-	while (*lst)
-	{
-		tmp = (*lst)->next;
-		safe_lstdelone(*lst, del);
-		*lst = tmp;
-	}
-	*lst = NULL;
-}
-
-static t_list	*safe_lstnew(void *content) {
-	t_list	*node;
-
-	node = malloc(sizeof(t_list));
-	if (!node)
-		return (NULL);
-	node->content = content;
-	node->next = NULL;
-	return (node);
-}
 
 static void test_ft_lstnew(void) {
 	int		content = 42;

@@ -1,36 +1,4 @@
-#include "libft.h"
-
-static void	safe_lstdelone(t_list *lst, void (*del)(void*)) {
-	if (!lst || !del)
-		return ;
-	del(lst->content);
-	free(lst);
-}
-
-static void	safe_lstclear(t_list **lst, void (*del)(void*)) {
-	t_list	*tmp;
-
-	if (!lst || !del)
-		return ;
-	while (*lst)
-	{
-		tmp = (*lst)->next;
-		safe_lstdelone(*lst, del);
-		*lst = tmp;
-	}
-	*lst = NULL;
-}
-
-static t_list	*safe_lstnew(void *content) {
-	t_list	*node;
-
-	node = malloc(sizeof(t_list));
-	if (!node)
-		return (NULL);
-	node->content = content;
-	node->next = NULL;
-	return (node);
-}
+#include "libft_fairy.h"
 
 static void *map_func(void *content) {
 	int	*new = malloc(sizeof(int));

@@ -1,4 +1,4 @@
-#include "libft.h"
+#include "libft_fairy.h"
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
@@ -7,12 +7,6 @@
 #ifndef VERBOSE
 # define VERBOSE 0
 #endif
-
-#define GREEN	"\033[0;32m"
-#define RED		"\033[0;31m"
-#define RESET	"\033[0m"
-
-int g_tests_failed = 0;
 
 static  int forked_test(void (*test_func)(void)) {
 	pid_t pid;
@@ -31,26 +25,6 @@ static  int forked_test(void (*test_func)(void)) {
 	if (WIFSIGNALED(status))
 		return 1;
 	return 0;
-}
-
-static int	all_tests_passed(const int *passed, size_t n) {
-	for (size_t i = 0; i < n; i++) {
-		if (passed[i] == 0)
-			return 0;
-	}
-	return 1;
-}
-
-static void	print_test_header(const char *function_name) {
-	printf("\n========================================\n");
-	printf("%s\n", function_name);
-	printf("========================================\n");
-}
-
-static void	print_result(const char *test_name, int passed) {
-	printf("%s" RESET "%s\n", passed ? GREEN "✓ " : RED "✗ ", test_name);
-	if (!passed)
-		g_tests_failed++;
 }
 
 static void	test_ft_isalpha(void) {
@@ -763,45 +737,37 @@ static void	test_ft_strtrim(void) {
 	print_result("Test NULL set", passed[6]);
 }
 
-static void	free_arr(char **arr) {
-	if (arr) {
-		for (int i = 0; arr[i]; i++)
-			free(arr[i]);
-		free(arr);
-	}
-}
-
 static void	test_ft_split(void) {
 	char	**arr;
 	int		passed[9];
 
 	arr = ft_split("Hello World 42", ' ');
 	passed[0] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
-	free_arr(arr);
+	safe_free_arr(arr);
 	arr = ft_split("___Hello___World___", '_');
 	passed[1] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
-	free_arr(arr);
+	safe_free_arr(arr);
 	arr = ft_split("", ' ');
 	passed[2] = arr && !arr[0];
-	free_arr(arr);
+	safe_free_arr(arr);
 	arr = ft_split("", 'x');
 	passed[3] = arr && !arr[0];
-	free_arr(arr);
+	safe_free_arr(arr);
 	arr = ft_split("xxx", 'x');
 	passed[4] = arr && !arr[0];
-	free_arr(arr);
+	safe_free_arr(arr);
 	arr = ft_split("Hello", '\0');
 	passed[5] = arr && !strcmp(arr[0], "Hello") && !arr[1];
-	free_arr(arr);
+	safe_free_arr(arr);
 	arr = ft_split("   ", ' ');
 	passed[6] = arr && !arr[0];
-	free_arr(arr);
+	safe_free_arr(arr);
 	arr = ft_split("HelloWorld", ' ');
 	passed[7] = arr && !strcmp(arr[0], "HelloWorld") && !arr[1];
-	free_arr(arr);
+	safe_free_arr(arr);
 	arr = ft_split("Hello   World", ' ');
 	passed[8] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
-	free_arr(arr);
+	safe_free_arr(arr);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_split");

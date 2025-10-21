@@ -69,30 +69,22 @@ main() {
 	fi
 
 	echo -n "🔨 Compiling tests... "
-	
-	# Définir le flag VERBOSE si nécessaire
 	VERBOSE_FLAG=""
 	if [ $VERBOSE -eq 1 ]; then
 		VERBOSE_FLAG="-DVERBOSE=1"
 	fi
-	
-	gcc -Wall -Wextra -Werror -no-pie $VERBOSE_FLAG basic_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME >/dev/null 2>&1
+	gcc -Wall -Wextra -Werror -no-pie $VERBOSE_FLAG basic_tests.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME #>/dev/null 2>&1
 	BASIC_TESTS_COMPILATION_RES=$?
-	
-	gcc -Wall -Wextra -Werror -no-pie leak_tests.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME >/dev/null 2>&1
+	gcc -Wall -Wextra -Werror -no-pie leak_tests.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME #>/dev/null 2>&1
 	LEAK_TESTS_COMPILATION_RES=$?
-	
 	BONUS_BASIC_TESTS_COMPILATION_RES=0
 	BONUS_LEAK_TESTS_COMPILATION_RES=0
-	
 	if [ $BONUS_VERSION -eq 1 ]; then
-		gcc -Wall -Wextra -Werror -no-pie $VERBOSE_FLAG basic_tests_bonus.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_BASIC_TESTER_NAME >/dev/null 2>&1
+		gcc -Wall -Wextra -Werror -no-pie $VERBOSE_FLAG basic_tests_bonus.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_BASIC_TESTER_NAME #>/dev/null 2>&1
 		BONUS_BASIC_TESTS_COMPILATION_RES=$?
-		
-		gcc -Wall -Wextra -Werror -no-pie leak_tests_bonus.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_LEAK_TESTER_NAME >/dev/null 2>&1
+		gcc -Wall -Wextra -Werror -no-pie leak_tests_bonus.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_LEAK_TESTER_NAME #>/dev/null 2>&1
 		BONUS_LEAK_TESTS_COMPILATION_RES=$?
 	fi
-	
 	if [ $BASIC_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_COMPILATION_RES -eq 0 ] \
 		&& [ $LEAK_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_COMPILATION_RES -eq 0 ]; then
 		echo "Done"
@@ -102,21 +94,17 @@ main() {
 	fi
 
 	echo -n "🧪 Running tests... "
-	
 	./$BASIC_TESTER_NAME > .results 2>&1
 	BASIC_TESTS_RES=$?
-	
 	BONUS_BASIC_TESTS_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
 		./$BONUS_BASIC_TESTER_NAME >> .results 2>&1
 		BONUS_BASIC_TESTS_RES=$?
 	fi
-	
 	valgrind --leak-check=full --show-leak-kinds=all \
 		--errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
 		--log-file=/tmp/valgrind_output.log ./$LEAK_TESTER_NAME > /dev/null 2>&1
 	LEAK_TESTS_RES=$?
-	
 	BONUS_LEAK_TESTS_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
 		valgrind --leak-check=full --show-leak-kinds=all \
@@ -124,8 +112,6 @@ main() {
 			--log-file=/tmp/bonus_valgrind_output.log ./$BONUS_LEAK_TESTER_NAME > /dev/null 2>&1
 		BONUS_LEAK_TESTS_RES=$?
 	fi
-	
-	# Afficher logs valgrind si erreur OU si verbose
 	if [ $LEAK_TESTS_RES -ne 0 ] || [ $VERBOSE -eq 1 ]; then
 		echo "" >> .results
 		echo "════════════════════════════════════════" >> .results
@@ -133,7 +119,6 @@ main() {
 		echo "════════════════════════════════════════" >> .results
 		cat /tmp/valgrind_output.log >> .results
 	fi
-	
 	if [ $BONUS_LEAK_TESTS_RES -ne 0 ] || [ $VERBOSE -eq 1 ]; then
 		echo "" >> .results
 		echo "════════════════════════════════════════" >> .results
@@ -141,7 +126,6 @@ main() {
 		echo "════════════════════════════════════════" >> .results
 		cat /tmp/bonus_valgrind_output.log >> .results
 	fi
-	
 	if [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && \
 	   [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]; then
 		echo "Done"
@@ -156,7 +140,6 @@ main() {
 	[ $BONUS_BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ] && \
 	[ $BONUS_LEAK_TESTS_RES -eq 0 ]
 	EXIT_CODE=$?
-	
 	if [ $EXIT_CODE -eq 0 ]; then
 		echo_color "╔════════════════════════════╗" "$GREEN"
 		echo_color "║     OH MY, YOU PASSED!     ║" "$GREEN"
@@ -167,7 +150,6 @@ main() {
 		echo_color "╚════════════════════════════╝" "$RED"
 	fi
 	echo ""
-	
 	return $EXIT_CODE
 }
 

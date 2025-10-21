@@ -1,12 +1,4 @@
-#include "libft.h"
-
-static void free_split(char **arr) {
-	if (!arr)
-		return;
-	for (int i = 0; arr[i]; i++)
-		free(arr[i]);
-	free(arr);
-}
+#include "libft_fairy.h"
 
 static char mapi_func(unsigned int i, char c) {
 	return c + i;
@@ -45,7 +37,7 @@ static void leak_test_ft_strtrim(void) {
 static void leak_test_ft_split(void) {
 	char	**arr = ft_split("Hello World Test 42", ' ');
 
-	free_split(arr);
+	safe_free_arr(arr);
 }
 
 static void leak_test_ft_itoa(void) {
