@@ -9,6 +9,7 @@
 
 extern int  g_tests_failed;
 
+int			forked_test(void (*test_func)(void));
 int			all_tests_passed(const int *passed, size_t n);
 void		print_test_header(const char *function_name);
 void		print_result(const char *test_name, int passed);

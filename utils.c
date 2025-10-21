@@ -1,7 +1,27 @@
 #include "libft_fairy.h"
-#include "stdio.h"
+#include <stdio.h>
+#include <sys/wait.h>
 
 int g_tests_failed = 0;
+
+int	forked_test(void (*test_func)(void)) {
+	pid_t pid;
+	int status;
+
+	fflush(stdout);
+	if ((pid = fork()) == -1) {
+		perror("libft-fairy: fork failed");
+		exit(EXIT_FAILURE);
+	}
+	if (!pid) {
+		test_func();
+		exit(EXIT_SUCCESS);
+	}
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status))
+		return 1;
+	return 0;
+}
 
 int	all_tests_passed(const int *passed, size_t n) {
 	for (size_t i = 0; i < n; i++) {

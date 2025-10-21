@@ -16,7 +16,7 @@ static void test_ft_lstnew(void) {
 	free(node);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
-	print_test_header("ft_lstnew");
+	print_test_header("ft_lstnew (bonus)");
 	print_result("Test node allocated", passed[0]);
 	print_result("Test content assigned", passed[1]);
 	print_result("Test next is NULL", passed[2]);
@@ -35,7 +35,7 @@ static void	test_ft_lstadd_front(void) {
 	free(lst);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
-	print_test_header("ft_lstadd_front");
+	print_test_header("ft_lstadd_front (bonus)");
 	print_result("Test add front", passed[0]);
 }
 
@@ -55,7 +55,7 @@ static void	test_ft_lstsize(void) {
 	free(n1);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
-	print_test_header("ft_lstsize");
+	print_test_header("ft_lstsize (bonus)");
 	print_result("Test size 3", passed[0]);
 	print_result("Test size NULL", passed[1]);
 }
@@ -76,7 +76,7 @@ static void	test_ft_lstlast(void) {
 	free(n1);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
-	print_test_header("ft_lstlast");
+	print_test_header("ft_lstlast (bonus)");
 	print_result("Test last", passed[0]);
 	print_result("Test NULL", passed[1]);
 }
@@ -93,7 +93,7 @@ static void	test_ft_lstadd_back(void) {
 	free(lst);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
-	print_test_header("ft_lstadd_back");
+	print_test_header("ft_lstadd_back (bonus)");
 	print_result("Test add back", passed[0]);
 }
 
@@ -139,7 +139,7 @@ static void test_ft_lstdelone(void) {
 	safe_lstclear(&lst, del_count);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
-	print_test_header("ft_lstdelone");
+	print_test_header("ft_lstdelone (bonus)");
 	print_result("Test delone calls free once", passed[0]);
 	print_result("Test delone leaves correct remaining nodes", passed[1]);
 }
@@ -157,7 +157,7 @@ static void	test_ft_lstclear(void) {
 	passed[0] = !n1;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
-	print_test_header("ft_lstclear");
+	print_test_header("ft_lstclear (bonus)");
 	print_result("Test clear (no crash)", passed[0]);
 }
 
@@ -181,7 +181,7 @@ static void	test_ft_lstiter(void) {
 	free(n1);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
-	print_test_header("ft_lstiter");
+	print_test_header("ft_lstiter (bonus)");
 	print_result("Test iter", passed[0]);
 }
 
@@ -221,7 +221,7 @@ static void	test_ft_lstmap(void) {
 	free(n1);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
-	print_test_header("ft_lstmap");
+	print_test_header("ft_lstmap (bonus)");
 	print_result("Test map normal", passed[0]);
 	print_result("Test malloc fail", passed[1]);
 }

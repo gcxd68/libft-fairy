@@ -2,30 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
-#include <sys/wait.h>
 
 #ifndef VERBOSE
 # define VERBOSE 0
 #endif
-
-static  int forked_test(void (*test_func)(void)) {
-	pid_t pid;
-	int status;
-
-	fflush(stdout);
-	if ((pid = fork()) == -1) {
-		perror("libft-fairy: fork failed");
-		exit(EXIT_FAILURE);
-	}
-	if (!pid) {
-		test_func();
-		exit(EXIT_SUCCESS);
-	}
-	waitpid(pid, &status, 0);
-	if (WIFSIGNALED(status))
-		return 1;
-	return 0;
-}
 
 static void	test_ft_isalpha(void) {
 	const int	passed[5] = {
