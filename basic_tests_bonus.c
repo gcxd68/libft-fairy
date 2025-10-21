@@ -1,7 +1,9 @@
 #include "libft.h"
 #include <stdio.h>
 
-#define VERBOSE	0
+#ifndef VERBOSE
+# define VERBOSE 0
+#endif
 
 #define GREEN	"\033[0;32m"
 #define RED		"\033[0;31m"
