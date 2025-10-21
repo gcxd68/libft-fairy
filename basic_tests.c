@@ -717,9 +717,28 @@ static void	test_ft_strtrim(void) {
 	print_result("Test NULL set", passed[6]);
 }
 
+static int	g_malloc_count = 0;
+static int	g_malloc_fail_at = 0;
+static int	g_malloc_fail_enabled = 0;
+
+void	*__real_malloc(size_t size);
+
+void	*__wrap_malloc(size_t size) {
+	if (g_malloc_fail_enabled && ++g_malloc_count == g_malloc_fail_at)
+		return NULL;
+	return __real_malloc(size);
+}
+
+static void	ft_split_malloc_fail_test(void) {
+	g_malloc_count = 0;
+	++g_malloc_fail_at;
+	char **result = ft_split("Hello World Test", ' ');
+	safe_free_arr(result);
+}
+
 static void	test_ft_split(void) {
 	char	**arr;
-	int		passed[9];
+	int		passed[14];
 
 	arr = ft_split("Hello World 42", ' ');
 	passed[0] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
@@ -748,6 +767,13 @@ static void	test_ft_split(void) {
 	arr = ft_split("Hello   World", ' ');
 	passed[8] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
 	safe_free_arr(arr);
+	g_malloc_fail_enabled = 1;
+	passed[9] = !forked_test(ft_split_malloc_fail_test);
+	passed[10] = !forked_test(ft_split_malloc_fail_test);
+	passed[11] = !forked_test(ft_split_malloc_fail_test);
+	passed[12] = !forked_test(ft_split_malloc_fail_test);
+	passed[13] = !forked_test(ft_split_malloc_fail_test);
+	g_malloc_fail_enabled = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_split");
@@ -760,6 +786,11 @@ static void	test_ft_split(void) {
 	print_result("Test only spaces", passed[6]);
 	print_result("Test no delimiter found", passed[7]);
 	print_result("Test consecutive delimiters", passed[8]);
+	print_result("Test malloc fail #1 (array)", passed[9]);
+	print_result("Test malloc fail #2 (word 1)", passed[10]);
+	print_result("Test malloc fail #3 (word 2)", passed[11]);
+	print_result("Test malloc fail #4 (word 3)", passed[12]);
+	print_result("Test malloc fail #5 (other)", passed[13]);
 }
 
 static void	test_ft_itoa(void) {
