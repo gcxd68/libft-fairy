@@ -185,7 +185,7 @@ static void	test_ft_lstiter(void) {
 	print_result("Test iter", passed[0]);
 }
 
-static void	*map_func(void *content) {
+static void *map_func(void *content) {
 	int *new = malloc(sizeof(int));
 	if (!new)
 		return NULL;
@@ -193,9 +193,22 @@ static void	*map_func(void *content) {
 	return new;
 }
 
-static void	*map_func_fail(void *content) {
-	(void)content;
-	return NULL;
+static void ft_lstmap_malloc_fail_test(void) {
+	int *v1 = malloc(sizeof(int)); *v1 = 1;
+	int *v2 = malloc(sizeof(int)); *v2 = 2;
+	int *v3 = malloc(sizeof(int)); *v3 = 3;
+	t_list *n1 = safe_lstnew(v1);
+	t_list *n2 = safe_lstnew(v2);
+	t_list *n3 = safe_lstnew(v3);
+	n1->next = n2;
+	n2->next = n3;
+	g_malloc_count = 0;
+	++g_malloc_fail_at;
+	g_malloc_fail_enabled = 1;
+	t_list *new_lst = ft_lstmap(n1, map_func, free);
+	g_malloc_fail_enabled = 0;
+	safe_lstclear(&new_lst, del_content);
+	safe_lstclear(&n1, free);
 }
 
 static void	test_ft_lstmap(void) {
@@ -204,7 +217,7 @@ static void	test_ft_lstmap(void) {
 	t_list	*n2 = safe_lstnew(&c2);
 	t_list	*n3 = safe_lstnew(&c3);
 	t_list	*new_lst;
-	int		passed[2];
+	int		passed[7];
 
 	n1->next = n2;
 	n2->next = n3;
@@ -213,17 +226,19 @@ static void	test_ft_lstmap(void) {
 				*(int *)new_lst->next->content == 4 &&
 				*(int *)new_lst->next->next->content == 6;
 	safe_lstclear(&new_lst, free);
-	new_lst = ft_lstmap(n1, map_func_fail, free);
-	passed[1] = !new_lst;
-	safe_lstclear(&new_lst, free);
-	free(n3);
-	free(n2);
-	free(n1);
+	g_malloc_fail_at = 0;
+	for (int i = 1; i < 7; i++)
+		passed[i] = !forked_test(ft_lstmap_malloc_fail_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstmap (bonus)");
 	print_result("Test map normal", passed[0]);
-	print_result("Test malloc fail", passed[1]);
+	print_result("Test malloc fail #1 (node 1)", passed[1]);
+	print_result("Test malloc fail #2 (content 1)", passed[2]);
+	print_result("Test malloc fail #3 (node 2)", passed[3]);
+	print_result("Test malloc fail #4 (content 2)", passed[4]);
+	print_result("Test malloc fail #5 (node 3)", passed[5]);
+	print_result("Test malloc fail #6 (content 3)", passed[6]);
 }
 
 int main(void) {
