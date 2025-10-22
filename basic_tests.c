@@ -717,18 +717,6 @@ static void	test_ft_strtrim(void) {
 	print_result("Test NULL set", passed[6]);
 }
 
-static int	g_malloc_count = 0;
-static int	g_malloc_fail_at = 0;
-static int	g_malloc_fail_enabled = 0;
-
-void	*__real_malloc(size_t size);
-
-void	*__wrap_malloc(size_t size) {
-	if (g_malloc_fail_enabled && ++g_malloc_count == g_malloc_fail_at)
-		return NULL;
-	return __real_malloc(size);
-}
-
 static void	ft_split_malloc_fail_test(void) {
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
@@ -768,11 +756,9 @@ static void	test_ft_split(void) {
 	passed[8] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
 	safe_free_arr(arr);
 	g_malloc_fail_enabled = 1;
-	passed[9] = !forked_test(ft_split_malloc_fail_test);
-	passed[10] = !forked_test(ft_split_malloc_fail_test);
-	passed[11] = !forked_test(ft_split_malloc_fail_test);
-	passed[12] = !forked_test(ft_split_malloc_fail_test);
-	passed[13] = !forked_test(ft_split_malloc_fail_test);
+	g_malloc_fail_at = 0;
+	for (int i = 9; i < 14; i++)
+		passed[i] = !forked_test(ft_split_malloc_fail_test);
 	g_malloc_fail_enabled = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;

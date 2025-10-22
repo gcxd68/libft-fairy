@@ -34,22 +34,10 @@ static void leak_test_ft_strtrim(void) {
 	free(trimmed);
 }
 
-static int	g_malloc_count = 0;
-static int	g_malloc_fail_at = 0;
-static int	g_malloc_fail_enabled = 0;
-
-void	*__real_malloc(size_t size);
-
-void	*__wrap_malloc(size_t size) {
-	if (g_malloc_fail_enabled && ++g_malloc_count == g_malloc_fail_at)
-		return NULL;
-	return __real_malloc(size);
-}
-
 static void	ft_split_malloc_fail_test(void) {
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
-	ft_split("Hello World Test 42", ' ');
+	ft_split("Hello World Test", ' ');
 }
 
 static void	leak_test_ft_split(void) {
@@ -57,7 +45,8 @@ static void	leak_test_ft_split(void) {
 
 	safe_free_arr(arr);
 	g_malloc_fail_enabled = 1;
-	for (int i = 0; i < 3; i++)
+	g_malloc_fail_at = 0;
+	for (int i = 0; i < 4; i++)
 		ft_split_malloc_fail_test();
 	g_malloc_fail_enabled = 0;
 }

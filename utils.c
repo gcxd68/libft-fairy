@@ -2,7 +2,10 @@
 #include <stdio.h>
 #include <sys/wait.h>
 
-int g_tests_failed = 0;
+int	g_malloc_count = 0;
+int	g_malloc_fail_at = 0;
+int	g_malloc_fail_enabled = 0;
+int	g_tests_failed = 0;
 
 int	forked_test(void (*test_func)(void)) {
 	pid_t pid;
@@ -41,6 +44,12 @@ void	print_result(const char *test_name, int passed) {
 	printf("%s" RESET "%s\n", passed ? GREEN "✓ " : RED "✗ ", test_name);
 	if (!passed)
 		g_tests_failed++;
+}
+
+void	*__wrap_malloc(size_t size) {
+	if (g_malloc_fail_enabled && ++g_malloc_count == g_malloc_fail_at)
+		return NULL;
+	return __real_malloc(size);
 }
 
 void	safe_free_arr(char **arr) {
