@@ -1,19 +1,25 @@
 #include "libft_fairy.h"
-#include <stdio.h>
 
 #ifndef VERBOSE
 # define VERBOSE 0
 #endif
 
+static int freed_count;
+
+static void free_count(void *content) {
+	free(content);
+	freed_count++;
+}
+
 static void test_ft_lstnew(void) {
 	int		content = 42;
-	t_list	*node = ft_lstnew(&content);
+	t_list	*n1 = ft_lstnew(&content);
 	int		passed[3];
 	
-	passed[0] = (node != NULL);
-	passed[1] = (node && node->content == &content);
-	passed[2] = (node && node->next == NULL);
-	free(node);
+	passed[0] = (n1 != NULL);
+	passed[1] = (n1 && n1->content == &content);
+	passed[2] = (n1 && n1->next == NULL);
+	free(n1);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstnew (bonus)");
@@ -22,17 +28,18 @@ static void test_ft_lstnew(void) {
 	print_result("Test next is NULL", passed[2]);
 }
 
-static void	test_ft_lstadd_front(void) {
-	int c1 = 1, c2 = 2;
-	t_list *lst = safe_lstnew(&c1);
-	t_list *new = safe_lstnew(&c2);
+static void test_ft_lstadd_front(void) {
+	int		c1 = 1, c2 = 2;
+	t_list	*n1 = safe_lstnew(&c1);
+	t_list	*n2 = safe_lstnew(&c2);
+	t_list	*lst = n1;
 	int passed[1];
 
-	ft_lstadd_front(&lst, new);
-	passed[0] = lst == new && *(int *)lst->content == 2 && 
-				*(int *)lst->next->content == 1;
-	free(lst->next);
-	free(lst);
+	ft_lstadd_front(&lst, n2);
+	passed[0] = lst == n2 && *(int *)lst->content == 2
+		&& *(int *)lst->next->content == 1;
+	free(n1);
+	free(n2);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstadd_front (bonus)");
@@ -40,19 +47,12 @@ static void	test_ft_lstadd_front(void) {
 }
 
 static void	test_ft_lstsize(void) {
-	int		c1 = 1, c2 = 2, c3 = 3;
-	t_list	*n1 = safe_lstnew(&c1);
-	t_list	*n2 = safe_lstnew(&c2);
-	t_list	*n3 = safe_lstnew(&c3);
+	t_list	*lst = create_test_list(1, 2, 3);
 	int		passed[2];
 
-	n1->next = n2;
-	n2->next = n3;
-	passed[0] = ft_lstsize(n1) == 3;
+	passed[0] = ft_lstsize(lst) == 3;
 	passed[1] = !ft_lstsize(NULL);
-	free(n3);
-	free(n2);
-	free(n1);
+	safe_lstclear(&lst, free);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstsize (bonus)");
@@ -61,19 +61,12 @@ static void	test_ft_lstsize(void) {
 }
 
 static void	test_ft_lstlast(void) {
-	int		c1 = 1, c2 = 2, c3 = 3;
-	t_list	*n1 = safe_lstnew(&c1);
-	t_list	*n2 = safe_lstnew(&c2);
-	t_list	*n3 = safe_lstnew(&c3);
+	t_list	*lst = create_test_list(1, 2, 3);
 	int		passed[2];
 
-	n1->next = n2;
-	n2->next = n3;
-	passed[0] = ft_lstlast(n1) == n3;
+	passed[0] = ft_lstlast(lst) == lst->next->next;
 	passed[1] = !ft_lstlast(NULL);
-	free(n3);
-	free(n2);
-	free(n1);
+	safe_lstclear(&lst, free);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstlast (bonus)");
@@ -97,46 +90,20 @@ static void	test_ft_lstadd_back(void) {
 	print_result("Test add back", passed[0]);
 }
 
-static void	del_content(void *content) {
-	(void)content;
-}
-
-static int freed_count;
-
-static void del_count(void *content) {
-	free(content);
-	freed_count++;
-}
-
 static void test_ft_lstdelone(void) {
-	int		*value1 = malloc(sizeof(int));
-	int		*value2 = malloc(sizeof(int));
-	int		*value3 = malloc(sizeof(int));
+	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*to_del = lst->next;
 	int		passed[2];
-	t_list	*lst = NULL;
-	t_list	*node1, *node2, *node3;
 
-	if (!value1 || !value2 || !value3) {
-		free(value1); free(value2); free(value3);
-		perror("libft-fairy: malloc");
-		exit(EXIT_FAILURE);
-	}
-	*value1 = 1; *value2 = 2; *value3 = 3;
-	node1 = safe_lstnew(value1);
-	node2 = safe_lstnew(value2);
-	node3 = safe_lstnew(value3);
-	safe_lstadd_back(&lst, node1);
-	safe_lstadd_back(&lst, node2);
-	safe_lstadd_back(&lst, node3);
-	node1->next = node3;
 	freed_count = 0;
-	ft_lstdelone(node2, del_count);
+	lst->next = lst->next->next;
+	ft_lstdelone(to_del, free_count);
 	passed[0] = (freed_count == 1);
 	int correct = (*(int *)lst->content == 1)
 		&& (*(int *)lst->next->content == 3)
 		&& lst->next->next == NULL;
 	passed[1] = correct;
-	safe_lstclear(&lst, del_count);
+	safe_lstclear(&lst, free);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstdelone (bonus)");
@@ -145,16 +112,12 @@ static void test_ft_lstdelone(void) {
 }
 
 static void	test_ft_lstclear(void) {
-	int 	c1 = 1, c2 = 2, c3 = 3;
-	t_list	*n1 = safe_lstnew(&c1);
-	t_list	*n2 = safe_lstnew(&c2);
-	t_list	*n3 = safe_lstnew(&c3);
+	t_list	*lst = create_test_list(1, 2, 3);
 	int		passed[1];
 
-	n1->next = n2;
-	n2->next = n3;
-	ft_lstclear(&n1, del_content);
-	passed[0] = !n1;
+	freed_count = 0;
+	ft_lstclear(&lst, free_count);
+	passed[0] = !lst && freed_count == 3;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstclear (bonus)");
@@ -166,66 +129,42 @@ static void	iter_func(void *content) {
 }
 
 static void	test_ft_lstiter(void) {
-	int 	c1 = 1, c2 = 2, c3 = 3;
-	t_list	*n1 = safe_lstnew(&c1);
-	t_list	*n2 = safe_lstnew(&c2);
-	t_list	*n3 = safe_lstnew(&c3);
+	t_list	*lst = create_test_list(1, 2, 3);
 	int		passed[1];
 
-	n1->next = n2;
-	n2->next = n3;
-	ft_lstiter(n1, iter_func);
-	passed[0] = c1 == 2 && c2 == 3 && c3 == 4;
-	free(n3);
-	free(n2);
-	free(n1);
+	ft_lstiter(lst, iter_func);
+	passed[0] = *(int *)lst->content == 2
+		&& *(int *)lst->next->content == 3
+		&& *(int *)lst->next->next->content == 4;
+	safe_lstclear(&lst, free);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstiter (bonus)");
 	print_result("Test iter", passed[0]);
 }
 
-static void *map_func(void *content) {
-	int *new = malloc(sizeof(int));
-	if (!new)
-		return NULL;
-	*new = *(int *)content * 2;
-	return new;
-}
-
 static void ft_lstmap_malloc_fail_test(void) {
-	int *v1 = malloc(sizeof(int)); *v1 = 1;
-	int *v2 = malloc(sizeof(int)); *v2 = 2;
-	int *v3 = malloc(sizeof(int)); *v3 = 3;
-	t_list *n1 = safe_lstnew(v1);
-	t_list *n2 = safe_lstnew(v2);
-	t_list *n3 = safe_lstnew(v3);
-	n1->next = n2;
-	n2->next = n3;
+	t_list	*lst = create_test_list(1, 2, 3);
+
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
 	g_malloc_fail_enabled = 1;
-	t_list *new_lst = ft_lstmap(n1, map_func, free);
+	t_list *new_lst = ft_lstmap(lst, map_func, free);
 	g_malloc_fail_enabled = 0;
 	safe_lstclear(&new_lst, free);
-	safe_lstclear(&n1, free);
+	safe_lstclear(&lst, free);
 }
 
 static void	test_ft_lstmap(void) {
-	int		c1 = 1, c2 = 2, c3 = 3;
-	t_list	*n1 = safe_lstnew(&c1);
-	t_list	*n2 = safe_lstnew(&c2);
-	t_list	*n3 = safe_lstnew(&c3);
-	t_list	*new_lst;
+	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*new_lst = ft_lstmap(lst, map_func, free);
 	int		passed[7];
 
-	n1->next = n2;
-	n2->next = n3;
-	new_lst = ft_lstmap(n1, map_func, free);
-	passed[0] = new_lst && *(int *)new_lst->content == 2 &&
-				*(int *)new_lst->next->content == 4 &&
-				*(int *)new_lst->next->next->content == 6;
+	passed[0] = new_lst && *(int *)new_lst->content == 2
+		&& *(int *)new_lst->next->content == 4
+		&& *(int *)new_lst->next->next->content == 6;
 	safe_lstclear(&new_lst, free);
+	safe_lstclear(&lst, free);
 	g_malloc_fail_at = 0;
 	for (int i = 1; i < 7; i++)
 		passed[i] = !forked_test(ft_lstmap_malloc_fail_test);

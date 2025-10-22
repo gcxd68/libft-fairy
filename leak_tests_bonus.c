@@ -1,72 +1,55 @@
 #include "libft_fairy.h"
-
-static void *map_func(void *content) {
-	int	*new = malloc(sizeof(int));
-
-	if (!new)
-		return NULL;
-	*new = *(int *)content * 2;
-	return new;
-}
+#include <stdio.h>
 
 static void leak_test_ft_lstnew(void) {
-	int		content = 42;
-	t_list	*node = ft_lstnew(&content);
+	int	*content = malloc(sizeof(int));
 
-	free(node);
+	if (!content) {
+		perror("libft-fairy: malloc failed");
+		exit(EXIT_FAILURE);
+	}
+	*content = 42;
+	t_list *node = ft_lstnew(content);
+	safe_lstdelone(node, free);
 }
 
 static void leak_test_ft_lstdelone(void) {
-	int		*val = malloc(sizeof(int));
+	int		*content = malloc(sizeof(int));
 	t_list	*node;
 
-	*val = 42;
-	node = safe_lstnew(val);
+	if (!content) {
+		perror("libft-fairy: malloc failed");
+		exit(EXIT_FAILURE);
+	}
+	*content = 42;
+	node = safe_lstnew(content);
 	ft_lstdelone(node, free);
 }
 
 static void leak_test_ft_lstclear(void) {
-	int *v1 = malloc(sizeof(int)); *v1 = 1;
-	int *v2 = malloc(sizeof(int)); *v2 = 2;
-	int *v3 = malloc(sizeof(int)); *v3 = 3;
-	t_list *n1 = safe_lstnew(v1);
-	t_list *n2 = safe_lstnew(v2);
-	t_list *n3 = safe_lstnew(v3);
-	n1->next = n2;
-	n2->next = n3;
-	ft_lstclear(&n1, free);
+	t_list	*lst = create_test_list(1, 2, 3);
+
+	ft_lstclear(&lst, free);
 }
 
 static void ft_lstmap_malloc_fail_test(void) {
-	int *v1 = malloc(sizeof(int)); *v1 = 1;
-	int *v2 = malloc(sizeof(int)); *v2 = 2;
-	int *v3 = malloc(sizeof(int)); *v3 = 3;
-	t_list *n1 = safe_lstnew(v1);
-	t_list *n2 = safe_lstnew(v2);
-	t_list *n3 = safe_lstnew(v3);
-	n1->next = n2;
-	n2->next = n3;
+	t_list	*lst = create_test_list(1, 2, 3);
+
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
 	g_malloc_fail_enabled = 1;
-	t_list *new_lst = ft_lstmap(n1, map_func, free);
+	t_list *new_lst = ft_lstmap(lst, map_func, free);
 	g_malloc_fail_enabled = 0;
 	(void)new_lst;
-	safe_lstclear(&n1, free);
+	safe_lstclear(&lst, free);
 }
 
 static void leak_test_ft_lstmap(void) {
-	int *v1 = malloc(sizeof(int)); *v1 = 1;
-	int *v2 = malloc(sizeof(int)); *v2 = 2;
-	int *v3 = malloc(sizeof(int)); *v3 = 3;
-	t_list *n1 = safe_lstnew(v1);
-	t_list *n2 = safe_lstnew(v2);
-	t_list *n3 = safe_lstnew(v3);
-	n1->next = n2;
-	n2->next = n3;
-	t_list *new_lst = ft_lstmap(n1, map_func, free);
+	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*new_lst = ft_lstmap(lst, map_func, free);
+
 	safe_lstclear(&new_lst, free);
-	safe_lstclear(&n1, free);
+	safe_lstclear(&lst, free);
 	g_malloc_fail_at = 0;
 	for (int i = 0; i < 6; i++)
 		ft_lstmap_malloc_fail_test();

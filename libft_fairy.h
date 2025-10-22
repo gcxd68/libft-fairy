@@ -7,6 +7,7 @@
 #define RED		"\033[0;31m"
 #define RESET	"\033[0m"
 
+extern int	g_del_count;
 extern int	g_malloc_count;
 extern int	g_malloc_fail_at;
 extern int	g_malloc_fail_enabled;
@@ -19,8 +20,11 @@ void		print_result(const char *test_name, int passed);
 void		*__real_malloc(size_t size);
 void		*__wrap_malloc(size_t size);
 void		safe_free_arr(char **arr);
+t_list		*create_test_list(int c1, int c2, int c3);
+void		*map_func(void *content);
 t_list		*safe_lstnew(void *content);
 void		safe_lstadd_back(t_list **lst, t_list *new);
+void		safe_lstdelone(t_list *lst, void (*del)(void*));
 void		safe_lstclear(t_list **lst, void (*del)(void*));
 
 #endif //LIBFT_FAIRY_H

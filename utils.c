@@ -60,6 +60,40 @@ void	safe_free_arr(char **arr) {
 	}
 }
 
+t_list *create_test_list(int c1, int c2, int c3)
+{
+	int *v1 = malloc(sizeof(int));
+	int *v2 = malloc(sizeof(int));
+	int *v3 = malloc(sizeof(int));
+	if (!v1 || !v2 || !v3) {
+		perror("libft-fairy: malloc failed");
+		free(v1); free(v2); free(v3);
+		exit(EXIT_FAILURE);
+	}
+	*v1 = c1; *v2 = c2; *v3 = c3;
+	t_list *n1 = safe_lstnew(v1);
+	t_list *n2 = safe_lstnew(v2);
+	t_list *n3 = safe_lstnew(v3);
+	if (!n1 || !n2 || !n3) {
+		if (n1) free(n1); else free(v1);
+		if (n2) free(n2); else free(v2);
+		if (n3) free(n3); else free(v3);
+		return NULL;
+	}
+	n1->next = n2;
+	n2->next = n3;
+	return n1;
+}
+
+void	*map_func(void *content) {
+	int	*new = malloc(sizeof(int));
+
+	if (!new)
+		return NULL;
+	*new = *(int *)content * 2;
+	return new;
+}
+
 t_list	*safe_lstnew(void *content) {
 	t_list	*node;
 
@@ -88,7 +122,7 @@ void	safe_lstadd_back(t_list **lst, t_list *new) {
 		*lst = new;
 }
 
-static void	safe_lstdelone(t_list *lst, void (*del)(void*)) {
+void	safe_lstdelone(t_list *lst, void (*del)(void*)) {
 	if (!lst || !del)
 		return ;
 	del(lst->content);
