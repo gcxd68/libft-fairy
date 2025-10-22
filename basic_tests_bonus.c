@@ -207,7 +207,7 @@ static void ft_lstmap_malloc_fail_test(void) {
 	g_malloc_fail_enabled = 1;
 	t_list *new_lst = ft_lstmap(n1, map_func, free);
 	g_malloc_fail_enabled = 0;
-	safe_lstclear(&new_lst, del_content);
+	safe_lstclear(&new_lst, free);
 	safe_lstclear(&n1, free);
 }
 
