@@ -180,11 +180,15 @@ static void ft_memcpy_null_test(void) {
 	ft_memcpy((void *)buffer, NULL, 5);
 }
 
+static void ft_memcpy_null_null_zero_test(void) {
+	ft_memcpy(NULL, NULL, 0);
+}
+
 static void	test_ft_memcpy(void) {
 	char	src[] = "Hello, World!";
 	char	dst1[20] = {0};
 	char	dst2[20] = {0};
-	int		passed[3];
+	int		passed[4];
 
 	ft_memcpy(dst1, src, strlen(src) + 1);
 	memcpy(dst2, src, strlen(src) + 1);
@@ -192,12 +196,14 @@ static void	test_ft_memcpy(void) {
 	ft_memcpy(dst1, "42", 2);
 	passed[1] = dst1[0] == '4' && dst1[1] == '2';
 	passed[2] = forked_test(ft_memcpy_null_test);
+	passed[3] = !forked_test(ft_memcpy_null_null_zero_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_memcpy");
 	print_result("Test basic memcpy", passed[0]);
 	print_result("Test partial copy", passed[1]);
 	print_result("Test NULL", passed[2]);
+	print_result("Test NULL-NULL-zero", passed[3]);
 }
 
 static void ft_memmove_null_test(void) {
@@ -206,12 +212,16 @@ static void ft_memmove_null_test(void) {
 	ft_memmove((void *)buffer, NULL, 5);
 }
 
+static void ft_memmove_null_null_zero_test(void) {
+	ft_memmove(NULL, NULL, 0);
+}
+
 static void test_ft_memmove(void) {
 	char	str1[] = "Hello, World!";
 	char	str2[] = "Hello, World!";
 	char	dst1[20] = {0};
 	char	dst2[20] = {0};
-	int		passed[7];
+	int		passed[8];
 
 	ft_memmove(str1 + 2, str1, 5);
 	memmove(str2 + 2, str2, 5);
@@ -240,6 +250,7 @@ static void test_ft_memmove(void) {
 	memmove(str2 + 1, str2, 5);
 	passed[5] = !strcmp(str1, str2);
 	passed[6] = forked_test(ft_memmove_null_test);
+	passed[7] = !forked_test(ft_memmove_null_null_zero_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_memmove");
@@ -250,6 +261,7 @@ static void test_ft_memmove(void) {
 	print_result("Test n = 0", passed[4]);
 	print_result("Test minimal overlap", passed[5]);
 	print_result("Test NULL", passed[6]);
+	print_result("Test NULL-NULL-zero", passed[7]);
 }
 
 static void	test_ft_strlcpy(void) {
