@@ -131,7 +131,7 @@ static void	test_ft_memset(void) {
 	char	str1[10] = {0};
 	char	str2[10] = {0};
 	void	*ret;
-	int		passed[3];
+	int		passed[4];
 
 	ret = ft_memset(str1, 'A', 5);
 	memset(str2, 'A', 5);
@@ -139,13 +139,17 @@ static void	test_ft_memset(void) {
 	ret = ft_memset(str1, 0, 10);
 	memset(str2, 0, 10);
 	passed[1] = !memcmp(str1, str2, 10) && ret == str1;
-	passed[2] = forked_test(ft_memset_null_test);
+	memset(str1, 200, 10);
+	ft_memset(str2, 200, 10);
+	passed[2] = !memcmp(str1, str2, 10);
+	passed[3] = forked_test(ft_memset_null_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_memset");
 	print_result("Test basic memset", passed[0]);
 	print_result("Test memset with 0", passed[1]);
-	print_result("Test memset with NULL", passed[2]);
+	print_result("Test unsigned char fill (200)", passed[2]);
+	print_result("Test NULL", passed[3]);
 }
 
 static void	test_ft_bzero(void) {
@@ -377,12 +381,13 @@ static void ft_strchr_null_test(void) {
 
 static void	test_ft_strchr(void)
 {
-	const char	*str = "Hello, World!";
-	const int	passed[5] = {
+	const char str[] = "Hello\xC8World";
+	const int	passed[6] = {
 		ft_strchr(str, 'o') == strchr(str, 'o'),
 		ft_strchr(str, 'W') == strchr(str, 'W'),
 		ft_strchr(str, '\0') == strchr(str, '\0'),
 		!ft_strchr(str, 'x'),
+		ft_strchr(str, 200) == strchr(str, 200),
 		forked_test(ft_strchr_null_test)
 	};
 
@@ -393,7 +398,8 @@ static void	test_ft_strchr(void)
 	print_result("Test find 'W'", passed[1]);
 	print_result("Test find '\\0'", passed[2]);
 	print_result("Test not found 'x'", passed[3]);
-	print_result("Test NULL", passed[4]);
+	print_result("Test unsigned char comparison (200)", passed[4]);
+	print_result("Test NULL", passed[5]);
 }
 
 static void ft_strrchr_null_test(void) {
@@ -401,12 +407,13 @@ static void ft_strrchr_null_test(void) {
 }
 
 static void	test_ft_strrchr(void) {
-	const char	*str = "Hello, World!";
-	const int	passed[5] = {
+	const char str[] = "Hello\xC8World\xC8!";
+	const int	passed[6] = {
 		ft_strrchr(str, 'o') == strrchr(str, 'o'),
 		ft_strrchr(str, 'W') == strrchr(str, 'W'),
 		ft_strrchr(str, '\0') == strrchr(str, '\0'),
 		!ft_strrchr(str, 'x'),
+		ft_strrchr(str, 200) == strrchr(str, 200),
 		forked_test(ft_strrchr_null_test)
 	};
 
@@ -417,7 +424,8 @@ static void	test_ft_strrchr(void) {
 	print_result("Test find 'W'", passed[1]);
 	print_result("Test find '\\0'", passed[2]);
 	print_result("Test not found 'x'", passed[3]);
-	print_result("Test NULL", passed[4]);
+	print_result("Test unsigned char comparison (200)", passed[4]);
+	print_result("Test NULL", passed[5]);
 }
 
 static void ft_strncmp_null_test(void) {
