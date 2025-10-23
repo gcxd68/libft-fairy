@@ -519,7 +519,7 @@ static void ft_atoi_null_test(void) {
 static void	test_ft_atoi(void) {
 	const int	passed[12] = {
 		ft_atoi("  \t\n\v\f\r +42") == 42,
-		ft_atoi("     -42*") == -42,
+		ft_atoi("\v \t\r  \n    \f-42*") == -42,
 		!ft_atoi("0"),
 		!ft_atoi("++2"),
 		!ft_atoi("--4"),
@@ -654,7 +654,6 @@ static void ft_substr_start_past_end_test(void) {
     free(res);
 }
 
-
 static void	test_ft_substr(void) {
 	char	*sub = ft_substr("Hello, World!", 7, 5);
 	int		passed[8];
@@ -769,7 +768,7 @@ static void	ft_split_malloc_fail_test(void) {
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
 	char **result = ft_split("Hello World Test", ' ');
-	safe_free_arr(result);
+	(void)result;
 }
 
 static void	test_ft_split(void) {
