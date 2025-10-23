@@ -76,6 +76,7 @@ t_list *create_test_list(int c1, int c2, int c3)
 	t_list *n2 = safe_lstnew(v2);
 	t_list *n3 = safe_lstnew(v3);
 	if (!n1 || !n2 || !n3) {
+		perror("libft-fairy: malloc failed");
 		if (n1) free(n1); else free(v1);
 		if (n2) free(n2); else free(v2);
 		if (n3) free(n3); else free(v3);
