@@ -4,14 +4,14 @@
 # define VERBOSE 0
 #endif
 
-static int freed_count;
+static int	freed_count;
 
-static void free_count(void *content) {
+static void	free_count(void *content) {
 	free(content);
 	freed_count++;
 }
 
-static void test_ft_lstnew(void) {
+static void	test_ft_lstnew(void) {
 	int		content = 42;
 	t_list	*n1 = ft_lstnew(&content);
 	int		passed[3];
@@ -34,13 +34,13 @@ static void	ft_lstadd_front_null_new_test(void) {
 	ft_lstadd_front(&lst, NULL);
 }
 
-static void test_ft_lstadd_front(void) {
+static void	test_ft_lstadd_front(void) {
 	int		c1 = 1, c2 = 2;
 	t_list	*n1 = safe_lstnew(&c1);
 	t_list	*n2 = safe_lstnew(&c2);
 	t_list	*lst = n1;
 	t_list	*empty, *node;
-	int passed[3];
+	int		passed[3];
 
 	ft_lstadd_front(&lst, n2);
 	passed[0] = lst == n2 && *(int *)lst->content == 2
@@ -120,7 +120,7 @@ static void	test_ft_lstadd_back(void) {
 	print_result("Test add NULL node", passed[2]);
 }
 
-static void test_ft_lstdelone(void) {
+static void	test_ft_lstdelone(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 	t_list	*to_del = lst->next;
 	int		passed[2];
@@ -173,14 +173,14 @@ static void	test_ft_lstiter(void) {
 	print_result("Test iter", passed[0]);
 }
 
-static void ft_lstmap_null_test(void) {
+static void	ft_lstmap_null_test(void) {
 	t_list *lst = ft_lstmap(NULL, map_func, free);
 
 	if (lst)
 		abort();
 }
 
-static void ft_lstmap_malloc_fail_test(void) {
+static void	ft_lstmap_malloc_fail_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
 	g_malloc_count = 0;
@@ -219,7 +219,7 @@ static void	test_ft_lstmap(void) {
 	print_result("Test malloc fail #6 (content 3)", passed[7]);
 }
 
-int main(void) {
+int	main(void) {
 	test_ft_lstnew();
 	test_ft_lstadd_front();
 	test_ft_lstsize();

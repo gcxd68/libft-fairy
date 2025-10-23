@@ -1,6 +1,6 @@
 #include "libft_fairy.h"
 
-static char mapi_func(unsigned int i, char c) {
+static char	mapi_func(unsigned int i, char c) {
 	return c + i;
 }
 
@@ -22,13 +22,13 @@ static void	leak_test_ft_substr(void) {
 	free(sub);
 }
 
-static void leak_test_ft_strjoin(void) {
+static void	leak_test_ft_strjoin(void) {
 	char	*joined = ft_strjoin("Hello", " World");
 
 	free(joined);
 }
 
-static void leak_test_ft_strtrim(void) {
+static void	leak_test_ft_strtrim(void) {
 	char	*trimmed = ft_strtrim("   Hello World   ", " ");
 
 	free(trimmed);
@@ -51,7 +51,7 @@ static void	leak_test_ft_split(void) {
 	g_malloc_fail_enabled = 0;
 }
 
-static void leak_test_ft_itoa(void) {
+static void	leak_test_ft_itoa(void) {
 	char	*num1 = ft_itoa(42);
 	char	*num2 = ft_itoa(-2147483648);
 
@@ -59,13 +59,13 @@ static void leak_test_ft_itoa(void) {
 	free(num2);
 }
 
-static void leak_test_ft_strmapi(void) {
+static void	leak_test_ft_strmapi(void) {
 	char	*mapped = ft_strmapi("abc", mapi_func);
 
 	free(mapped);
 }
 
-int main(void) {
+int	main(void) {
 	leak_test_ft_calloc();
 	leak_test_ft_strdup();
 	leak_test_ft_substr();

@@ -100,7 +100,7 @@ static void	test_ft_isprint(void) {
 	print_result("Test 'a'", passed[4]);
 }
 
-static void ft_strlen_null_test(void) {
+static void	ft_strlen_null_test(void) {
 	ft_strlen(NULL);
 }
 
@@ -123,7 +123,7 @@ static void	test_ft_strlen(void) {
 	print_result("Test NULL", passed[4]);
 }
 
-static void ft_memset_null_test(void) {
+static void	ft_memset_null_test(void) {
 	ft_memset(NULL, 0, 5);
 }
 
@@ -158,7 +158,6 @@ static void	test_ft_bzero(void) {
 
 	memset(str, 'A', 10);
 	ft_bzero(str, 5);
-
 	passed[0] = 1;
 	for (int i = 0; passed[0] && i < 5; i++)
 		if (str[i])
@@ -178,13 +177,13 @@ static void	test_ft_bzero(void) {
 	print_result("Test bzero all", passed[1]);
 }
 
-static void ft_memcpy_null_test(void) {
+static void	ft_memcpy_null_test(void) {
 	char	buffer[10];
 
 	ft_memcpy((void *)buffer, NULL, 5);
 }
 
-static void ft_memcpy_null_null_zero_test(void) {
+static void	ft_memcpy_null_null_zero_test(void) {
 	ft_memcpy(NULL, NULL, 0);
 }
 
@@ -210,17 +209,17 @@ static void	test_ft_memcpy(void) {
 	print_result("Test NULL-NULL-zero", passed[3]);
 }
 
-static void ft_memmove_null_test(void) {
+static void	ft_memmove_null_test(void) {
 	char	buffer[10];
 
 	ft_memmove((void *)buffer, NULL, 5);
 }
 
-static void ft_memmove_null_null_zero_test(void) {
+static void	ft_memmove_null_null_zero_test(void) {
 	ft_memmove(NULL, NULL, 0);
 }
 
-static void test_ft_memmove(void) {
+static void	test_ft_memmove(void) {
 	char	str1[] = "Hello, World!";
 	char	str2[] = "Hello, World!";
 	char	dst1[20] = {0};
@@ -287,7 +286,7 @@ static void	test_ft_strlcpy(void) {
 	print_result("Test size 0", passed[2]);
 }
 
-static void ft_strlcat_no_null_terminator_test(void) {
+static void	ft_strlcat_no_null_terminator_test(void) {
 	char	dst[10];
 	size_t	len;
 
@@ -375,13 +374,13 @@ static void	test_ft_tolower(void) {
 	print_result("Test '0'", passed[3]);
 }
 
-static void ft_strchr_null_test(void) {
+static void	ft_strchr_null_test(void) {
 	ft_strchr(NULL, 'a');
 }
 
 static void	test_ft_strchr(void)
 {
-	const char str[] = "Hello\xC8World";
+	const char	str[] = "Hello\xC8World";
 	const int	passed[6] = {
 		ft_strchr(str, 'o') == strchr(str, 'o'),
 		ft_strchr(str, 'W') == strchr(str, 'W'),
@@ -402,12 +401,12 @@ static void	test_ft_strchr(void)
 	print_result("Test NULL", passed[5]);
 }
 
-static void ft_strrchr_null_test(void) {
+static void	ft_strrchr_null_test(void) {
 	ft_strrchr(NULL, 'a');
 }
 
 static void	test_ft_strrchr(void) {
-	const char str[] = "Hello\xC8World\xC8!";
+	const char	str[] = "Hello\xC8World\xC8!";
 	const int	passed[6] = {
 		ft_strrchr(str, 'o') == strrchr(str, 'o'),
 		ft_strrchr(str, 'W') == strrchr(str, 'W'),
@@ -428,7 +427,7 @@ static void	test_ft_strrchr(void) {
 	print_result("Test NULL", passed[5]);
 }
 
-static void ft_strncmp_null_test(void) {
+static void	ft_strncmp_null_test(void) {
 	ft_strncmp(NULL, "abc", 3);
 }
 
@@ -460,9 +459,9 @@ static void	test_ft_strncmp(void) {
 }
 
 static void	test_ft_memchr(void) {
-	const char	*str = "Hello, World!";
-	const unsigned char bin[] = {0, 128, 255, 42};
-	const int	passed[6] = {
+	const char			*str = "Hello, World!";
+	const unsigned char	bin[] = {0, 128, 255, 42};
+	const int			passed[6] = {
 		ft_memchr(str, 'o', 13) == memchr(str, 'o', 13),
 		ft_memchr(str, 'W', 13) == memchr(str, 'W', 13),
 		!ft_memchr(str, 'x', 13),
@@ -483,11 +482,11 @@ static void	test_ft_memchr(void) {
 }
 
 static void	test_ft_memcmp(void) {
-	char	buf1[] = {1, 2, 3, 4, 5};
-	char	buf2[] = {1, 2, 3, 4, 6};
-	char	high1[] = {'A', '\200', 0};
-	char	high2[] = {'A', '\0', 0};
-	const int passed[6] = {
+	char		buf1[] = {1, 2, 3, 4, 5};
+	char		buf2[] = {1, 2, 3, 4, 6};
+	char		high1[] = {'A', '\200', 0};
+	char		high2[] = {'A', '\0', 0};
+	const int	passed[6] = {
 		!ft_memcmp("Hello", "Hello", 5),
 		ft_memcmp("Hello", "World", 5),
 		!ft_memcmp("Hello", "World", 0),
@@ -527,11 +526,11 @@ static void	test_ft_strnstr(void) {
 	print_result("Test len too short", passed[4]);
 }
 
-static void ft_atoi_overflow_test(void) {
+static void	ft_atoi_overflow_test(void) {
 	ft_atoi("9999999999999999999");
 }
 
-static void ft_atoi_null_test(void) {
+static void	ft_atoi_null_test(void) {
 	ft_atoi(NULL);
 }
 
@@ -568,27 +567,27 @@ static void	test_ft_atoi(void) {
 	print_result("Test NULL", passed[11]);
 }
 
-static void ft_calloc_overflow_write_test(void) {
+static void	ft_calloc_overflow_write_test(void) {
 	const size_t	size_max = ~(size_t)0;
 	char			*ptr = ft_calloc(size_max >> 1, size_max >> 1);
 
 	ptr[0] = 'x';
 }
 
-static void ft_calloc_overflow_free_test(void) {
+static void	ft_calloc_overflow_free_test(void) {
 	const size_t	size_max = ~(size_t)0;
 	char			*ptr = ft_calloc(size_max >> 1, size_max >> 1);
 
 	free(ptr);
 }
 
-static void ft_calloc_zero_count_test(void) {
+static void	ft_calloc_zero_count_test(void) {
 	void	*ptr = ft_calloc(0, 5);
 
 	free(ptr);
 }
 
-static void ft_calloc_zero_size_test(void) {
+static void	ft_calloc_zero_size_test(void) {
 	void	*ptr = ft_calloc(5, 0);
 
 	free(ptr);
@@ -621,7 +620,7 @@ static void	test_ft_calloc(void) {
 	print_result("Test size = 0", passed[5]);
 }
 
-static void ft_strdup_empty_test(void) {
+static void	ft_strdup_empty_test(void) {
 	char	*dup = ft_strdup("");
 
 	dup[0] = 'a';
@@ -646,11 +645,11 @@ static void	test_ft_strdup(void) {
 	print_result("Test empty string", passed[2]);
 }
 
-static void ft_substr_null_test(void) {
+static void	ft_substr_null_test(void) {
 	ft_substr(NULL, 0, 5);
 }
 
-static void ft_substr_empty_test(void) {
+static void	ft_substr_empty_test(void) {
 	char	*sub1 = ft_substr("Hello", 10, 5);
 	char	*sub2 = ft_substr("test", 0, 0);
 
@@ -660,17 +659,16 @@ static void ft_substr_empty_test(void) {
 	free(sub2);
 }
 
-static void ft_substr_start_past_end_test(void) {
-    char *res;
+static void	ft_substr_start_past_end_test(void) {
+	char	*res = ft_substr("", 1, 1);
 
-    res = ft_substr("", 1, 1);
-    if (!res || res[0] != '\0')
-        abort();
-    free(res);
-    res = ft_substr("abc", 5, 2);
-    if (!res || res[0] != '\0')
-        abort();
-    free(res);
+	if (!res || res[0] != '\0')
+		abort();
+	free(res);
+	res = ft_substr("abc", 5, 2);
+	if (!res || res[0] != '\0')
+		abort();
+	free(res);
 }
 
 static void	test_ft_substr(void) {
@@ -731,19 +729,19 @@ static void	test_ft_strjoin(void) {
 	print_result("Test short strings", passed[3]);
 }
 
-static void ft_strtrim_empty_string_test(void) {
+static void	ft_strtrim_empty_string_test(void) {
 	ft_strtrim("", " ");
 }
 
-static void ft_strtrim_all_trim_test(void) {
+static void	ft_strtrim_all_trim_test(void) {
 	ft_strtrim("xxxxx", "x");
 }
 
-static void ft_strtrim_null_input_test(void) {
+static void	ft_strtrim_null_input_test(void) {
 	ft_strtrim(NULL, " ");
 }
 
-static void ft_strtrim_null_set_test(void) {
+static void	ft_strtrim_null_set_test(void) {
 	ft_strtrim("test", NULL);
 }
 
@@ -883,15 +881,15 @@ static void	test_ft_itoa(void) {
 	print_result("Test INT_MAX", passed[4]);
 }
 
-static char mapi_func(unsigned int i, char c) {
+static char	mapi_func(unsigned int i, char c) {
 	return c + i;
 }
 
-static void ft_strmapi_null_func_test(void) {
+static void	ft_strmapi_null_func_test(void) {
 	ft_strmapi("test", NULL);
 }
 
-static void test_ft_strmapi(void) {
+static void	test_ft_strmapi(void) {
 	char	*result = ft_strmapi("abc", mapi_func);
 	int		passed[3];
 
@@ -913,7 +911,7 @@ static void	iteri_func(unsigned int i, char *c) {
 	*c = *c + i;
 }
 
-static void ft_striteri_null_func_test(void) {
+static void	ft_striteri_null_func_test(void) {
 	ft_striteri("test", NULL);
 }
 
@@ -934,10 +932,9 @@ static void	test_ft_striteri(void) {
 static int	test_fd_output(void (*func)(void *, int), void *input, 
 							const char *expected, size_t read_len) {
 	char	buf[50] = {0};
-	int		fd;
+	int		fd = open("/tmp/test_fd", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	int		result;
 
-	fd = open("/tmp/test_fd", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	func(input, fd);
 	close(fd);
 	fd = open("/tmp/test_fd", O_RDONLY);
@@ -967,10 +964,10 @@ static void	wrapper_putnbr(void *n, int fd) {
 
 static void	test_ft_putchar_fd(void) {
 	char	c = '0';
-	int		passed[2];
-
 	char	buf[10];
 	int		fd = open("/tmp/test_putchar", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	int		passed[2];
+
 	ft_putchar_fd('A', fd);
 	ft_putchar_fd('B', fd);
 	close(fd);
@@ -1031,7 +1028,7 @@ static void	test_ft_putnbr_fd(void) {
 	print_result("Test INT_MAX", passed[4]);
 }
 
-int main(void) {
+int	main(void) {
 	test_ft_isalpha();
 	test_ft_isdigit();
 	test_ft_isalnum();

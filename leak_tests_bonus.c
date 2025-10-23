@@ -1,7 +1,7 @@
 #include "libft_fairy.h"
 #include <stdio.h>
 
-static void leak_test_ft_lstnew(void) {
+static void	leak_test_ft_lstnew(void) {
 	int	*content = malloc(sizeof(int));
 
 	if (!content) {
@@ -13,7 +13,7 @@ static void leak_test_ft_lstnew(void) {
 	safe_lstdelone(node, free);
 }
 
-static void leak_test_ft_lstdelone(void) {
+static void	leak_test_ft_lstdelone(void) {
 	int		*content = malloc(sizeof(int));
 	t_list	*node;
 
@@ -26,13 +26,13 @@ static void leak_test_ft_lstdelone(void) {
 	ft_lstdelone(node, free);
 }
 
-static void leak_test_ft_lstclear(void) {
+static void	leak_test_ft_lstclear(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
 	ft_lstclear(&lst, free);
 }
 
-static void ft_lstmap_malloc_fail_test(void) {
+static void	ft_lstmap_malloc_fail_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
 	g_malloc_count = 0;
@@ -44,7 +44,7 @@ static void ft_lstmap_malloc_fail_test(void) {
 	safe_lstclear(&lst, free);
 }
 
-static void leak_test_ft_lstmap(void) {
+static void	leak_test_ft_lstmap(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 	t_list	*new_lst = ft_lstmap(lst, map_func, free);
 
@@ -55,7 +55,7 @@ static void leak_test_ft_lstmap(void) {
 		ft_lstmap_malloc_fail_test();
 }
 
-int main(void) {
+int	main(void) {
 	leak_test_ft_lstnew();
 	leak_test_ft_lstdelone();
 	leak_test_ft_lstclear();

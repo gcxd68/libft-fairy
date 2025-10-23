@@ -8,8 +8,8 @@ int	g_malloc_fail_enabled = 0;
 int	g_tests_failed = 0;
 
 int	forked_test(void (*test_func)(void)) {
-	pid_t pid;
-	int status;
+	pid_t	pid;
+	int		status;
 
 	fflush(stdout);
 	if ((pid = fork()) == -1) {
@@ -62,9 +62,10 @@ void	safe_free_arr(char **arr) {
 
 t_list *create_test_list(int c1, int c2, int c3)
 {
-	int *v1 = malloc(sizeof(int));
-	int *v2 = malloc(sizeof(int));
-	int *v3 = malloc(sizeof(int));
+	int	*v1 = malloc(sizeof(int));
+	int	*v2 = malloc(sizeof(int));
+	int	*v3 = malloc(sizeof(int));
+
 	if (!v1 || !v2 || !v3) {
 		perror("libft-fairy: malloc failed");
 		free(v1); free(v2); free(v3);
@@ -95,9 +96,8 @@ void	*map_func(void *content) {
 }
 
 t_list	*safe_lstnew(void *content) {
-	t_list	*node;
+	t_list	*node = malloc(sizeof(t_list));
 
-	node = malloc(sizeof(t_list));
 	if (!node)
 		return (NULL);
 	node->content = content;
