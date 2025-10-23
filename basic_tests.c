@@ -164,9 +164,9 @@ static void	test_ft_bzero(void) {
 			passed[0] = 0;
 	ft_bzero(str, 10);
 	passed[1] = 1;
-	for (int i = 0; passed[0] && i < 10; i++)
+	for (int i = 0; passed[1] && i < 10; i++)
 		if (str[i])
-			passed[0] = 0;
+			passed[1] = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_bzero");
@@ -730,7 +730,7 @@ static void ft_strtrim_null_set_test(void) {
 
 static void	test_ft_strtrim(void) {
 	char	*trimmed = ft_strtrim("   Hello   ", " ");
-	int		passed[8];
+	int		passed[9];
 
 	passed[0] = !strcmp(trimmed, "Hello");
 	free(trimmed);
@@ -743,10 +743,13 @@ static void	test_ft_strtrim(void) {
 	trimmed = ft_strtrim("abcdcba", "abc");
 	passed[3] = !strcmp(trimmed, "d");
 	free(trimmed);
-	passed[4] = !forked_test(ft_strtrim_empty_string_test);
-	passed[5] = !forked_test(ft_strtrim_all_trim_test);
-	passed[6] = !forked_test(ft_strtrim_null_input_test);
-	passed[7] = !forked_test(ft_strtrim_null_set_test);
+	trimmed = ft_strtrim("Hello", "");
+	passed[4] = !strcmp(trimmed, "Hello");
+	free(trimmed);
+	passed[5] = !forked_test(ft_strtrim_empty_string_test);
+	passed[6] = !forked_test(ft_strtrim_all_trim_test);
+	passed[7] = !forked_test(ft_strtrim_null_input_test);
+	passed[8] = !forked_test(ft_strtrim_null_set_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strtrim");
@@ -754,10 +757,11 @@ static void	test_ft_strtrim(void) {
 	print_result("Test custom set", passed[1]);
 	print_result("Test no trim", passed[2]);
 	print_result("Test multiple occurrences", passed[3]);
-	print_result("Test empty string", passed[4]);
-	print_result("Test all trim", passed[5]);
-	print_result("Test NULL input", passed[6]);
-	print_result("Test NULL set", passed[7]);
+	print_result("Test no set", passed[4]);
+	print_result("Test empty string", passed[5]);
+	print_result("Test all trim", passed[6]);
+	print_result("Test NULL input", passed[7]);
+	print_result("Test NULL set", passed[8]);
 }
 
 static void	ft_split_null_test(void) {
