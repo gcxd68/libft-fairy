@@ -283,10 +283,20 @@ static void	test_ft_strlcpy(void) {
 	print_result("Test size 0", passed[2]);
 }
 
+static void ft_strlcat_no_null_terminator_test(void) {
+	char	dst[10];
+	size_t	len;
+
+	memset(dst, 'A', sizeof(dst));
+	len = ft_strlcat(dst, "World", 10);
+	if (len != 15)
+		abort();
+}
+
 static void	test_ft_strlcat(void) {
 	char	dst[20];
 	size_t	len;
-	int		passed[8];
+	int		passed[9];
 	
 	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, " World", 20);
@@ -312,6 +322,7 @@ static void	test_ft_strlcat(void) {
 	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, "X", 6);
 	passed[7] = !strcmp(dst, "Hello") && len == 6;
+	passed[8] = !forked_test(ft_strlcat_no_null_terminator_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strlcat");
@@ -323,6 +334,7 @@ static void	test_ft_strlcat(void) {
 	print_result("Test empty src", passed[5]);
 	print_result("Test empty dst", passed[6]);
 	print_result("Test no room for concat", passed[7]);
+	print_result("Test buffer without '\\0'", passed[8]);
 }
 
 static void	test_ft_toupper(void) {
@@ -629,9 +641,23 @@ static void ft_substr_empty_test(void) {
 	free(sub2);
 }
 
+static void ft_substr_start_past_end_test(void) {
+    char *res;
+
+    res = ft_substr("", 1, 1);
+    if (!res || res[0] != '\0')
+        abort();
+    free(res);
+    res = ft_substr("abc", 5, 2);
+    if (!res || res[0] != '\0')
+        abort();
+    free(res);
+}
+
+
 static void	test_ft_substr(void) {
 	char	*sub = ft_substr("Hello, World!", 7, 5);
-	int		passed[7];
+	int		passed[8];
 
 	passed[0] = !strcmp(sub, "World");
 	free(sub);
@@ -649,6 +675,7 @@ static void	test_ft_substr(void) {
 	free(sub);
 	passed[5] = !forked_test(ft_substr_null_test);
 	passed[6] = !forked_test(ft_substr_empty_test);
+	passed[7] = !forked_test(ft_substr_start_past_end_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_substr");
@@ -659,6 +686,7 @@ static void	test_ft_substr(void) {
 	print_result("Test len = 0", passed[4]);
 	print_result("Test NULL", passed[5]);
 	print_result("Test empty string alloc", passed[6]);
+	print_result("Test start past end", passed[7]);
 }
 
 static void	test_ft_strjoin(void) {
