@@ -28,22 +28,37 @@ static void test_ft_lstnew(void) {
 	print_result("Test next is NULL", passed[2]);
 }
 
+static void	ft_lstadd_front_null_new_test(void) {
+	t_list	*lst = NULL;
+
+	ft_lstadd_front(&lst, NULL);
+}
+
 static void test_ft_lstadd_front(void) {
 	int		c1 = 1, c2 = 2;
 	t_list	*n1 = safe_lstnew(&c1);
 	t_list	*n2 = safe_lstnew(&c2);
 	t_list	*lst = n1;
-	int passed[1];
+	t_list	*empty, *node;
+	int passed[3];
 
 	ft_lstadd_front(&lst, n2);
 	passed[0] = lst == n2 && *(int *)lst->content == 2
 		&& *(int *)lst->next->content == 1;
 	free(n1);
 	free(n2);
+	empty = NULL;
+	node = safe_lstnew(&c1);
+	ft_lstadd_front(&empty, node);
+	passed[1] = empty == node && empty->next == NULL;
+	free(node);
+	passed[2] = !forked_test(ft_lstadd_front_null_new_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstadd_front (bonus)");
 	print_result("Test add front", passed[0]);
+	print_result("Test add to empty list", passed[1]);
+	print_result("Test add NULL node", passed[2]);
 }
 
 static void	test_ft_lstsize(void) {
@@ -74,20 +89,35 @@ static void	test_ft_lstlast(void) {
 	print_result("Test NULL", passed[1]);
 }
 
+static void	ft_lstadd_back_null_new_test(void) {
+	t_list	*lst = NULL;
+
+	ft_lstadd_back(&lst, NULL);
+}
+
 static void	test_ft_lstadd_back(void) {
 	int		c1 = 1, c2 = 2;
 	t_list	*lst = safe_lstnew(&c1);
 	t_list	*new = safe_lstnew(&c2);
-	int		passed[1];
+	t_list	*empty, *node;
+	int		passed[3];
 
 	ft_lstadd_back(&lst, new);
 	passed[0] = lst->next == new && *(int *)new->content == 2;
 	free(new);
 	free(lst);
+	empty = NULL;
+	node = safe_lstnew(&c1);
+	ft_lstadd_back(&empty, node);
+	passed[1] = empty == node && empty->next == NULL;
+	free(node);
+	passed[2] = !forked_test(ft_lstadd_back_null_new_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstadd_back (bonus)");
 	print_result("Test add back", passed[0]);
+	print_result("Test add to empty list", passed[1]);
+	print_result("Test add NULL node", passed[2]);
 }
 
 static void test_ft_lstdelone(void) {
@@ -143,6 +173,13 @@ static void	test_ft_lstiter(void) {
 	print_result("Test iter", passed[0]);
 }
 
+static void ft_lstmap_null_test(void) {
+	t_list *lst = ft_lstmap(NULL, map_func, free);
+
+	if (lst)
+		abort();
+}
+
 static void ft_lstmap_malloc_fail_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
@@ -158,26 +195,28 @@ static void ft_lstmap_malloc_fail_test(void) {
 static void	test_ft_lstmap(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 	t_list	*new_lst = ft_lstmap(lst, map_func, free);
-	int		passed[7];
+	int		passed[8];
 
 	passed[0] = new_lst && *(int *)new_lst->content == 2
 		&& *(int *)new_lst->next->content == 4
 		&& *(int *)new_lst->next->next->content == 6;
 	safe_lstclear(&new_lst, free);
 	safe_lstclear(&lst, free);
+	passed[1] = !forked_test(ft_lstmap_null_test);
 	g_malloc_fail_at = 0;
-	for (int i = 1; i < 7; i++)
+	for (int i = 2; i < 8; i++)
 		passed[i] = !forked_test(ft_lstmap_malloc_fail_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstmap (bonus)");
 	print_result("Test map normal", passed[0]);
-	print_result("Test malloc fail #1 (node 1)", passed[1]);
-	print_result("Test malloc fail #2 (content 1)", passed[2]);
-	print_result("Test malloc fail #3 (node 2)", passed[3]);
-	print_result("Test malloc fail #4 (content 2)", passed[4]);
-	print_result("Test malloc fail #5 (node 3)", passed[5]);
-	print_result("Test malloc fail #6 (content 3)", passed[6]);
+	print_result("Test NULL", passed[1]);
+	print_result("Test malloc fail #1 (node 1)", passed[2]);
+	print_result("Test malloc fail #2 (content 1)", passed[3]);
+	print_result("Test malloc fail #3 (node 2)", passed[4]);
+	print_result("Test malloc fail #4 (content 2)", passed[5]);
+	print_result("Test malloc fail #5 (node 3)", passed[6]);
+	print_result("Test malloc fail #6 (content 3)", passed[7]);
 }
 
 int main(void) {
