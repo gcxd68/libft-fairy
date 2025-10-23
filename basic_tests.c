@@ -703,7 +703,7 @@ static void ft_strtrim_null_set_test(void) {
 
 static void	test_ft_strtrim(void) {
 	char	*trimmed = ft_strtrim("   Hello   ", " ");
-	int		passed[7];
+	int		passed[8];
 
 	passed[0] = !strcmp(trimmed, "Hello");
 	free(trimmed);
@@ -713,20 +713,28 @@ static void	test_ft_strtrim(void) {
 	trimmed = ft_strtrim("Hello", "xyz");
 	passed[2] = !strcmp(trimmed, "Hello");
 	free(trimmed);
-	passed[3] = !forked_test(ft_strtrim_empty_string_test);
-	passed[4] = !forked_test(ft_strtrim_all_trim_test);
-	passed[5] = !forked_test(ft_strtrim_null_input_test);
-	passed[6] = !forked_test(ft_strtrim_null_set_test);
+	trimmed = ft_strtrim("abcdcba", "abc");
+	passed[3] = !strcmp(trimmed, "d");
+	free(trimmed);
+	passed[4] = !forked_test(ft_strtrim_empty_string_test);
+	passed[5] = !forked_test(ft_strtrim_all_trim_test);
+	passed[6] = !forked_test(ft_strtrim_null_input_test);
+	passed[7] = !forked_test(ft_strtrim_null_set_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strtrim");
 	print_result("Test spaces", passed[0]);
 	print_result("Test custom set", passed[1]);
 	print_result("Test no trim", passed[2]);
-	print_result("Test empty string", passed[3]);
-	print_result("Test all trim", passed[4]);
-	print_result("Test NULL input", passed[5]);
-	print_result("Test NULL set", passed[6]);
+	print_result("Test multiple occurrences", passed[3]);
+	print_result("Test empty string", passed[4]);
+	print_result("Test all trim", passed[5]);
+	print_result("Test NULL input", passed[6]);
+	print_result("Test NULL set", passed[7]);
+}
+
+static void	ft_split_null_test(void) {
+	ft_split(NULL, ' ');
 }
 
 static void	ft_split_malloc_fail_test(void) {
@@ -738,7 +746,7 @@ static void	ft_split_malloc_fail_test(void) {
 
 static void	test_ft_split(void) {
 	char	**arr;
-	int		passed[14];
+	int		passed[16];
 
 	arr = ft_split("Hello World 42", ' ');
 	passed[0] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
@@ -758,18 +766,22 @@ static void	test_ft_split(void) {
 	arr = ft_split("Hello", '\0');
 	passed[5] = arr && !strcmp(arr[0], "Hello") && !arr[1];
 	safe_free_arr(arr);
+	arr = ft_split("", '\0');
+	passed[6] = (arr && !arr[0]);
+	safe_free_arr(arr);
 	arr = ft_split("   ", ' ');
-	passed[6] = arr && !arr[0];
+	passed[7] = arr && !arr[0];
 	safe_free_arr(arr);
 	arr = ft_split("HelloWorld", ' ');
-	passed[7] = arr && !strcmp(arr[0], "HelloWorld") && !arr[1];
+	passed[8] = arr && !strcmp(arr[0], "HelloWorld") && !arr[1];
 	safe_free_arr(arr);
 	arr = ft_split("Hello   World", ' ');
-	passed[8] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
+	passed[9] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
 	safe_free_arr(arr);
+	passed[10] = !forked_test(ft_split_null_test);
 	g_malloc_fail_enabled = 1;
 	g_malloc_fail_at = 0;
-	for (int i = 9; i < 14; i++)
+	for (int i = 11; i < 16; i++)
 		passed[i] = !forked_test(ft_split_malloc_fail_test);
 	g_malloc_fail_enabled = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -781,14 +793,16 @@ static void	test_ft_split(void) {
 	print_result("Test empty string with 'x'", passed[3]);
 	print_result("Test all delimiters", passed[4]);
 	print_result("Test delimiter = '\\0'", passed[5]);
-	print_result("Test only spaces", passed[6]);
-	print_result("Test no delimiter found", passed[7]);
-	print_result("Test consecutive delimiters", passed[8]);
-	print_result("Test malloc fail #1 (array)", passed[9]);
-	print_result("Test malloc fail #2 (word 1)", passed[10]);
-	print_result("Test malloc fail #3 (word 2)", passed[11]);
-	print_result("Test malloc fail #4 (word 3)", passed[12]);
-	print_result("Test malloc fail #5 (other)", passed[13]);
+	print_result("Test empty string with '\\0'", passed[6]);
+	print_result("Test only spaces", passed[7]);
+	print_result("Test no delimiter found", passed[8]);
+	print_result("Test consecutive delimiters", passed[9]);
+	print_result("Test NULL", passed[10]);
+	print_result("Test malloc fail #1 (array)", passed[11]);
+	print_result("Test malloc fail #2 (word 1)", passed[12]);
+	print_result("Test malloc fail #3 (word 2)", passed[13]);
+	print_result("Test malloc fail #4 (word 3)", passed[14]);
+	print_result("Test malloc fail #5 (other)", passed[15]);
 }
 
 static void	test_ft_itoa(void) {
