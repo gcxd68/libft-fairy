@@ -425,14 +425,15 @@ static void ft_strncmp_null_test(void) {
 }
 
 static void	test_ft_strncmp(void) {
-	const int	passed[8] = {
+	const int	passed[9] = {
 		!ft_strncmp("Hello", "Hello", 5),
 		ft_strncmp("Hello", "World", 5),
 		!ft_strncmp("Hello", "Help", 3),
 		!ft_strncmp("Hello", "World", 0),
 		!ft_strncmp("Hello", "Hello\0test", 10),
-		ft_strncmp("test\200", "test\0", 6) > 0,
 		ft_strncmp("abc", "abcd", 5) < 0,
+		ft_strncmp("test\200", "test\0", 6) > 0,
+		ft_strncmp("test\xff", "test\x7f", 6) > 0,
 		forked_test(ft_strncmp_null_test)
 	};
 
@@ -444,19 +445,22 @@ static void	test_ft_strncmp(void) {
 	print_result("Test partial compare", passed[2]);
 	print_result("Test n=0", passed[3]);
 	print_result("Test with \\0", passed[4]);
-	print_result("Test unsigned char comparison", passed[5]);
-	print_result("Test n > strlen", passed[6]);
-	print_result("Test NULL", passed[7]);
+	print_result("Test n > strlen", passed[5]);
+	print_result("Test unsigned char comparison", passed[6]);
+	print_result("Test unsigned char 255 vs 127", passed[7]);
+	print_result("Test NULL", passed[8]);
 }
 
 static void	test_ft_memchr(void) {
 	const char	*str = "Hello, World!";
-	const int	passed[5] = {
+	const unsigned char bin[] = {0, 128, 255, 42};
+	const int	passed[6] = {
 		ft_memchr(str, 'o', 13) == memchr(str, 'o', 13),
 		ft_memchr(str, 'W', 13) == memchr(str, 'W', 13),
 		!ft_memchr(str, 'x', 13),
 		!ft_memchr(str, 'H', 0),
-		ft_memchr(str, '\0', 14) == memchr(str, '\0', 14)
+		ft_memchr(str, '\0', 14) == memchr(str, '\0', 14),
+		ft_memchr(bin, 255, sizeof(bin)) == memchr(bin, 255, sizeof(bin))
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -467,16 +471,21 @@ static void	test_ft_memchr(void) {
 	print_result("Test not found", passed[2]);
 	print_result("Test n=0", passed[3]);
 	print_result("Test find '\\0'", passed[4]);
+	print_result("Test unsigned char comparison (255)", passed[5]);
 }
 
 static void	test_ft_memcmp(void) {
 	char	buf1[] = {1, 2, 3, 4, 5};
 	char	buf2[] = {1, 2, 3, 4, 6};
-	const int passed[4] = {
+	char	high1[] = {'A', '\200', 0};
+	char	high2[] = {'A', '\0', 0};
+	const int passed[6] = {
 		!ft_memcmp("Hello", "Hello", 5),
 		ft_memcmp("Hello", "World", 5),
 		!ft_memcmp("Hello", "World", 0),
-		ft_memcmp(buf1, buf2, 5) < 0
+		ft_memcmp(buf1, buf2, 5) < 0,
+		ft_memcmp(high1, high2, 2) > 0,
+		ft_memcmp(high2, high1, 2) < 0
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -486,6 +495,8 @@ static void	test_ft_memcmp(void) {
 	print_result("Test different", passed[1]);
 	print_result("Test n=0", passed[2]);
 	print_result("Test binary data", passed[3]);
+	print_result("Test unsigned char >127 (\\200 vs \\0)", passed[4]);
+	print_result("Test unsigned char symmetry", passed[5]);
 }
 
 static void	test_ft_strnstr(void) {
@@ -518,8 +529,8 @@ static void ft_atoi_null_test(void) {
 
 static void	test_ft_atoi(void) {
 	const int	passed[12] = {
-		ft_atoi("  \t\n\v\f\r +42") == 42,
-		ft_atoi("\v \t\r  \n    \f-42*") == -42,
+		ft_atoi("  \t\n\v\f\r +42   $") == 42,
+		ft_atoi("\v \t\r  \n    \f-42   *") == -42,
 		!ft_atoi("0"),
 		!ft_atoi("++2"),
 		!ft_atoi("--4"),
