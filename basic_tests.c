@@ -9,25 +9,20 @@
 
 static void	test_ft_isalpha(void) {
 	int c = -1;
-	int	passed[5];
+	int	passed[5] = {1, 1, 1, 1, 1};
 
-	passed[0] = 1;
 	while (passed[0] && c < 'A')
 		if (ft_isalpha(c++))
 			passed[0] = 0;
-	passed[1] = 1;
 	while (passed[1] && c <= 'Z')
 		if (!ft_isalpha(c++))
 			passed[1] = 0;
-	passed[2] = 1;
 	while (passed[2] && c < 'a')
 		if (ft_isalpha(c++))
 			passed[2] = 0;
-	passed[3] = 1;
 	while (passed[3] && c <= 'z')
 		if (!ft_isalpha(c++))
 			passed[3] = 0;
-	passed[4] = 1;
 	while (passed[4] && c < 256)
 		if (ft_isalpha(c++))
 			passed[4] = 0;
@@ -43,17 +38,14 @@ static void	test_ft_isalpha(void) {
 
 static void test_ft_isdigit(void) {
 	int c = -1;
-	int passed[3];
+	int passed[3] = {1, 1, 1};
 
-	passed[0] = 1;
 	while (passed[0] && c < '0')
 		if (ft_isdigit(c++))
 			passed[0] = 0;
-	passed[1] = 1;
 	while (passed[1] && c <= '9')
 		if (!ft_isdigit(c++))
 			passed[1] = 0;
-	passed[2] = 1;
 	while (passed[2] && c < 256)
 		if (ft_isdigit(c++))
 			passed[2] = 0;
@@ -67,33 +59,26 @@ static void test_ft_isdigit(void) {
 
 static void	test_ft_isalnum(void) {
 	int c = -1;
-	int passed[7];
+	int passed[7] = {1, 1, 1, 1, 1, 1, 1};
 
-	passed[0] = 1;
 	while (passed[0] && c < '0')
 		if (ft_isalnum(c++))
 			passed[0] = 0;
-	passed[1] = 1;
 	while (passed[1] && c <= '9')
 		if (!ft_isalnum(c++))
 			passed[1] = 0;
-	passed[2] = 1;
 	while (passed[2] && c < 'A')
 		if (ft_isalnum(c++))
 			passed[2] = 0;
-	passed[3] = 1;
 	while (passed[3] && c <= 'Z')
 		if (!ft_isalnum(c++))
 			passed[3] = 0;
-	passed[4] = 1;
 	while (passed[4] && c < 'a')
 		if (ft_isalnum(c++))
 			passed[4] = 0;
-	passed[5] = 1;
 	while (passed[5] && c <= 'z')
 		if (!ft_isalnum(c++))
 			passed[5] = 0;
-	passed[6] = 1;
 	while (passed[6] && c < 256)
 		if (ft_isalnum(c++))
 			passed[6] = 0;
@@ -111,14 +96,13 @@ static void	test_ft_isalnum(void) {
 
 static void	test_ft_isascii(void) {
 	int c = 0;
-	int passed[3];
+	int passed[3] = {1, 1, 1};
 
-	passed[0] = !ft_isascii(-1);
-	passed[1] = 1;
+	if (ft_isascii(-1))
+		passed[0] = 0;
 	while (passed[1] && c < 128)
 		if (!ft_isascii(c++))
 			passed[1] = 0;
-	passed[2] = 1;
 	while (passed[2] && c < 256)
 		if (ft_isascii(c++))
 			passed[2] = 0;
@@ -132,17 +116,14 @@ static void	test_ft_isascii(void) {
 
 static void	test_ft_isprint(void) {
 	int c = -1;
-	int passed[3];
+	int passed[3] = {1, 1, 1};
 
-	passed[0] = 1;
 	while (passed[0] && c < ' ')
 		if (ft_isprint(c++))
 			passed[0] = 0;
-	passed[1] = 1;
 	while (passed[1] && c <= '~')
 		if (!ft_isprint(c++))
 			passed[1] = 0;
-	passed[2] = 1;
 	while (passed[2] && c < 256)
 		if (ft_isprint(c++))
 			passed[2] = 0;
