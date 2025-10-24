@@ -8,96 +8,150 @@
 #endif
 
 static void	test_ft_isalpha(void) {
-	const int	passed[5] = {
-		ft_isalpha('a'),
-		ft_isalpha('Z'),
-		!ft_isalpha('0'),
-		!ft_isalpha(' '),
-		!ft_isalpha('@')
-	};
+	int c = -1;
+	int	passed[5];
 
+	passed[0] = 1;
+	while (passed[0] && c < 'A')
+		if (ft_isalpha(c++))
+			passed[0] = 0;
+	passed[1] = 1;
+	while (passed[1] && c <= 'Z')
+		if (!ft_isalpha(c++))
+			passed[1] = 0;
+	passed[2] = 1;
+	while (passed[2] && c < 'a')
+		if (ft_isalpha(c++))
+			passed[2] = 0;
+	passed[3] = 1;
+	while (passed[3] && c <= 'z')
+		if (!ft_isalpha(c++))
+			passed[3] = 0;
+	passed[4] = 1;
+	while (passed[4] && c < 256)
+		if (ft_isalpha(c++))
+			passed[4] = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_isalpha");
-	print_result("Test 'a'", passed[0]);
-	print_result("Test 'Z'", passed[1]);
-	print_result("Test '0'", passed[2]);
-	print_result("Test ' '", passed[3]);
-	print_result("Test '@'", passed[4]);
+	print_result("Test EOF to '?'", passed[0]);
+	print_result("Test 'A' to 'Z'", passed[1]);
+	print_result("Test '[' to '`'", passed[2]);
+	print_result("Test 'a' to 'z'", passed[3]);
+	print_result("Test '{' to 255", passed[4]);
 }
 
-static void	test_ft_isdigit(void) {
-	const int	passed[4] = {
-		ft_isdigit('0'),
-		ft_isdigit('9'),
-		!ft_isdigit('a'),
-		!ft_isdigit(' ')
-	};
+static void test_ft_isdigit(void) {
+	int c = -1;
+	int passed[3];
 
+	passed[0] = 1;
+	while (passed[0] && c < '0')
+		if (ft_isdigit(c++))
+			passed[0] = 0;
+	passed[1] = 1;
+	while (passed[1] && c <= '9')
+		if (!ft_isdigit(c++))
+			passed[1] = 0;
+	passed[2] = 1;
+	while (passed[2] && c < 256)
+		if (ft_isdigit(c++))
+			passed[2] = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_isdigit");
-	print_result("Test '0'", passed[0]);
-	print_result("Test '9'", passed[1]);
-	print_result("Test 'a'", passed[2]);
-	print_result("Test ' '", passed[3]);
+	print_result("Test EOF to '/'", passed[0]);
+	print_result("Test '0' to '9'", passed[1]);
+	print_result("Test ':' to 255", passed[2]);
 }
 
 static void	test_ft_isalnum(void) {
-	const int	passed[5] = {
-		ft_isalnum('a'),
-		ft_isalnum('Z'),
-		ft_isalnum('5'),
-		!ft_isalnum(' '),
-		!ft_isalnum('@')
-	};
+	int c = -1;
+	int passed[7];
 
+	passed[0] = 1;
+	while (passed[0] && c < '0')
+		if (ft_isalnum(c++))
+			passed[0] = 0;
+	passed[1] = 1;
+	while (passed[1] && c <= '9')
+		if (!ft_isalnum(c++))
+			passed[1] = 0;
+	passed[2] = 1;
+	while (passed[2] && c < 'A')
+		if (ft_isalnum(c++))
+			passed[2] = 0;
+	passed[3] = 1;
+	while (passed[3] && c <= 'Z')
+		if (!ft_isalnum(c++))
+			passed[3] = 0;
+	passed[4] = 1;
+	while (passed[4] && c < 'a')
+		if (ft_isalnum(c++))
+			passed[4] = 0;
+	passed[5] = 1;
+	while (passed[5] && c <= 'z')
+		if (!ft_isalnum(c++))
+			passed[5] = 0;
+	passed[6] = 1;
+	while (passed[6] && c < 256)
+		if (ft_isalnum(c++))
+			passed[6] = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_isalnum");
-	print_result("Test 'a'", passed[0]);
-	print_result("Test 'Z'", passed[1]);
-	print_result("Test '5'", passed[2]);
-	print_result("Test ' '", passed[3]);
-	print_result("Test '@'", passed[4]);
+	print_result("Test EOF to '/'", passed[0]);
+	print_result("Test '0' to '9'", passed[1]);
+	print_result("Test ':' to '?'", passed[2]);
+	print_result("Test 'A' to 'Z'", passed[3]);
+	print_result("Test '[' to '`'", passed[4]);
+	print_result("Test 'a' to 'z'", passed[5]);
+	print_result("Test '{' to 255", passed[6]);
 }
 
 static void	test_ft_isascii(void) {
-	const int	passed[5] = {
-		ft_isascii(0),
-		ft_isascii(127),
-		!ft_isascii(128),
-		!ft_isascii(-1),
-		ft_isascii('a')
-	};
+	int c = 0;
+	int passed[3];
 
+	passed[0] = !ft_isascii(-1);
+	passed[1] = 1;
+	while (passed[1] && c < 128)
+		if (!ft_isascii(c++))
+			passed[1] = 0;
+	passed[2] = 1;
+	while (passed[2] && c < 256)
+		if (ft_isascii(c++))
+			passed[2] = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_isascii");
-	print_result("Test 0", passed[0]);
-	print_result("Test 127", passed[1]);
-	print_result("Test 128", passed[2]);
-	print_result("Test -1", passed[3]);
-	print_result("Test 'a'", passed[4]);
+	print_result("Test EOF", passed[0]);
+	print_result("Test '\\0' to DEL", passed[1]);
+	print_result("Test 128 to 255", passed[2]);
 }
 
 static void	test_ft_isprint(void) {
-	const int	passed[5] = {
-		ft_isprint(' '),
-		ft_isprint('~'),
-		!ft_isprint(31),
-		!ft_isprint(127),
-		ft_isprint('a')
-	};
+	int c = -1;
+	int passed[3];
 
+	passed[0] = 1;
+	while (passed[0] && c < ' ')
+		if (ft_isprint(c++))
+			passed[0] = 0;
+	passed[1] = 1;
+	while (passed[1] && c <= '~')
+		if (!ft_isprint(c++))
+			passed[1] = 0;
+	passed[2] = 1;
+	while (passed[2] && c < 256)
+		if (ft_isprint(c++))
+			passed[2] = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_isprint");
-	print_result("Test ' '", passed[0]);
-	print_result("Test '~'", passed[1]);
-	print_result("Test 31", passed[2]);
-	print_result("Test 127", passed[3]);
-	print_result("Test 'a'", passed[4]);
+	print_result("Test EOF to US", passed[0]);
+	print_result("Test ' ' to '~'", passed[1]);
+	print_result("Test DEL to 255", passed[2]);
 }
 
 static void	ft_strlen_null_test(void) {
