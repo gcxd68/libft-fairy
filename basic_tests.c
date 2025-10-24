@@ -29,11 +29,11 @@ static void	test_ft_isalpha(void) {
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_isalpha");
-	print_result("Test EOF to '?'", passed[0]);
-	print_result("Test 'A' to 'Z'", passed[1]);
-	print_result("Test '[' to '`'", passed[2]);
-	print_result("Test 'a' to 'z'", passed[3]);
-	print_result("Test '{' to 255", passed[4]);
+	print_result("Tests EOF to '?'", passed[0]);
+	print_result("Tests 'A' to 'Z'", passed[1]);
+	print_result("Tests '[' to '`'", passed[2]);
+	print_result("Tests 'a' to 'z'", passed[3]);
+	print_result("Tests '{' to 255", passed[4]);
 }
 
 static void test_ft_isdigit(void) {
@@ -52,9 +52,9 @@ static void test_ft_isdigit(void) {
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_isdigit");
-	print_result("Test EOF to '/'", passed[0]);
-	print_result("Test '0' to '9'", passed[1]);
-	print_result("Test ':' to 255", passed[2]);
+	print_result("Tests EOF to '/'", passed[0]);
+	print_result("Tests '0' to '9'", passed[1]);
+	print_result("Tests ':' to 255", passed[2]);
 }
 
 static void	test_ft_isalnum(void) {
@@ -85,13 +85,13 @@ static void	test_ft_isalnum(void) {
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_isalnum");
-	print_result("Test EOF to '/'", passed[0]);
-	print_result("Test '0' to '9'", passed[1]);
-	print_result("Test ':' to '?'", passed[2]);
-	print_result("Test 'A' to 'Z'", passed[3]);
-	print_result("Test '[' to '`'", passed[4]);
-	print_result("Test 'a' to 'z'", passed[5]);
-	print_result("Test '{' to 255", passed[6]);
+	print_result("Tests EOF to '/'", passed[0]);
+	print_result("Tests '0' to '9'", passed[1]);
+	print_result("Tests ':' to '?'", passed[2]);
+	print_result("Tests 'A' to 'Z'", passed[3]);
+	print_result("Tests '[' to '`'", passed[4]);
+	print_result("Tests 'a' to 'z'", passed[5]);
+	print_result("Tests '{' to 255", passed[6]);
 }
 
 static void	test_ft_isascii(void) {
@@ -110,8 +110,8 @@ static void	test_ft_isascii(void) {
 		return;
 	print_test_header("ft_isascii");
 	print_result("Test EOF", passed[0]);
-	print_result("Test '\\0' to DEL", passed[1]);
-	print_result("Test 128 to 255", passed[2]);
+	print_result("Tests '\\0' to DEL", passed[1]);
+	print_result("Tests 128 to 255", passed[2]);
 }
 
 static void	test_ft_isprint(void) {
@@ -130,9 +130,9 @@ static void	test_ft_isprint(void) {
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_isprint");
-	print_result("Test EOF to US", passed[0]);
-	print_result("Test ' ' to '~'", passed[1]);
-	print_result("Test DEL to 255", passed[2]);
+	print_result("Tests EOF to US", passed[0]);
+	print_result("Tests ' ' to '~'", passed[1]);
+	print_result("Tests DEL to 255", passed[2]);
 }
 
 static void	ft_strlen_null_test(void) {
