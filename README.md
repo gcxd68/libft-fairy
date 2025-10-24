@@ -27,7 +27,6 @@ Before using libft-fairy, make sure you have installed:
 1. Clone the repository inside your libft directory:
 
 ```bash
-cd /path/to/your/libft
 git clone https://github.com/gcxd68/libft-fairy.git
 ```
 
