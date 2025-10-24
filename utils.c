@@ -12,7 +12,8 @@ int	forked_test(void (*test_func)(void)) {
 	int		status;
 
 	fflush(stdout);
-	if ((pid = fork()) == -1) {
+	pid = fork();
+	if (pid == -1) {
 		perror("libft-fairy: fork failed");
 		exit(EXIT_FAILURE);
 	}

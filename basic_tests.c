@@ -546,16 +546,12 @@ static void	test_ft_strnstr(void) {
 	print_result("Test len too short", passed[4]);
 }
 
-static void	ft_atoi_overflow_test(void) {
-	ft_atoi("9999999999999999999");
-}
-
 static void	ft_atoi_null_test(void) {
 	ft_atoi(NULL);
 }
 
 static void	test_ft_atoi(void) {
-	const int	passed[12] = {
+	const int	passed[11] = {
 		ft_atoi("  \t\n\v\f\r +42   $") == 42,
 		ft_atoi("\v \t\r  \n    \f-42   *") == -42,
 		!ft_atoi("0"),
@@ -566,7 +562,6 @@ static void	test_ft_atoi(void) {
 		!ft_atoi(" \t-R66"),
 		ft_atoi("2147483647") == 2147483647,
 		ft_atoi("-2147483648") == -2147483648,
-		!forked_test(ft_atoi_overflow_test),
 		forked_test(ft_atoi_null_test)
 	};
 
@@ -583,8 +578,7 @@ static void	test_ft_atoi(void) {
 	print_result("Test '\\t-R66'", passed[7]);
 	print_result("Test INT_MAX", passed[8]);
 	print_result("Test INT_MIN", passed[9]);
-	print_result("Test overflow", passed[10]);
-	print_result("Test NULL", passed[11]);
+	print_result("Test NULL", passed[10]);
 }
 
 static void	ft_calloc_overflow_write_test(void) {

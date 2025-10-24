@@ -23,7 +23,7 @@ BONUS_LEAK_TESTER_NAME=".leak_tests_bonus"
 TESTER_DIR=$(basename "$(pwd)")
 
 echo_color() {
-	echo -e "${2}${1}${RESET}"
+	echo -e -n "${2}${1}${RESET}"
 }
 
 cleanup() {
@@ -38,38 +38,40 @@ trap cleanup EXIT INT TERM
 
 main() {
 	echo ""
-	echo_color "╔════════════════════════════╗" "$PINK"
-	echo_color "║       LIBFT-FAIRY 🧚       ║" "$PINK"
-	echo_color "╚════════════════════════════╝" "$PINK"
+	echo_color "╔════════════════════════════╗\n" "$PINK"
+	echo_color "║       LIBFT-FAIRY 🧚       ║\n" "$PINK"
+	echo_color "╚════════════════════════════╝\n" "$PINK"
 	echo ""
 	
-	echo -n "📝 Checking norm... "
+	echo -e -n "📝 Checking norm...\t"
 	NORM_OUTPUT=$(find $LIBFT_DIR -type d -name "$TESTER_DIR" -prune -o \
 		\( -name "*.c" -o -name "*.h" \) -type f -print | xargs -r norminette 2>&1)
 	if echo "$NORM_OUTPUT" | grep -q "Error"; then
 		NORM_TEST_RES=1
-		echo_color "Failed" "$RED"
+		echo_color "[KO]\n" "$RED"
 		echo ""
 		echo "$NORM_OUTPUT" | grep "Error"
 		echo ""
 	else
 		NORM_TEST_RES=0
-		echo "Done"
+		echo_color "[OK]\n" "$GREEN"
 	fi
 
-	echo -n "📦 Compiling libft... "
+	echo -e -n "📦 Compiling libft...\t"
 	if make -C $LIBFT_DIR bonus > /dev/null 2>&1; then
 		BONUS_VERSION=1
-		echo "Done (bonus)"
+		echo_color "[OK] " "$GREEN"
+		echo "(bonus)"
 	elif make -C $LIBFT_DIR > /dev/null 2>&1; then
 		BONUS_VERSION=0
-		echo "Done (no bonus)"
+		echo_color "[OK] " "$GREEN"
+		echo "(no bonus)"
 	else
-		echo_color "Failed" "$RED"
+		echo_color "[KO]" "$RED"
 		exit 1
 	fi
 
-	echo -n "🔨 Compiling tests... "
+	echo -e -n "🔨 Compiling tests...\t"
 	VERBOSE_FLAG=""
 	if [ $VERBOSE -eq 1 ]; then
 		VERBOSE_FLAG="-DVERBOSE=1"
@@ -92,13 +94,13 @@ main() {
 	fi
 	if [ $BASIC_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_COMPILATION_RES -eq 0 ] \
 		&& [ $LEAK_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_COMPILATION_RES -eq 0 ]; then
-		echo "Done"
+		echo_color "[OK]\n" "$GREEN"
 	else
-		echo_color "Failed" "$RED"
+		echo_color "[KO]\n" "$RED"
 		exit 1
 	fi
 
-	echo -n "🧪 Running tests... "
+	echo -e -n "🧪 Running tests...\t"
 	./$BASIC_TESTER_NAME > .results 2>&1
 	BASIC_TESTS_RES=$?
 	BONUS_BASIC_TESTS_RES=0
@@ -133,11 +135,10 @@ main() {
 	fi
 	if [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && \
 	   [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]; then
-		echo "Done"
+		echo_color "[OK]\n" "$GREEN"
 	else
-		echo_color "Failed" "$RED"
+		echo_color "[KO]\n" "$RED"
 	fi
-
 	cat .results
 	echo ""
 
@@ -146,13 +147,13 @@ main() {
 	[ $BONUS_LEAK_TESTS_RES -eq 0 ]
 	EXIT_CODE=$?
 	if [ $EXIT_CODE -eq 0 ]; then
-		echo_color "╔════════════════════════════╗" "$GREEN"
-		echo_color "║     OH MY, YOU PASSED!     ║" "$GREEN"
-		echo_color "╚════════════════════════════╝" "$GREEN"
+		echo_color "╔════════════════════════════╗\n" "$GREEN"
+		echo_color "║     OH MY, YOU PASSED!     ║\n" "$GREEN"
+		echo_color "╚════════════════════════════╝\n" "$GREEN"
 	else
-		echo_color "╔════════════════════════════╗" "$RED"
-		echo_color "║    OH NO... YOU FAILED!    ║" "$RED"
-		echo_color "╚════════════════════════════╝" "$RED"
+		echo_color "╔════════════════════════════╗\n" "$RED"
+		echo_color "║    OH NO... YOU FAILED!    ║\n" "$RED"
+		echo_color "╚════════════════════════════╝\n" "$RED"
 	fi
 	echo ""
 	return $EXIT_CODE
