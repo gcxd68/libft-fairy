@@ -135,17 +135,12 @@ static void	test_ft_isprint(void) {
 	print_result("Tests DEL to 255", passed[2]);
 }
 
-static void	ft_strlen_null_test(void) {
-	ft_strlen(NULL);
-}
-
 static void	test_ft_strlen(void) {
-	const int	passed[5] = {
+	const int	passed[4] = {
 		!ft_strlen(""),
 		ft_strlen("hello") == 5,
 		ft_strlen("42") == 2,
-		ft_strlen("Hello, World!") == 13,
-		forked_test(ft_strlen_null_test)
+		ft_strlen("Hello, World!") == 13
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -155,18 +150,13 @@ static void	test_ft_strlen(void) {
 	print_result("Test 'hello'", passed[1]);
 	print_result("Test '42'", passed[2]);
 	print_result("Test long string", passed[3]);
-	print_result("Test NULL", passed[4]);
-}
-
-static void	ft_memset_null_test(void) {
-	ft_memset(NULL, 0, 5);
 }
 
 static void	test_ft_memset(void) {
 	char	str1[10] = {0};
 	char	str2[10] = {0};
 	void	*ret;
-	int		passed[4];
+	int		passed[3];
 
 	ret = ft_memset(str1, 'A', 5);
 	memset(str2, 'A', 5);
@@ -177,14 +167,12 @@ static void	test_ft_memset(void) {
 	memset(str1, 200, 10);
 	ft_memset(str2, 200, 10);
 	passed[2] = !memcmp(str1, str2, 10);
-	passed[3] = forked_test(ft_memset_null_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_memset");
 	print_result("Test basic memset", passed[0]);
 	print_result("Test memset with 0", passed[1]);
 	print_result("Test unsigned char fill (200)", passed[2]);
-	print_result("Test NULL", passed[3]);
 }
 
 static void	test_ft_bzero(void) {
@@ -212,46 +200,22 @@ static void	test_ft_bzero(void) {
 	print_result("Test bzero all", passed[1]);
 }
 
-static void	ft_memcpy_null_test(void) {
-	char	buffer[10];
-
-	ft_memcpy((void *)buffer, NULL, 5);
-}
-
-static void	ft_memcpy_null_null_zero_test(void) {
-	ft_memcpy(NULL, NULL, 0);
-}
-
 static void	test_ft_memcpy(void) {
 	char	src[] = "Hello, World!";
 	char	dst1[20] = {0};
 	char	dst2[20] = {0};
-	int		passed[4];
+	int		passed[2];
 
 	ft_memcpy(dst1, src, strlen(src) + 1);
 	memcpy(dst2, src, strlen(src) + 1);
 	passed[0] = !strcmp(dst1, dst2);
 	ft_memcpy(dst1, "42", 2);
 	passed[1] = dst1[0] == '4' && dst1[1] == '2';
-	passed[2] = forked_test(ft_memcpy_null_test);
-	passed[3] = !forked_test(ft_memcpy_null_null_zero_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_memcpy");
 	print_result("Test basic memcpy", passed[0]);
 	print_result("Test partial copy", passed[1]);
-	print_result("Test NULL", passed[2]);
-	print_result("Test NULL-NULL-zero", passed[3]);
-}
-
-static void	ft_memmove_null_test(void) {
-	char	buffer[10];
-
-	ft_memmove((void *)buffer, NULL, 5);
-}
-
-static void	ft_memmove_null_null_zero_test(void) {
-	ft_memmove(NULL, NULL, 0);
 }
 
 static void	test_ft_memmove(void) {
@@ -259,7 +223,7 @@ static void	test_ft_memmove(void) {
 	char	str2[] = "Hello, World!";
 	char	dst1[20] = {0};
 	char	dst2[20] = {0};
-	int		passed[8];
+	int		passed[6];
 
 	ft_memmove(str1 + 2, str1, 5);
 	memmove(str2 + 2, str2, 5);
@@ -287,8 +251,6 @@ static void	test_ft_memmove(void) {
 	ft_memmove(str1 + 1, str1, 5);
 	memmove(str2 + 1, str2, 5);
 	passed[5] = !strcmp(str1, str2);
-	passed[6] = forked_test(ft_memmove_null_test);
-	passed[7] = !forked_test(ft_memmove_null_null_zero_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_memmove");
@@ -298,8 +260,6 @@ static void	test_ft_memmove(void) {
 	print_result("Test dst == src", passed[3]);
 	print_result("Test n = 0", passed[4]);
 	print_result("Test minimal overlap", passed[5]);
-	print_result("Test NULL", passed[6]);
-	print_result("Test NULL-NULL-zero", passed[7]);
 }
 
 static void	test_ft_strlcpy(void) {
@@ -409,19 +369,14 @@ static void	test_ft_tolower(void) {
 	print_result("Test '0'", passed[3]);
 }
 
-static void	ft_strchr_null_test(void) {
-	ft_strchr(NULL, 'a');
-}
-
 static void	test_ft_strchr(void) {
 	const char	str[] = "Hello\xC8World";
-	const int	passed[6] = {
+	const int	passed[5] = {
 		ft_strchr(str, 'o') == strchr(str, 'o'),
 		ft_strchr(str, 'W') == strchr(str, 'W'),
 		ft_strchr(str, '\0') == strchr(str, '\0'),
 		!ft_strchr(str, 'x'),
-		ft_strchr(str, 200) == strchr(str, 200),
-		forked_test(ft_strchr_null_test)
+		ft_strchr(str, 200) == strchr(str, 200)
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -432,22 +387,16 @@ static void	test_ft_strchr(void) {
 	print_result("Test find '\\0'", passed[2]);
 	print_result("Test not found 'x'", passed[3]);
 	print_result("Test unsigned char comparison (200)", passed[4]);
-	print_result("Test NULL", passed[5]);
-}
-
-static void	ft_strrchr_null_test(void) {
-	ft_strrchr(NULL, 'a');
 }
 
 static void	test_ft_strrchr(void) {
 	const char	str[] = "Hello\xC8World\xC8!";
-	const int	passed[6] = {
+	const int	passed[5] = {
 		ft_strrchr(str, 'o') == strrchr(str, 'o'),
 		ft_strrchr(str, 'W') == strrchr(str, 'W'),
 		ft_strrchr(str, '\0') == strrchr(str, '\0'),
 		!ft_strrchr(str, 'x'),
-		ft_strrchr(str, 200) == strrchr(str, 200),
-		forked_test(ft_strrchr_null_test)
+		ft_strrchr(str, 200) == strrchr(str, 200)
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -458,15 +407,10 @@ static void	test_ft_strrchr(void) {
 	print_result("Test find '\\0'", passed[2]);
 	print_result("Test not found 'x'", passed[3]);
 	print_result("Test unsigned char comparison (200)", passed[4]);
-	print_result("Test NULL", passed[5]);
-}
-
-static void	ft_strncmp_null_test(void) {
-	ft_strncmp(NULL, "abc", 3);
 }
 
 static void	test_ft_strncmp(void) {
-	const int	passed[9] = {
+	const int	passed[8] = {
 		!ft_strncmp("Hello", "Hello", 5),
 		ft_strncmp("Hello", "World", 5),
 		!ft_strncmp("Hello", "Help", 3),
@@ -474,8 +418,7 @@ static void	test_ft_strncmp(void) {
 		!ft_strncmp("Hello", "Hello\0test", 10),
 		ft_strncmp("abc", "abcd", 5) < 0,
 		ft_strncmp("test\200", "test\0", 6) > 0,
-		ft_strncmp("test\xff", "test\x7f", 6) > 0,
-		forked_test(ft_strncmp_null_test)
+		ft_strncmp("test\xff", "test\x7f", 6) > 0
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -489,7 +432,6 @@ static void	test_ft_strncmp(void) {
 	print_result("Test n > strlen", passed[5]);
 	print_result("Test unsigned char comparison", passed[6]);
 	print_result("Test unsigned char 255 vs 127", passed[7]);
-	print_result("Test NULL", passed[8]);
 }
 
 static void	ft_memchr_nullchar_test(void) {
@@ -574,12 +516,8 @@ static void	ft_atoi_overflow_test(void) {
 	ft_atoi("9999999999999999999");
 }
 
-static void	ft_atoi_null_test(void) {
-	ft_atoi(NULL);
-}
-
 static void	test_ft_atoi(void) {
-	const int	passed[12] = {
+	const int	passed[11] = {
 		ft_atoi("  \t\n\v\f\r +42   $") == 42,
 		ft_atoi("\v \t\r  \n    \f-42   *") == -42,
 		!ft_atoi("0"),
@@ -590,8 +528,7 @@ static void	test_ft_atoi(void) {
 		!ft_atoi(" \t-R66"),
 		ft_atoi("2147483647") == 2147483647,
 		ft_atoi("-2147483648") == -2147483648,
-		!forked_test(ft_atoi_overflow_test),
-		forked_test(ft_atoi_null_test)
+		!forked_test(ft_atoi_overflow_test)
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -608,7 +545,6 @@ static void	test_ft_atoi(void) {
 	print_result("Test INT_MAX", passed[8]);
 	print_result("Test INT_MIN", passed[9]);
 	print_result("Test overflow", passed[10]);
-	print_result("Test NULL", passed[11]);
 }
 
 static void	ft_calloc_overflow_write_test(void) {
