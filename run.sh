@@ -45,7 +45,7 @@ main() {
 	
 	echo -n "📝 Checking norm... "
 	NORM_OUTPUT=$(find $LIBFT_DIR -type d -name "$TESTER_DIR" -prune -o \
-		\( -name "*.c" -o -name "*.h" \) -type f -print | xargs norminette 2>&1)
+		\( -name "*.c" -o -name "*.h" \) -type f -print | xargs -r norminette 2>&1)
 	if echo "$NORM_OUTPUT" | grep -q "Error"; then
 		NORM_TEST_RES=1
 		echo_color "Failed" "$RED"

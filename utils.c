@@ -41,7 +41,7 @@ void	print_test_header(const char *function_name) {
 }
 
 void	print_result(const char *test_name, int passed) {
-	printf("%s" RESET "%s\n", passed ? GREEN "✓ " : RED "✗ ", test_name);
+	printf("%s" RESET "%s\n", passed ? GREEN "[OK]  " : RED "[KO]  ", test_name);
 	if (!passed)
 		g_tests_failed++;
 }

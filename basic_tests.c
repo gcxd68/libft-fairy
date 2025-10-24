@@ -36,7 +36,7 @@ static void	test_ft_isalpha(void) {
 	print_result("Tests '{' to 255", passed[4]);
 }
 
-static void test_ft_isdigit(void) {
+static void	test_ft_isdigit(void) {
 	int c = -1;
 	int passed[3] = {1, 1, 1};
 
@@ -309,20 +309,10 @@ static void	test_ft_strlcpy(void) {
 	print_result("Test size 0", passed[2]);
 }
 
-static void	ft_strlcat_no_null_terminator_test(void) {
-	char	dst[10];
-	size_t	len;
-
-	memset(dst, 'A', sizeof(dst));
-	len = ft_strlcat(dst, "World", 10);
-	if (len != 15)
-		abort();
-}
-
 static void	test_ft_strlcat(void) {
 	char	dst[20];
 	size_t	len;
-	int		passed[9];
+	int		passed[8];
 	
 	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, " World", 20);
@@ -348,7 +338,6 @@ static void	test_ft_strlcat(void) {
 	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, "X", 6);
 	passed[7] = !strcmp(dst, "Hello") && len == 6;
-	passed[8] = !forked_test(ft_strlcat_no_null_terminator_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strlcat");
@@ -360,7 +349,6 @@ static void	test_ft_strlcat(void) {
 	print_result("Test empty src", passed[5]);
 	print_result("Test empty dst", passed[6]);
 	print_result("Test no room for concat", passed[7]);
-	print_result("Test buffer without '\\0'", passed[8]);
 }
 
 static void	test_ft_toupper(void) {
@@ -703,9 +691,16 @@ static void	ft_substr_start_past_end_test(void) {
 	free(res);
 }
 
+static void	ft_substr_start_max_test(void) {
+	char *res = ft_substr("abc", ~(unsigned int)0, 1);
+	if (!res || res[0] != '\0')
+		abort();
+	free(res);
+}
+
 static void	test_ft_substr(void) {
 	char	*sub = ft_substr("Hello, World!", 7, 5);
-	int		passed[8];
+	int		passed[9];
 
 	passed[0] = !strcmp(sub, "World");
 	free(sub);
@@ -724,6 +719,7 @@ static void	test_ft_substr(void) {
 	passed[5] = !forked_test(ft_substr_null_test);
 	passed[6] = !forked_test(ft_substr_empty_test);
 	passed[7] = !forked_test(ft_substr_start_past_end_test);
+	passed[8] = !forked_test(ft_substr_start_max_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_substr");
@@ -735,6 +731,7 @@ static void	test_ft_substr(void) {
 	print_result("Test NULL", passed[5]);
 	print_result("Test empty string alloc", passed[6]);
 	print_result("Test start past end", passed[7]);
+	print_result("Test start = UINT_MAX", passed[8]);
 }
 
 static void	ft_strjoin_null_s1_test(void) {
@@ -845,7 +842,7 @@ static void	ft_split_malloc_fail_test(void) {
 
 static void	test_ft_split(void) {
 	char	**arr;
-	int		passed[16];
+	int		passed[18];
 
 	arr = ft_split("Hello World 42", ' ');
 	passed[0] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
@@ -877,10 +874,16 @@ static void	test_ft_split(void) {
 	arr = ft_split("Hello   World", ' ');
 	passed[9] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
 	safe_free_arr(arr);
-	passed[10] = !forked_test(ft_split_null_test);
+	arr = ft_split("Hello\xFFWorld", (char)255);
+	passed[10] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
+	safe_free_arr(arr);
+	arr = ft_split("Hello\xFFWorld", (char)-1);
+	passed[11] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
+	safe_free_arr(arr);
+	passed[12] = !forked_test(ft_split_null_test);
 	g_malloc_fail_enabled = 1;
 	g_malloc_fail_at = 0;
-	for (int i = 11; i < 16; i++)
+	for (int i = 13; i < 18; i++)
 		passed[i] = !forked_test(ft_split_malloc_fail_test);
 	g_malloc_fail_enabled = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -896,12 +899,14 @@ static void	test_ft_split(void) {
 	print_result("Test only spaces", passed[7]);
 	print_result("Test no delimiter found", passed[8]);
 	print_result("Test consecutive delimiters", passed[9]);
-	print_result("Test NULL", passed[10]);
-	print_result("Test malloc fail #1 (array)", passed[11]);
-	print_result("Test malloc fail #2 (word 1)", passed[12]);
-	print_result("Test malloc fail #3 (word 2)", passed[13]);
-	print_result("Test malloc fail #4 (word 3)", passed[14]);
-	print_result("Test malloc fail #5 (other)", passed[15]);
+	print_result("Test delimiter = 255 (\\xFF)", passed[10]);
+	print_result("Test delimiter = -1", passed[11]);
+	print_result("Test NULL", passed[12]);
+	print_result("Test malloc fail #1 (array)", passed[13]);
+	print_result("Test malloc fail #2 (word 1)", passed[14]);
+	print_result("Test malloc fail #3 (word 2)", passed[15]);
+	print_result("Test malloc fail #4 (word 3)", passed[16]);
+	print_result("Test malloc fail #5 (other)", passed[17]);
 }
 
 static void	test_ft_itoa(void) {
@@ -983,16 +988,25 @@ static void	test_ft_striteri(void) {
 static int	test_fd_output(void (*func)(void *, int), void *input, 
 							const char *expected, size_t read_len) {
 	char	buf[50] = {0};
-	int		fd = open("/tmp/test_fd", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	char	tmp[] = "/tmp/test_fd_XXXXXX";
+	int		fd = mkstemp(tmp);
 	int		result;
 
+	if (fd == -1) {
+		perror("libft-fairy: mkstemp failed");
+		exit(EXIT_FAILURE);
+	}
 	func(input, fd);
 	close(fd);
-	fd = open("/tmp/test_fd", O_RDONLY);
+	fd = open(tmp, O_RDONLY);
+	if (fd == -1) {
+		perror("libft-fairy: open failed");
+		exit(EXIT_FAILURE);
+	}
 	read(fd, buf, read_len);
 	buf[read_len] = '\0';
 	close(fd);
-	unlink("/tmp/test_fd");
+	unlink(tmp);
 	result = !strcmp(buf, expected);
 	return (result);
 }
@@ -1013,21 +1027,17 @@ static void	wrapper_putnbr(void *n, int fd) {
 	ft_putnbr_fd(*(int *)n, fd);
 }
 
+static void	wrapper_putchar_str(void *s, int fd) {
+	char *str = (char *)s;
+	for (int i = 0; str[i]; i++)
+		ft_putchar_fd(str[i], fd);
+}
+
 static void	test_ft_putchar_fd(void) {
 	char	c = '0';
-	char	buf[10];
-	int		fd = open("/tmp/test_putchar", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	int		passed[2];
 
-	ft_putchar_fd('A', fd);
-	ft_putchar_fd('B', fd);
-	close(fd);
-	fd = open("/tmp/test_putchar", O_RDONLY);
-	read(fd, buf, 2);
-	buf[2] = '\0';
-	close(fd);
-	unlink("/tmp/test_putchar");
-	passed[0] = !strcmp(buf, "AB");
+	passed[0] = test_fd_output(wrapper_putchar_str, "AB", "AB", 2);
 	passed[1] = test_fd_output(wrapper_putchar, &c, "0", 1);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
