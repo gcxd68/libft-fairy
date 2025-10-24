@@ -158,26 +158,58 @@ static void	iter_func(void *content) {
 	(*(int *)content)++;
 }
 
+static void	ft_lstiter_null_list_test(void) {
+	ft_lstiter(NULL, iter_func);
+}
+
+static void	ft_lstiter_null_func_test(void) {
+	t_list	*lst = create_test_list(1, 2, 3);
+
+	ft_lstiter(lst, NULL);
+	safe_lstclear(&lst, free);
+}
+
+static void	ft_lstiter_null_both_test(void) {
+	ft_lstiter(NULL, NULL);
+}
+
 static void	test_ft_lstiter(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
-	int		passed[1];
+	int		passed[4];
 
 	ft_lstiter(lst, iter_func);
 	passed[0] = *(int *)lst->content == 2
 		&& *(int *)lst->next->content == 3
 		&& *(int *)lst->next->next->content == 4;
 	safe_lstclear(&lst, free);
+	passed[1] = !forked_test(ft_lstiter_null_list_test);
+	passed[2] = !forked_test(ft_lstiter_null_func_test);
+	passed[3] = !forked_test(ft_lstiter_null_both_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstiter (bonus)");
 	print_result("Test iter", passed[0]);
+	print_result("Test NULL list", passed[1]);
+	print_result("Test NULL function", passed[2]);
+	print_result("Test NULL both", passed[3]);
 }
 
-static void	ft_lstmap_null_test(void) {
+static void	ft_lstmap_null_list_test(void) {
 	t_list *lst = ft_lstmap(NULL, map_func, free);
 
 	if (lst)
 		abort();
+}
+
+static void	ft_lstmap_null_func_test(void) {
+	t_list	*lst = create_test_list(1, 2, 3);
+
+	ft_lstmap(lst, NULL, free);
+	safe_lstclear(&lst, free);
+}
+
+static void	ft_lstmap_null_both_test(void) {
+	ft_lstmap(NULL, NULL, free);
 }
 
 static void	ft_lstmap_malloc_fail_test(void) {
@@ -195,28 +227,32 @@ static void	ft_lstmap_malloc_fail_test(void) {
 static void	test_ft_lstmap(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 	t_list	*new_lst = ft_lstmap(lst, map_func, free);
-	int		passed[8];
+	int		passed[10];
 
 	passed[0] = new_lst && *(int *)new_lst->content == 2
 		&& *(int *)new_lst->next->content == 4
 		&& *(int *)new_lst->next->next->content == 6;
 	safe_lstclear(&new_lst, free);
 	safe_lstclear(&lst, free);
-	passed[1] = !forked_test(ft_lstmap_null_test);
+	passed[1] = !forked_test(ft_lstmap_null_list_test);
+	passed[2] = !forked_test(ft_lstmap_null_func_test);
+	passed[3] = !forked_test(ft_lstmap_null_both_test);
 	g_malloc_fail_at = 0;
-	for (int i = 2; i < 8; i++)
+	for (int i = 4; i < 10; i++)
 		passed[i] = !forked_test(ft_lstmap_malloc_fail_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstmap (bonus)");
 	print_result("Test map normal", passed[0]);
-	print_result("Test NULL", passed[1]);
-	print_result("Test malloc fail #1 (node 1)", passed[2]);
-	print_result("Test malloc fail #2 (content 1)", passed[3]);
-	print_result("Test malloc fail #3 (node 2)", passed[4]);
-	print_result("Test malloc fail #4 (content 2)", passed[5]);
-	print_result("Test malloc fail #5 (node 3)", passed[6]);
-	print_result("Test malloc fail #6 (content 3)", passed[7]);
+	print_result("Test NULL list", passed[1]);
+	print_result("Test NULL function", passed[2]);
+	print_result("Test NULL both", passed[3]);
+	print_result("Test malloc fail #1 (node 1)", passed[4]);
+	print_result("Test malloc fail #2 (content 1)", passed[5]);
+	print_result("Test malloc fail #3 (node 2)", passed[6]);
+	print_result("Test malloc fail #4 (content 2)", passed[7]);
+	print_result("Test malloc fail #5 (node 3)", passed[8]);
+	print_result("Test malloc fail #6 (content 3)", passed[9]);
 }
 
 int	main(void) {

@@ -413,8 +413,7 @@ static void	ft_strchr_null_test(void) {
 	ft_strchr(NULL, 'a');
 }
 
-static void	test_ft_strchr(void)
-{
+static void	test_ft_strchr(void) {
 	const char	str[] = "Hello\xC8World";
 	const int	passed[6] = {
 		ft_strchr(str, 'o') == strchr(str, 'o'),
@@ -493,6 +492,11 @@ static void	test_ft_strncmp(void) {
 	print_result("Test NULL", passed[8]);
 }
 
+static void	ft_memchr_nullchar_test(void) {
+	if (ft_memchr("Hello, World!", '\0', 14) != memchr("Hello, World!", '\0', 14))
+		abort();
+}
+
 static void	test_ft_memchr(void) {
 	const char			*str = "Hello, World!";
 	const unsigned char	bin[] = {0, 128, 255, 42};
@@ -501,7 +505,7 @@ static void	test_ft_memchr(void) {
 		ft_memchr(str, 'W', 13) == memchr(str, 'W', 13),
 		!ft_memchr(str, 'x', 13),
 		!ft_memchr(str, 'H', 0),
-		ft_memchr(str, '\0', 14) == memchr(str, '\0', 14),
+		!forked_test(ft_memchr_nullchar_test),
 		ft_memchr(bin, 255, sizeof(bin)) == memchr(bin, 255, sizeof(bin))
 	};
 
@@ -515,6 +519,7 @@ static void	test_ft_memchr(void) {
 	print_result("Test find '\\0'", passed[4]);
 	print_result("Test unsigned char comparison (255)", passed[5]);
 }
+
 
 static void	test_ft_memcmp(void) {
 	char		buf1[] = {1, 2, 3, 4, 5};
@@ -541,6 +546,10 @@ static void	test_ft_memcmp(void) {
 	print_result("Test unsigned char symmetry", passed[5]);
 }
 
+static void	ft_strnstr_len_too_short(void) {
+	ft_strnstr("Hello, World!", "World", 5);
+}
+
 static void	test_ft_strnstr(void) {
 	const char	*haystack = "Hello, World!";
 	const int	passed[5] = {
@@ -548,7 +557,7 @@ static void	test_ft_strnstr(void) {
 		ft_strnstr(haystack, "o", 13) != NULL,
 		!ft_strnstr(haystack, "xyz", 13),
 		ft_strnstr(haystack, "", 13) == haystack,
-		!ft_strnstr(haystack, "World", 5)
+		!forked_test(ft_strnstr_len_too_short)
 	};
 
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
@@ -740,10 +749,23 @@ static void	test_ft_substr(void) {
 	print_result("Test start past end", passed[7]);
 }
 
-static void	test_ft_strjoin(void) {
-	char	*joined = ft_strjoin("Hello", " World");
-	int		passed[4];
+static void	ft_strjoin_null_s1_test(void) {
+	ft_strjoin(NULL, "test");
+}
 
+static void	ft_strjoin_null_s2_test(void) {
+	ft_strjoin("test", NULL);
+}
+
+static void	ft_strjoin_null_both_test(void) {
+	ft_strjoin(NULL, NULL);
+}
+
+static void	test_ft_strjoin(void) {
+	char	*joined;
+	int		passed[7];
+
+	joined = ft_strjoin("Hello", " World");
 	passed[0] = !strcmp(joined, "Hello World");
 	free(joined);
 	joined = ft_strjoin("", "Hello");
@@ -755,6 +777,9 @@ static void	test_ft_strjoin(void) {
 	joined = ft_strjoin("42", "!");
 	passed[3] = !strcmp(joined, "42!");
 	free(joined);
+	passed[4] = !forked_test(ft_strjoin_null_s1_test);
+	passed[5] = !forked_test(ft_strjoin_null_s2_test);
+	passed[6] = !forked_test(ft_strjoin_null_both_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strjoin");
@@ -762,6 +787,9 @@ static void	test_ft_strjoin(void) {
 	print_result("Test empty s1", passed[1]);
 	print_result("Test empty s2", passed[2]);
 	print_result("Test short strings", passed[3]);
+	print_result("Test NULL s1", passed[4]);
+	print_result("Test NULL s2", passed[5]);
+	print_result("Test both NULL", passed[6]);
 }
 
 static void	ft_strtrim_empty_string_test(void) {
