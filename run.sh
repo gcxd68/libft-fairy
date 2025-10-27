@@ -27,7 +27,7 @@ echo_color() {
 }
 
 cleanup() {
-	echo -n "🧹 Cleaning up... "
+	echo -e -n "🧹 Cleaning up...\t"
 	rm -f *.o $BASIC_TESTER_NAME $LEAK_TESTER_NAME $BONUS_BASIC_TESTER_NAME $BONUS_LEAK_TESTER_NAME .results
 	make -C $LIBFT_DIR fclean > /dev/null 2>&1
 	echo "Done"
