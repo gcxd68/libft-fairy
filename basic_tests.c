@@ -437,12 +437,19 @@ static void	test_ft_strrchr(void) {
 	print_result("Test NULL", passed[5]);
 }
 
+static void	ft_strncmp_size_max_test(void) {
+	const size_t	size_max = ~(size_t)0;
+
+	if (ft_strncmp("abc", "abc", size_max))
+		abort();
+}
+
 static void	ft_strncmp_null_test(void) {
 	ft_strncmp(NULL, "abc", 3);
 }
 
 static void	test_ft_strncmp(void) {
-	const int	passed[9] = {
+	const int	passed[10] = {
 		!ft_strncmp("Hello", "Hello", 5),
 		ft_strncmp("Hello", "World", 5),
 		!ft_strncmp("Hello", "Help", 3),
@@ -451,6 +458,7 @@ static void	test_ft_strncmp(void) {
 		ft_strncmp("abc", "abcd", 5) < 0,
 		ft_strncmp("test\200", "test\0", 6) > 0,
 		ft_strncmp("test\xff", "test\x7f", 6) > 0,
+		!forked_test(ft_strncmp_size_max_test),
 		forked_test(ft_strncmp_null_test)
 	};
 
@@ -465,7 +473,8 @@ static void	test_ft_strncmp(void) {
 	print_result("Test n > strlen", passed[5]);
 	print_result("Test unsigned char comparison", passed[6]);
 	print_result("Test unsigned char 255 vs 127", passed[7]);
-	print_result("Test NULL", passed[8]);
+	print_result("Test SIZE_MAX", passed[8]);
+	print_result("Test NULL", passed[9]);
 }
 
 static void	ft_memchr_nullchar_test(void) {
