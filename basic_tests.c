@@ -1040,28 +1040,40 @@ static void	test_ft_putchar_fd(void) {
 	print_result("Test '0'", passed[1]);
 }
 
+static void	putstr_fd_null_test(void) {
+	ft_putstr_fd(NULL, 1);
+}
+
 static void	test_ft_putstr_fd(void) {
-	int	passed[2];
+	int	passed[3];
 
 	passed[0] = test_fd_output(wrapper_putstr, "Hello, World!", "Hello, World!", 13);
 	passed[1] = test_fd_output(wrapper_putstr, "42", "42", 2);
+	passed[2] = !forked_test(putstr_fd_null_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_putstr_fd");
 	print_result("Test 'Hello, World!'", passed[0]);
 	print_result("Test '42'", passed[1]);
+	print_result("Test NULL", passed[2]);
+}
+
+static void	putendl_fd_null_test(void) {
+	ft_putendl_fd(NULL, 1);
 }
 
 static void	test_ft_putendl_fd(void) {
-	int	passed[2];
+	int	passed[3];
 
 	passed[0] = test_fd_output(wrapper_putendl, "Hello", "Hello\n", 6);
 	passed[1] = test_fd_output(wrapper_putendl, "", "\n", 1);
+	passed[2] = !forked_test(putendl_fd_null_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_putendl_fd");
 	print_result("Test 'Hello' with newline", passed[0]);
 	print_result("Test empty string with newline", passed[1]);
+	print_result("Test NULL", passed[2]);
 }
 
 static void	test_ft_putnbr_fd(void) {
