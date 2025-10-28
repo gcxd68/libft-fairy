@@ -787,9 +787,13 @@ static void	ft_strtrim_null_set_test(void) {
 	ft_strtrim("test", NULL);
 }
 
+static void	ft_strtrim_null_both_test(void) {
+	ft_strtrim(NULL, NULL);
+}
+
 static void	test_ft_strtrim(void) {
 	char	*trimmed = ft_strtrim("   Hello   ", " ");
-	int		passed[9];
+	int		passed[10];
 
 	passed[0] = !strcmp(trimmed, "Hello");
 	free(trimmed);
@@ -809,6 +813,7 @@ static void	test_ft_strtrim(void) {
 	passed[6] = !forked_test(ft_strtrim_all_trim_test);
 	passed[7] = !forked_test(ft_strtrim_null_input_test);
 	passed[8] = !forked_test(ft_strtrim_null_set_test);
+	passed[9] = !forked_test(ft_strtrim_null_both_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strtrim");
@@ -821,6 +826,7 @@ static void	test_ft_strtrim(void) {
 	print_result("Test all trim", passed[6]);
 	print_result("Test NULL input", passed[7]);
 	print_result("Test NULL set", passed[8]);
+	print_result("Test both NULL", passed[9]);
 }
 
 static void	ft_split_null_test(void) {
@@ -935,48 +941,72 @@ static char	mapi_func(unsigned int i, char c) {
 	return c + i;
 }
 
+static void	ft_strmapi_null_input_test(void) {
+	ft_strmapi(NULL, mapi_func);
+}
+
 static void	ft_strmapi_null_func_test(void) {
 	ft_strmapi("test", NULL);
 }
 
+static void	ft_strmapi_null_both_test(void) {
+	ft_strmapi(NULL, NULL);
+}
+
 static void	test_ft_strmapi(void) {
 	char	*result = ft_strmapi("abc", mapi_func);
-	int		passed[3];
+	int		passed[5];
 
 	passed[0] = result && result[0] == 'a' && result[1] == 'c' && result[2] == 'e';
 	free(result);
 	result = ft_strmapi("", mapi_func);
 	passed[1] = result && !strcmp(result, "");
 	free(result);
-	passed[2] = !forked_test(ft_strmapi_null_func_test);
+	passed[2] = !forked_test(ft_strmapi_null_input_test);
+	passed[3] = !forked_test(ft_strmapi_null_func_test);
+	passed[4] = !forked_test(ft_strmapi_null_both_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_strmapi");
 	print_result("Test basic", passed[0]);
 	print_result("Test empty string", passed[1]);
-	print_result("Test f = NULL", passed[2]);
+	print_result("Test NULL input", passed[2]);
+	print_result("Test f = NULL", passed[3]);
+	print_result("Test both NULL", passed[4]);
 }
 
 static void	iteri_func(unsigned int i, char *c) {
 	*c = *c + i;
 }
 
+static void	ft_striteri_null_input_test(void) {
+	ft_striteri(NULL, iteri_func);
+}
+
 static void	ft_striteri_null_func_test(void) {
 	ft_striteri("test", NULL);
 }
 
+static void	ft_striteri_null_both_test(void) {
+	ft_striteri(NULL, NULL);
+}
+
 static void	test_ft_striteri(void) {
 	char	str[] = "abc";
-	int		passed[2];
+	int		passed[4];
 
 	ft_striteri(str, iteri_func);
 	passed[0] = str[0] == 'a' && str[1] == 'c' && str[2] == 'e';
-	passed[1] = !forked_test(ft_striteri_null_func_test);
+	passed[1] = !forked_test(ft_striteri_null_input_test);
+	passed[2] = !forked_test(ft_striteri_null_func_test);
+	passed[3] = !forked_test(ft_striteri_null_both_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_striteri");
 	print_result("Test basic striteri", passed[0]);
-	print_result("Test f = NULL", passed[1]);
+	print_result("Test NULL input", passed[1]);
+	print_result("Test f = NULL", passed[2]);
+	print_result("Test both NULL", passed[3]);
 }
 
 static int	test_fd_output(void (*func)(void *, int), void *input, 
