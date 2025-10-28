@@ -352,37 +352,45 @@ static void	test_ft_strlcat(void) {
 }
 
 static void	test_ft_toupper(void) {
-	const int	passed[4] = {
-		ft_toupper('a') == 'A',
-		ft_toupper('z') == 'Z',
-		ft_toupper('A') == 'A',
-		ft_toupper('0') == '0'
-	};
+	int c = -2;
+	int	passed[3] = {1, 1, 1};
 
+	while (passed[0] && ++c < 'a')
+		if (ft_toupper(c) != c)
+			passed[0] = 0;
+	while (passed[1] && ++c <= 'z')
+		if (ft_toupper(c) != c - 32)
+			passed[1] = 0;
+	while (passed[2] && ++c < 256)
+		if (ft_toupper(c) != c)
+			passed[2] = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_toupper");
-	print_result("Test 'a'", passed[0]);
-	print_result("Test 'z'", passed[1]);
-	print_result("Test 'A'", passed[2]);
-	print_result("Test '0'", passed[3]);
+	print_result("Tests EOF to '`'", passed[0]);
+	print_result("Tests 'a' to 'z'", passed[1]);
+	print_result("Tests '{' to 255", passed[2]);
 }
 
 static void	test_ft_tolower(void) {
-	const int	passed[4] = {
-		ft_tolower('A') == 'a',
-		ft_tolower('Z') == 'z',
-		ft_tolower('a') == 'a',
-		ft_tolower('0') == '0'
-	};
+	int c = -2;
+	int	passed[3] = {1, 1, 1};
 
+	while (passed[0] && ++c < 'A')
+		if (ft_tolower(c) != c)
+			passed[0] = 0;
+	while (passed[1] && ++c <= 'Z')
+		if (ft_tolower(c) != c + 32)
+			passed[1] = 0;
+	while (passed[2] && ++c < 256)
+		if (ft_tolower(c) != c)
+			passed[2] = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_tolower");
-	print_result("Test 'A'", passed[0]);
-	print_result("Test 'Z'", passed[1]);
-	print_result("Test 'a'", passed[2]);
-	print_result("Test '0'", passed[3]);
+	print_result("Tests EOF to '@'", passed[0]);
+	print_result("Tests 'A' to 'Z'", passed[1]);
+	print_result("Tests '[' to 255", passed[2]);
 }
 
 static void	ft_strchr_null_test(void) {

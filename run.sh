@@ -75,7 +75,7 @@ main() {
 		VERBOSE_FLAG="-DVERBOSE=1"
 	fi
 	gcc -Wall -Wextra -Werror -no-pie $VERBOSE_FLAG -Wl,--wrap=malloc basic_tests.c utils.c \
-		-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME >/dev/null 2>&1
+		-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME #>/dev/null 2>&1
 	BASIC_TESTS_COMPILATION_RES=$?
 	gcc -Wall -Wextra -Werror -no-pie -Wl,--wrap=malloc leak_tests.c utils.c \
 		-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME >/dev/null 2>&1
