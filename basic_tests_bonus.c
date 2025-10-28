@@ -11,21 +11,27 @@ static void	free_count(void *content) {
 	freed_count++;
 }
 
+static void	ft_lstnew_null_content_test(void) {
+	t_list	*node = ft_lstnew(NULL);
+
+	if (!node || node->content || node->next)
+		abort();
+}
+
 static void	test_ft_lstnew(void) {
 	int		content = 42;
-	t_list	*n1 = ft_lstnew(&content);
-	int		passed[3];
+	t_list	*node = ft_lstnew(&content);
 	
-	passed[0] = (n1 != NULL);
-	passed[1] = (n1 && n1->content == &content);
-	passed[2] = (n1 && n1->next == NULL);
-	free(n1);
+	int		passed[2];
+	
+	passed[0] = node && node->content == &content && !node->next;
+	free(node);
+	passed[1] = !forked_test(ft_lstnew_null_content_test);
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_lstnew (bonus)");
-	print_result("Test node allocated", passed[0]);
-	print_result("Test content assigned", passed[1]);
-	print_result("Test next is NULL", passed[2]);
+	print_result("Test with content", passed[0]);
+	print_result("Test with NULL content", passed[1]);
 }
 
 static void	ft_lstadd_front_null_list_test(void) {
