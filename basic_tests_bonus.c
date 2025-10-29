@@ -274,7 +274,7 @@ static void	test_ft_lstiter(void) {
 }
 
 static void	ft_lstmap_null_list_test(void) {
-	t_list *lst = ft_lstmap(NULL, map_func, free);
+	t_list *lst = ft_lstmap(NULL, map_func_dynamic, free);
 
 	if (lst)
 		abort();
@@ -297,7 +297,7 @@ static void	ft_lstmap_malloc_fail_test(void) {
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
 	g_malloc_fail_enabled = 1;
-	t_list *new_lst = ft_lstmap(lst, map_func, free);
+	t_list *new_lst = ft_lstmap(lst, map_func_dynamic, free);
 	g_malloc_fail_enabled = 0;
 	safe_lstclear(&new_lst, free);
 	safe_lstclear(&lst, free);
@@ -305,7 +305,7 @@ static void	ft_lstmap_malloc_fail_test(void) {
 
 static void	test_ft_lstmap(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
-	t_list	*new_lst = ft_lstmap(lst, map_func, free);
+	t_list	*new_lst = ft_lstmap(lst, map_func_dynamic, free);
 	int		passed[10];
 
 	passed[0] = new_lst && *(int *)new_lst->content == 2
