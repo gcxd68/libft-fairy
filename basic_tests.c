@@ -600,15 +600,10 @@ static void	test_ft_atoi(void) {
 
 static void	ft_calloc_overflow_test(void) {
 	const size_t	size_max = ~(size_t)0;
+	char			*ptr = ft_calloc(size_max >> 1, size_max >> 1);
 
-	g_malloc_count = 0;
-	g_malloc_fail_at = 0;
-	g_malloc_wrap_enabled = 1;
-	char *ptr = ft_calloc(size_max >> 1, size_max >> 1);
-	g_malloc_wrap_enabled = 0;
-	if (ptr && !g_malloc_zero)
+	if (ptr)
 		abort();
-	free(ptr);
 }
 
 static void	ft_calloc_zero_count_test(void) {
