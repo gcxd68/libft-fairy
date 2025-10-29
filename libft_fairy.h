@@ -1,11 +1,11 @@
 #ifndef LIBFT_FAIRY_H
 # define LIBFT_FAIRY_H
 
-#include "libft.h"
+# include "libft.h"
 
-#define GREEN	"\033[0;32m"
-#define RED		"\033[0;31m"
-#define RESET	"\033[0m"
+# define GREEN	"\033[0;32m"
+# define RED		"\033[0;31m"
+# define RESET	"\033[0m"
 
 extern int	g_del_count;
 extern int	g_malloc_wrap_enabled;

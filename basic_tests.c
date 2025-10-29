@@ -8,8 +8,16 @@
 #endif
 
 static void	test_ft_isalpha(void) {
-	int c = -1;
-	int	passed[5] = {1, 1, 1, 1, 1};
+	const char		*tests[] = {
+		"EOF to '?'",
+		"'A' to 'Z'",
+		"'[' to '`'",
+		"'a' to 'z'",
+		"'{' to 255"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[] = {1, 1, 1, 1, 1};
+	int				c = -1;
 
 	while (passed[0] && c < 'A')
 		if (ft_isalpha(c++))
@@ -26,19 +34,22 @@ static void	test_ft_isalpha(void) {
 	while (passed[4] && c < 256)
 		if (ft_isalpha(c++))
 			passed[4] = 0;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_isalpha");
-	print_result("Tests EOF to '?'", passed[0]);
-	print_result("Tests 'A' to 'Z'", passed[1]);
-	print_result("Tests '[' to '`'", passed[2]);
-	print_result("Tests 'a' to 'z'", passed[3]);
-	print_result("Tests '{' to 255", passed[4]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_isdigit(void) {
-	int c = -1;
-	int passed[3] = {1, 1, 1};
+	const char		*tests[] = {
+		"EOF to '/'",
+		"'0' to '9'",
+		"':' to 255"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[] = {1, 1, 1};
+	int				c = -1;
 
 	while (passed[0] && c < '0')
 		if (ft_isdigit(c++))
@@ -49,17 +60,26 @@ static void	test_ft_isdigit(void) {
 	while (passed[2] && c < 256)
 		if (ft_isdigit(c++))
 			passed[2] = 0;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_isdigit");
-	print_result("Tests EOF to '/'", passed[0]);
-	print_result("Tests '0' to '9'", passed[1]);
-	print_result("Tests ':' to 255", passed[2]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_isalnum(void) {
-	int c = -1;
-	int passed[7] = {1, 1, 1, 1, 1, 1, 1};
+	const char		*tests[] = {
+		"EOF to '/'",
+		"'0' to '9'",
+		"':' to '?'",
+		"'A' to 'Z'",
+		"'[' to '`'",
+		"'a' to 'z'",
+		"'{' to 255"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[] = {1, 1, 1, 1, 1, 1, 1};
+	int				c = -1;
 
 	while (passed[0] && c < '0')
 		if (ft_isalnum(c++))
@@ -82,21 +102,22 @@ static void	test_ft_isalnum(void) {
 	while (passed[6] && c < 256)
 		if (ft_isalnum(c++))
 			passed[6] = 0;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_isalnum");
-	print_result("Tests EOF to '/'", passed[0]);
-	print_result("Tests '0' to '9'", passed[1]);
-	print_result("Tests ':' to '?'", passed[2]);
-	print_result("Tests 'A' to 'Z'", passed[3]);
-	print_result("Tests '[' to '`'", passed[4]);
-	print_result("Tests 'a' to 'z'", passed[5]);
-	print_result("Tests '{' to 255", passed[6]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_isascii(void) {
-	int c = 0;
-	int passed[3] = {1, 1, 1};
+	const char		*tests[] = {
+		"EOF",
+		"'\\0' to DEL",
+		"128 to 255"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[] = {1, 1, 1};
+	int				c = 0;
 
 	if (ft_isascii(-1))
 		passed[0] = 0;
@@ -106,17 +127,22 @@ static void	test_ft_isascii(void) {
 	while (passed[2] && c < 256)
 		if (ft_isascii(c++))
 			passed[2] = 0;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_isascii");
-	print_result("Test EOF", passed[0]);
-	print_result("Tests '\\0' to DEL", passed[1]);
-	print_result("Tests 128 to 255", passed[2]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_isprint(void) {
-	int c = -1;
-	int passed[3] = {1, 1, 1};
+	const char		*tests[] = {
+		"EOF to US",
+		"' ' to '~'",
+		"DEL to 255"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[] = {1, 1, 1};
+	int				c = -1;
 
 	while (passed[0] && c < ' ')
 		if (ft_isprint(c++))
@@ -127,12 +153,11 @@ static void	test_ft_isprint(void) {
 	while (passed[2] && c < 256)
 		if (ft_isprint(c++))
 			passed[2] = 0;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_isprint");
-	print_result("Tests EOF to US", passed[0]);
-	print_result("Tests ' ' to '~'", passed[1]);
-	print_result("Tests DEL to 255", passed[2]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_strlen_null_test(void) {
@@ -140,7 +165,15 @@ static void	ft_strlen_null_test(void) {
 }
 
 static void	test_ft_strlen(void) {
-	const int	passed[5] = {
+	const char		*tests[] = {
+		"empty string",
+		"'hello'",
+		"'42'",
+		"long string",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	const int		passed[] = {
 		!ft_strlen(""),
 		ft_strlen("hello") == 5,
 		ft_strlen("42") == 2,
@@ -148,14 +181,11 @@ static void	test_ft_strlen(void) {
 		forked_test(ft_strlen_null_test)
 	};
 
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strlen");
-	print_result("Test empty string", passed[0]);
-	print_result("Test 'hello'", passed[1]);
-	print_result("Test '42'", passed[2]);
-	print_result("Test long string", passed[3]);
-	print_result("Test NULL", passed[4]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_memset_null_test(void) {
@@ -163,10 +193,17 @@ static void	ft_memset_null_test(void) {
 }
 
 static void	test_ft_memset(void) {
-	char	str1[10] = {0};
-	char	str2[10] = {0};
-	void	*ret;
-	int		passed[4];
+	const char		*tests[] = {
+		"basic memset",
+		"with 0",
+		"unsigned char (200)",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[4];
+	char			str1[10] = {0};
+	char			str2[10] = {0};
+	void			*ret;
 
 	ret = ft_memset(str1, 'A', 5);
 	memset(str2, 'A', 5);
@@ -178,18 +215,21 @@ static void	test_ft_memset(void) {
 	ft_memset(str2, 200, 10);
 	passed[2] = !memcmp(str1, str2, 10);
 	passed[3] = forked_test(ft_memset_null_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_memset");
-	print_result("Test basic memset", passed[0]);
-	print_result("Test memset with 0", passed[1]);
-	print_result("Test unsigned char fill (200)", passed[2]);
-	print_result("Test NULL", passed[3]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_bzero(void) {
-	char	str[10];
-	int		passed[2];
+	const char		*tests[] = {
+		"bzero 5 bytes",
+		"bzero all"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[2];
+	char			str[10];
 
 	memset(str, 'A', 10);
 	ft_bzero(str, 5);
@@ -205,11 +245,11 @@ static void	test_ft_bzero(void) {
 	for (int i = 0; passed[1] && i < 10; i++)
 		if (str[i])
 			passed[1] = 0;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_bzero");
-	print_result("Test bzero 5 bytes", passed[0]);
-	print_result("Test bzero all", passed[1]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_memcpy_null_test(void) {
@@ -219,10 +259,16 @@ static void	ft_memcpy_null_test(void) {
 }
 
 static void	test_ft_memcpy(void) {
-	char	src[] = "Hello, World!";
-	char	dst1[20] = {0};
-	char	dst2[20] = {0};
-	int		passed[3];
+	const char		*tests[] = {
+		"basic memcpy",
+		"partial copy",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[3];
+	char			src[] = "Hello, World!";
+	char			dst1[20] = {0};
+	char			dst2[20] = {0};
 
 	ft_memcpy(dst1, src, strlen(src) + 1);
 	memcpy(dst2, src, strlen(src) + 1);
@@ -230,12 +276,11 @@ static void	test_ft_memcpy(void) {
 	ft_memcpy(dst1, "42", 2);
 	passed[1] = dst1[0] == '4' && dst1[1] == '2';
 	passed[2] = forked_test(ft_memcpy_null_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_memcpy");
-	print_result("Test basic memcpy", passed[0]);
-	print_result("Test partial copy", passed[1]);
-	print_result("Test NULL", passed[2]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_memmove_null_test(void) {
@@ -245,11 +290,21 @@ static void	ft_memmove_null_test(void) {
 }
 
 static void	test_ft_memmove(void) {
-	char	str1[] = "Hello, World!";
-	char	str2[] = "Hello, World!";
-	char	dst1[20] = {0};
-	char	dst2[20] = {0};
-	int		passed[7];
+	const char		*tests[] = {
+		"overlapping forward",
+		"overlapping backward",
+		"no overlap",
+		"dst == src",
+		"n = 0",
+		"minimal overlap",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[7];
+	char			str1[] = "Hello, World!";
+	char			str2[] = "Hello, World!";
+	char			dst1[20] = {0};
+	char			dst2[20] = {0};
 
 	ft_memmove(str1 + 2, str1, 5);
 	memmove(str2 + 2, str2, 5);
@@ -278,22 +333,23 @@ static void	test_ft_memmove(void) {
 	memmove(str2 + 1, str2, 5);
 	passed[5] = !strcmp(str1, str2);
 	passed[6] = forked_test(ft_memmove_null_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_memmove");
-	print_result("Test overlapping forward", passed[0]);
-	print_result("Test overlapping backward", passed[1]);
-	print_result("Test no overlap", passed[2]);
-	print_result("Test dst == src", passed[3]);
-	print_result("Test n = 0", passed[4]);
-	print_result("Test minimal overlap", passed[5]);
-	print_result("Test NULL", passed[6]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_strlcpy(void) {
-	char	dst[10];
-	size_t	len;
-	int		passed[3];
+	const char		*tests[] = {
+		"basic copy",
+		"truncation",
+		"size 0"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[3];
+	char			dst[10];
+	size_t			len;
 
 	len = ft_strlcpy(dst, "Hello", 20);
 	passed[0] = !strcmp(dst, "Hello") && len == 5;
@@ -301,18 +357,28 @@ static void	test_ft_strlcpy(void) {
 	passed[1] = !strcmp(dst, "Hello") && len == 13;
 	len = ft_strlcpy(dst, "42", 0);
 	passed[2] = len == 2;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strlcpy");
-	print_result("Test basic copy", passed[0]);
-	print_result("Test truncation", passed[1]);
-	print_result("Test size 0", passed[2]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_strlcat(void) {
-	char	dst[20];
-	size_t	len;
-	int		passed[8];
+	const char		*tests[] = {
+		"basic concat",
+		"truncation",
+		"dstsize = strlen(dst)",
+		"dstsize < strlen(dst)",
+		"dstsize = 0",
+		"empty src",
+		"empty dst",
+		"no room for concat"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[8];
+	char			dst[20];
+	size_t			len;
 	
 	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, " World", 20);
@@ -338,22 +404,22 @@ static void	test_ft_strlcat(void) {
 	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, "X", 6);
 	passed[7] = !strcmp(dst, "Hello") && len == 6;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strlcat");
-	print_result("Test basic concat", passed[0]);
-	print_result("Test truncation", passed[1]);
-	print_result("Test dstsize = strlen(dst)", passed[2]);
-	print_result("Test dstsize < strlen(dst)", passed[3]);
-	print_result("Test dstsize = 0", passed[4]);
-	print_result("Test empty src", passed[5]);
-	print_result("Test empty dst", passed[6]);
-	print_result("Test no room for concat", passed[7]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_toupper(void) {
-	int c = -2;
-	int	passed[3] = {1, 1, 1};
+	const char		*tests[] = {
+		"EOF to '`'",
+		"'a' to 'z'",
+		"'{' to 255"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[3] = {1, 1, 1};
+	int				c = -2;
 
 	while (passed[0] && ++c < 'a')
 		if (ft_toupper(c) != c)
@@ -364,17 +430,22 @@ static void	test_ft_toupper(void) {
 	while (passed[2] && ++c < 256)
 		if (ft_toupper(c) != c)
 			passed[2] = 0;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_toupper");
-	print_result("Tests EOF to '`'", passed[0]);
-	print_result("Tests 'a' to 'z'", passed[1]);
-	print_result("Tests '{' to 255", passed[2]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_tolower(void) {
-	int c = -2;
-	int	passed[3] = {1, 1, 1};
+	const char		*tests[] = {
+		"EOF to '@'",
+		"'A' to 'Z'",
+		"'[' to 255"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[3] = {1, 1, 1};
+	int				c = -2;
 
 	while (passed[0] && ++c < 'A')
 		if (ft_tolower(c) != c)
@@ -385,12 +456,11 @@ static void	test_ft_tolower(void) {
 	while (passed[2] && ++c < 256)
 		if (ft_tolower(c) != c)
 			passed[2] = 0;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_tolower");
-	print_result("Tests EOF to '@'", passed[0]);
-	print_result("Tests 'A' to 'Z'", passed[1]);
-	print_result("Tests '[' to 255", passed[2]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_strchr_null_test(void) {
