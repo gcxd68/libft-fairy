@@ -34,13 +34,13 @@ static void	leak_test_ft_lstclear(void) {
 
 static void	ft_lstmap_basic_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
-	t_list	*new_lst = ft_lstmap(lst, map_func_dynamic, free);
+	t_list	*new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
 
 	safe_lstclear(&new_lst, free);
 	safe_lstclear(&lst, free);
 }
 
-static void	*map_func_shared(void *content) {
+static void	*map_func_shared_content(void *content) {
 	return content;
 }
 
@@ -51,13 +51,13 @@ static void	ft_lstmap_shared_content_test(void)
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
 	g_malloc_fail_enabled = 1;
-	t_list *new_lst = ft_lstmap(lst, map_func_shared, del_func_dummy);
+	t_list *new_lst = ft_lstmap(lst, map_func_shared_content, del_func_dummy);
 	g_malloc_fail_enabled = 0;
 	(void)new_lst;
 	safe_lstclear(&lst, free);
 }
 
-static void	*map_func_static(void *content) {
+static void	*map_func_static_content(void *content) {
 	const int	value = (int)(intptr_t)content;
 
 	return (void *)(intptr_t)(value * 10);
@@ -72,7 +72,7 @@ static void	ft_lstmap_static_content_test(void)
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
 	g_malloc_fail_enabled = 1;
-	t_list	*new_lst = ft_lstmap(lst, map_func_static, del_func_dummy);
+	t_list	*new_lst = ft_lstmap(lst, map_func_static_content, del_func_dummy);
 	g_malloc_fail_enabled = 0;
 	(void)new_lst;
 	free(lst->next->next);
@@ -86,7 +86,7 @@ static void	ft_lstmap_dynamic_content_test(void) {
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
 	g_malloc_fail_enabled = 1;
-	t_list *new_lst = ft_lstmap(lst, map_func_dynamic, free);
+	t_list *new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
 	g_malloc_fail_enabled = 0;
 	(void)new_lst;
 	safe_lstclear(&lst, free);

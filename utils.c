@@ -88,7 +88,7 @@ t_list *create_test_list(int c1, int c2, int c3)
 	return n1;
 }
 
-void	*map_func_dynamic(void *content) {
+void	*map_func_dynamic_content(void *content) {
 	int	*new = malloc(sizeof(int));
 
 	if (!new)
