@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <sys/wait.h>
 
+int	g_malloc_wrap_enabled = 0;
+int	g_malloc_zero = 0;
 int	g_malloc_count = 0;
 int	g_malloc_fail_at = 0;
-int	g_malloc_fail_enabled = 0;
 int	g_tests_failed = 0;
 
 int	forked_test(void (*test_func)(void)) {
@@ -48,8 +49,11 @@ void	print_result(const char *test_name, int passed) {
 }
 
 void	*__wrap_malloc(size_t size) {
-	if (g_malloc_fail_enabled && ++g_malloc_count == g_malloc_fail_at)
+	if (g_malloc_wrap_enabled && ++g_malloc_count == g_malloc_fail_at)
 		return NULL;
+	g_malloc_zero = 0;
+	if (!size)
+		g_malloc_zero = 1;
 	return __real_malloc(size);
 }
 

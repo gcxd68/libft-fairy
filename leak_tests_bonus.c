@@ -50,9 +50,9 @@ static void	ft_lstmap_shared_content_test(void)
 
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
-	g_malloc_fail_enabled = 1;
+	g_malloc_wrap_enabled = 1;
 	t_list *new_lst = ft_lstmap(lst, map_func_shared_content, del_func_dummy);
-	g_malloc_fail_enabled = 0;
+	g_malloc_wrap_enabled = 0;
 	(void)new_lst;
 	safe_lstclear(&lst, free);
 }
@@ -71,9 +71,9 @@ static void	ft_lstmap_static_content_test(void)
 	safe_lstadd_back(&lst, safe_lstnew((void *)(intptr_t)3));
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
-	g_malloc_fail_enabled = 1;
+	g_malloc_wrap_enabled = 1;
 	t_list	*new_lst = ft_lstmap(lst, map_func_static_content, del_func_dummy);
-	g_malloc_fail_enabled = 0;
+	g_malloc_wrap_enabled = 0;
 	(void)new_lst;
 	free(lst->next->next);
 	free(lst->next);
@@ -85,9 +85,9 @@ static void	ft_lstmap_dynamic_content_test(void) {
 
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
-	g_malloc_fail_enabled = 1;
+	g_malloc_wrap_enabled = 1;
 	t_list *new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
-	g_malloc_fail_enabled = 0;
+	g_malloc_wrap_enabled = 0;
 	(void)new_lst;
 	safe_lstclear(&lst, free);
 }

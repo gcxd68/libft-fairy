@@ -296,9 +296,9 @@ static void	ft_lstmap_malloc_fail_test(void) {
 
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
-	g_malloc_fail_enabled = 1;
+	g_malloc_wrap_enabled = 1;
 	t_list *new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
-	g_malloc_fail_enabled = 0;
+	g_malloc_wrap_enabled = 0;
 	safe_lstclear(&new_lst, free);
 	safe_lstclear(&lst, free);
 }

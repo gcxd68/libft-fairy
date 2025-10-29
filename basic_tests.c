@@ -600,26 +600,42 @@ static void	test_ft_atoi(void) {
 
 static void	ft_calloc_overflow_test(void) {
 	const size_t	size_max = ~(size_t)0;
-	char			*ptr = ft_calloc(size_max >> 1, size_max >> 1);
 
+	g_malloc_count = 0;
+	g_malloc_fail_at = 0;
+	g_malloc_wrap_enabled = 1;
+	char *ptr = ft_calloc(size_max >> 1, size_max >> 1);
+	g_malloc_wrap_enabled = 0;
+	if (ptr && !g_malloc_zero)
+		abort();
 	free(ptr);
 }
 
 static void	ft_calloc_zero_count_test(void) {
-	void	*ptr = ft_calloc(0, 5);
-
+	g_malloc_count = 0;
+	g_malloc_fail_at = 0;
+	g_malloc_wrap_enabled = 1;
+	void *ptr = ft_calloc(0, 5);
+	g_malloc_wrap_enabled = 0;
+	if (ptr && !g_malloc_zero)
+		abort();
 	free(ptr);
 }
 
 static void	ft_calloc_zero_size_test(void) {
-	void	*ptr = ft_calloc(5, 0);
-
+	g_malloc_count = 0;
+	g_malloc_fail_at = 0;
+	g_malloc_wrap_enabled = 1;
+	void *ptr = ft_calloc(5, 0);
+	g_malloc_wrap_enabled = 0;
+	if (ptr && !g_malloc_zero)
+		abort();
 	free(ptr);
 }
 
 static void	test_ft_calloc(void) {
 	int	*arr = ft_calloc(5, sizeof(int));
-	int	passed[6];
+	int	passed[5];
 
 	passed[0] = 1;
 	for (int i = 0; i < 5; i++)
@@ -889,11 +905,11 @@ static void	test_ft_split(void) {
 	passed[11] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
 	safe_free_arr(arr);
 	passed[12] = !forked_test(ft_split_null_test);
-	g_malloc_fail_enabled = 1;
+	g_malloc_wrap_enabled = 1;
 	g_malloc_fail_at = 0;
 	for (int i = 13; i < 18; i++)
 		passed[i] = !forked_test(ft_split_malloc_fail_test);
-	g_malloc_fail_enabled = 0;
+	g_malloc_wrap_enabled = 0;
 	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
 		return;
 	print_test_header("ft_split");

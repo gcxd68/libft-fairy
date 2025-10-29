@@ -44,11 +44,11 @@ static void	leak_test_ft_split(void) {
 	char	**arr = ft_split("Hello World Test 42", ' ');
 
 	safe_free_arr(arr);
-	g_malloc_fail_enabled = 1;
+	g_malloc_wrap_enabled = 1;
 	g_malloc_fail_at = 0;
 	for (int i = 0; i < 4; i++)
 		ft_split_malloc_fail_test();
-	g_malloc_fail_enabled = 0;
+	g_malloc_wrap_enabled = 0;
 }
 
 static void	leak_test_ft_itoa(void) {

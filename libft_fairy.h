@@ -8,10 +8,11 @@
 #define RESET	"\033[0m"
 
 extern int	g_del_count;
+extern int	g_malloc_wrap_enabled;
+extern int	g_malloc_zero;
 extern int	g_malloc_count;
 extern int	g_malloc_fail_at;
-extern int	g_malloc_fail_enabled;
-extern int  g_tests_failed;
+extern int	g_tests_failed;
 
 int			forked_test(void (*test_func)(void));
 int			all_tests_passed(const int *passed, size_t n);
