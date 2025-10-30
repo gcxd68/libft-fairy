@@ -1224,16 +1224,22 @@ static void	wrapper_putchar_str(void *s, int fd) {
 }
 
 static void	test_ft_putchar_fd(void) {
-	char	c = '0';
-	int		passed[2];
+	const char		*tests[] = {
+		"'A' and 'B'",
+		"'0'"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	char			c = '0';
+	const int		passed[] = {
+		test_fd_output(wrapper_putchar_str, "AB", "AB", 2),
+		test_fd_output(wrapper_putchar, &c, "0", 1)
+	};
 
-	passed[0] = test_fd_output(wrapper_putchar_str, "AB", "AB", 2);
-	passed[1] = test_fd_output(wrapper_putchar, &c, "0", 1);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_putchar_fd");
-	print_result("Test 'A' and 'B'", passed[0]);
-	print_result("Test '0'", passed[1]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	putstr_fd_null_test(void) {
@@ -1241,17 +1247,23 @@ static void	putstr_fd_null_test(void) {
 }
 
 static void	test_ft_putstr_fd(void) {
-	int	passed[3];
+	const char		*tests[] = {
+		"'Hello, World!'",
+		"'42'",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	const int		passed[] = {
+		test_fd_output(wrapper_putstr, "Hello, World!", "Hello, World!", 13),
+		test_fd_output(wrapper_putstr, "42", "42", 2),
+		!forked_test(putstr_fd_null_test)
+	};
 
-	passed[0] = test_fd_output(wrapper_putstr, "Hello, World!", "Hello, World!", 13);
-	passed[1] = test_fd_output(wrapper_putstr, "42", "42", 2);
-	passed[2] = !forked_test(putstr_fd_null_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_putstr_fd");
-	print_result("Test 'Hello, World!'", passed[0]);
-	print_result("Test '42'", passed[1]);
-	print_result("Test NULL", passed[2]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	putendl_fd_null_test(void) {
@@ -1259,36 +1271,47 @@ static void	putendl_fd_null_test(void) {
 }
 
 static void	test_ft_putendl_fd(void) {
-	int	passed[3];
+	const char		*tests[] = {
+		"'Hello' with newline",
+		"empty string with newline",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	const int		passed[] = {
+		test_fd_output(wrapper_putendl, "Hello", "Hello\n", 6),
+		test_fd_output(wrapper_putendl, "", "\n", 1),
+		!forked_test(putendl_fd_null_test)
+	};
 
-	passed[0] = test_fd_output(wrapper_putendl, "Hello", "Hello\n", 6);
-	passed[1] = test_fd_output(wrapper_putendl, "", "\n", 1);
-	passed[2] = !forked_test(putendl_fd_null_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_putendl_fd");
-	print_result("Test 'Hello' with newline", passed[0]);
-	print_result("Test empty string with newline", passed[1]);
-	print_result("Test NULL", passed[2]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_putnbr_fd(void) {
-	int	n1 = 42, n2 = -42, n3 = 0, n4 = -2147483648, n5 = 2147483647;
-	int	passed[5];
+	const char		*tests[] = {
+		"42",
+		"-42",
+		"0",
+		"INT_MIN",
+		"INT_MAX"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	const int		passed[] = {
+		test_fd_output(wrapper_putnbr, &(int){42}, "42", 2),
+		test_fd_output(wrapper_putnbr, &(int){-42}, "-42", 3),
+		test_fd_output(wrapper_putnbr, &(int){0}, "0", 1),
+		test_fd_output(wrapper_putnbr, &(int){-2147483648}, "-2147483648", 11),
+		test_fd_output(wrapper_putnbr, &(int){2147483647}, "2147483647", 10)
+	};
 
-	passed[0] = test_fd_output(wrapper_putnbr, &n1, "42", 2);
-	passed[1] = test_fd_output(wrapper_putnbr, &n2, "-42", 3);
-	passed[2] = test_fd_output(wrapper_putnbr, &n3, "0", 1);
-	passed[3] = test_fd_output(wrapper_putnbr, &n4, "-2147483648", 11);
-	passed[4] = test_fd_output(wrapper_putnbr, &n5, "2147483647", 10);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_putnbr_fd");
-	print_result("Test 42", passed[0]);
-	print_result("Test -42", passed[1]);
-	print_result("Test 0", passed[2]);
-	print_result("Test INT_MIN", passed[3]);
-	print_result("Test INT_MAX", passed[4]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 int	main(void) {

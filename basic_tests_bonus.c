@@ -4,11 +4,11 @@
 # define VERBOSE 0
 #endif
 
-static int	freed_count;
+static int	g_freed_count;
 
 static void	free_count(void *content) {
 	free(content);
-	freed_count++;
+	g_freed_count++;
 }
 
 static void	ft_lstnew_null_content_test(void) {
@@ -19,19 +19,23 @@ static void	ft_lstnew_null_content_test(void) {
 }
 
 static void	test_ft_lstnew(void) {
-	int		content = 42;
-	t_list	*node = ft_lstnew(&content);
-	
-	int		passed[2];
-	
+	const char		*tests[] = {
+		"with content",
+		"with NULL content"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[2];
+	int				content = 42;
+	t_list			*node = ft_lstnew(&content);
+
 	passed[0] = node && node->content == &content && !node->next;
 	free(node);
 	passed[1] = !forked_test(ft_lstnew_null_content_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_lstnew (bonus)");
-	print_result("Test with content", passed[0]);
-	print_result("Test with NULL content", passed[1]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_lstadd_front_null_list_test(void) {
@@ -52,16 +56,23 @@ static void	ft_lstadd_front_null_both_test(void) {
 }
 
 static void	test_ft_lstadd_front(void) {
-	int		c1 = 1, c2 = 2;
-	t_list	*n1 = safe_lstnew(&c1);
-	t_list	*n2 = safe_lstnew(&c2);
-	t_list	*lst = n1;
-	t_list	*empty, *node;
-	int		passed[5];
+	const char		*tests[] = {
+		"add front",
+		"add to empty list",
+		"NULL list",
+		"NULL new",
+		"NULL both"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				c1 = 1, c2 = 2;
+	t_list			*n1 = safe_lstnew(&c1);
+	t_list			*n2 = safe_lstnew(&c2);
+	t_list			*lst = n1;
+	t_list			*empty, *node;
+	int				passed[5];
 
 	ft_lstadd_front(&lst, n2);
-	passed[0] = lst == n2 && *(int *)lst->content == 2
-		&& *(int *)lst->next->content == 1;
+	passed[0] = lst == n2 && *(int *)lst->content == 2 && *(int *)lst->next->content == 1;
 	free(n1);
 	free(n2);
 	empty = NULL;
@@ -72,42 +83,51 @@ static void	test_ft_lstadd_front(void) {
 	passed[2] = !forked_test(ft_lstadd_front_null_list_test);
 	passed[3] = !forked_test(ft_lstadd_front_null_new_test);
 	passed[4] = !forked_test(ft_lstadd_front_null_both_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_lstadd_front (bonus)");
-	print_result("Test add front", passed[0]);
-	print_result("Test add to empty list", passed[1]);
-	print_result("Test NULL list", passed[2]);
-	print_result("Test NULL new", passed[3]);
-	print_result("Test NULL both", passed[4]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_lstsize(void) {
+	const char		*tests[] = {
+		"size 3",
+		"size NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	t_list	*lst = create_test_list(1, 2, 3);
-	int		passed[2];
+	const int		passed[] = {
+		ft_lstsize(lst) == 3,
+		!ft_lstsize(NULL)
+	};
 
-	passed[0] = ft_lstsize(lst) == 3;
-	passed[1] = !ft_lstsize(NULL);
 	safe_lstclear(&lst, free);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_lstsize (bonus)");
-	print_result("Test size 3", passed[0]);
-	print_result("Test size NULL", passed[1]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_lstlast(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
-	int		passed[2];
+	const char		*tests[] = {
+		"last",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	t_list			*lst = create_test_list(1, 2, 3);
+	const int		passed[] = {
+		ft_lstlast(lst) == lst->next->next,
+		!ft_lstlast(NULL)
+	};
 
-	passed[0] = ft_lstlast(lst) == lst->next->next;
-	passed[1] = !ft_lstlast(NULL);
 	safe_lstclear(&lst, free);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_lstlast (bonus)");
-	print_result("Test last", passed[0]);
-	print_result("Test NULL", passed[1]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_lstadd_back_null_list_test(void) {
@@ -128,11 +148,19 @@ static void	ft_lstadd_back_null_both_test(void) {
 }
 
 static void	test_ft_lstadd_back(void) {
-	int		c1 = 1, c2 = 2;
-	t_list	*lst = safe_lstnew(&c1);
-	t_list	*new = safe_lstnew(&c2);
-	t_list	*empty, *node;
-	int		passed[5];
+	const char		*tests[] = {
+		"add back",
+		"add to empty list",
+		"NULL list",
+		"NULL new",
+		"NULL both"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[5];
+	int				c1 = 1, c2 = 2;
+	t_list			*lst = safe_lstnew(&c1);
+	t_list			*new = safe_lstnew(&c2);
+	t_list			*empty, *node;
 
 	ft_lstadd_back(&lst, new);
 	passed[0] = lst->next == new && *(int *)new->content == 2;
@@ -141,23 +169,20 @@ static void	test_ft_lstadd_back(void) {
 	empty = NULL;
 	node = safe_lstnew(&c1);
 	ft_lstadd_back(&empty, node);
-	passed[1] = empty == node && empty->next == NULL;
+	passed[1] = empty == node && !empty->next;
 	free(node);
 	passed[2] = !forked_test(ft_lstadd_back_null_list_test);
 	passed[3] = !forked_test(ft_lstadd_back_null_new_test);
 	passed[4] = !forked_test(ft_lstadd_back_null_both_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_lstadd_back (bonus)");
-	print_result("Test add back", passed[0]);
-	print_result("Test add to empty list", passed[1]);
-	print_result("Test NULL list", passed[2]);
-	print_result("Test NULL new", passed[3]);
-	print_result("Test NULL both", passed[4]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_lstdelone_null_node_test(void) {
-	ft_lstdelone(NULL, free_count);
+	ft_lstdelone(NULL, free);
 }
 
 static void	ft_lstdelone_null_func_test(void) {
@@ -172,14 +197,22 @@ static void	ft_lstdelone_null_both_test(void) {
 }
 
 static void	test_ft_lstdelone(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
-	t_list	*to_del = lst->next;
-	int		passed[5];
+	const char		*tests[] = {
+		"free once",
+		"correct remaining nodes",
+		"NULL node",
+		"NULL function",
+		"NULL both"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[5];
+	t_list			*lst = create_test_list(1, 2, 3);
+	t_list			*to_del = lst->next;
 
-	freed_count = 0;
 	lst->next = lst->next->next;
+	g_freed_count = 0;
 	ft_lstdelone(to_del, free_count);
-	passed[0] = (freed_count == 1);
+	passed[0] = (g_freed_count == 1);
 	int correct = (*(int *)lst->content == 1)
 		&& (*(int *)lst->next->content == 3)
 		&& lst->next->next == NULL;
@@ -188,19 +221,15 @@ static void	test_ft_lstdelone(void) {
 	passed[2] = !forked_test(ft_lstdelone_null_node_test);
 	passed[3] = !forked_test(ft_lstdelone_null_func_test);
 	passed[4] = !forked_test(ft_lstdelone_null_both_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_lstdelone (bonus)");
-	print_result("Test delone calls free once", passed[0]);
-	print_result("Test delone leaves correct remaining nodes", passed[1]);
-	print_result("Test NULL node", passed[2]);
-	print_result("Test NULL function", passed[3]);
-	print_result("Test NULL both", passed[4]);
-
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_lstclear_null_list_test(void) {
-	ft_lstclear(NULL, free_count);
+	ft_lstclear(NULL, free);
 }
 
 static void	ft_lstclear_null_func_test(void) {
@@ -215,22 +244,27 @@ static void	ft_lstclear_null_both_test(void) {
 }
 
 static void	test_ft_lstclear(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
-	int		passed[4];
+	const char		*tests[] = {
+		"basic",
+		"NULL list",
+		"NULL function",
+		"NULL both"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[4];
+	t_list			*lst = create_test_list(1, 2, 3);
 
-	freed_count = 0;
+	g_freed_count = 0;
 	ft_lstclear(&lst, free_count);
-	passed[0] = !lst && freed_count == 3;
+	passed[0] = !lst && g_freed_count == 3;
 	passed[1] = !forked_test(ft_lstclear_null_list_test);
 	passed[2] = !forked_test(ft_lstclear_null_func_test);
 	passed[3] = !forked_test(ft_lstclear_null_both_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_lstclear (bonus)");
-	print_result("Test clear (no crash)", passed[0]);
-	print_result("Test NULL list", passed[1]);
-	print_result("Test NULL function", passed[2]);
-	print_result("Test NULL both", passed[3]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	iter_func(void *content) {
@@ -253,8 +287,15 @@ static void	ft_lstiter_null_both_test(void) {
 }
 
 static void	test_ft_lstiter(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
-	int		passed[4];
+	const char		*tests[] = {
+		"iter",
+		"NULL list",
+		"NULL function",
+		"NULL both"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[4];
+	t_list			*lst = create_test_list(1, 2, 3);
 
 	ft_lstiter(lst, iter_func);
 	passed[0] = *(int *)lst->content == 2
@@ -264,13 +305,11 @@ static void	test_ft_lstiter(void) {
 	passed[1] = !forked_test(ft_lstiter_null_list_test);
 	passed[2] = !forked_test(ft_lstiter_null_func_test);
 	passed[3] = !forked_test(ft_lstiter_null_both_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_lstiter (bonus)");
-	print_result("Test iter", passed[0]);
-	print_result("Test NULL list", passed[1]);
-	print_result("Test NULL function", passed[2]);
-	print_result("Test NULL both", passed[3]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_lstmap_null_list_test(void) {
@@ -304,9 +343,22 @@ static void	ft_lstmap_malloc_fail_test(void) {
 }
 
 static void	test_ft_lstmap(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
-	t_list	*new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
-	int		passed[10];
+	const char		*tests[] = {
+		"basic",
+		"NULL list",
+		"NULL function",
+		"NULL both",
+		"malloc fail #1 (node 1)",
+		"malloc fail #2 (content 1)",
+		"malloc fail #3 (node 2)",
+		"malloc fail #4 (content 2)",
+		"malloc fail #5 (node 3)",
+		"malloc fail #6 (content 3)"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[10];
+	t_list			*lst = create_test_list(1, 2, 3);
+	t_list			*new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
 
 	passed[0] = new_lst && *(int *)new_lst->content == 2
 		&& *(int *)new_lst->next->content == 4
@@ -319,19 +371,11 @@ static void	test_ft_lstmap(void) {
 	g_malloc_fail_at = 0;
 	for (int i = 4; i < 10; i++)
 		passed[i] = !forked_test(ft_lstmap_malloc_fail_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_lstmap (bonus)");
-	print_result("Test map normal", passed[0]);
-	print_result("Test NULL list", passed[1]);
-	print_result("Test NULL function", passed[2]);
-	print_result("Test NULL both", passed[3]);
-	print_result("Test malloc fail #1 (node 1)", passed[4]);
-	print_result("Test malloc fail #2 (content 1)", passed[5]);
-	print_result("Test malloc fail #3 (node 2)", passed[6]);
-	print_result("Test malloc fail #4 (content 2)", passed[7]);
-	print_result("Test malloc fail #5 (node 3)", passed[8]);
-	print_result("Test malloc fail #6 (content 3)", passed[9]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 int	main(void) {
