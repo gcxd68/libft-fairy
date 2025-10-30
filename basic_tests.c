@@ -1,7 +1,4 @@
 #include "libft_fairy.h"
-#include <stdio.h>
-#include <string.h>
-#include <fcntl.h>
 
 #ifndef VERBOSE
 # define VERBOSE 0
@@ -173,6 +170,8 @@ static void	test_ft_strlen(void) {
 static void	ft_memset_null_test(void) {
 	ft_memset(NULL, 0, 5);
 }
+
+#include <string.h>
 
 static void	test_ft_memset(void) {
 	const char		*tests[] = {
@@ -933,40 +932,40 @@ static void	test_ft_split(void) {
 	char			**arr = ft_split("Hello World 42", ' ');
 
 	passed[0] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("___Hello___World___", '_');
 	passed[1] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("", ' ');
 	passed[2] = arr && !arr[0];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("", 'x');
 	passed[3] = arr && !arr[0];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("xxx", 'x');
 	passed[4] = arr && !arr[0];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("Hello", '\0');
 	passed[5] = arr && !strcmp(arr[0], "Hello") && !arr[1];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("", '\0');
 	passed[6] = (arr && !arr[0]);
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("   ", ' ');
 	passed[7] = arr && !arr[0];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("HelloWorld", ' ');
 	passed[8] = arr && !strcmp(arr[0], "HelloWorld") && !arr[1];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("Hello   World", ' ');
 	passed[9] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("Hello\xFFWorld", (char)255);
 	passed[10] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	arr = ft_split("Hello\xFFWorld", (char)-1);
 	passed[11] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !arr[2];
-	safe_free_arr(arr);
+	safe_free_arr(&arr);
 	passed[12] = !forked_test(ft_split_null_test);
 	g_malloc_wrap_enabled = 1;
 	g_malloc_fail_at = 0;
@@ -1083,6 +1082,9 @@ static void	test_ft_striteri(void) {
 		print_test_results("ft_striteri", num_tests, tests, passed);
 }
 
+#include <stdio.h>
+#include <fcntl.h>
+
 static int	test_fd_output(void (*func)(void *, int), void *input, 
 							const char *expected, size_t read_len) {
 	char	buf[50] = {0};
@@ -1148,7 +1150,12 @@ static void	test_ft_putchar_fd(void) {
 }
 
 static void	putstr_fd_null_test(void) {
-	ft_putstr_fd(NULL, 1);
+	char	tmp[] = "/tmp/putstr_fd_null_test_XXXXXX";
+	int		fd = mkstemp(tmp);
+
+	ft_putstr_fd(NULL, fd);
+	close(fd);
+	unlink(tmp);
 }
 
 static void	test_ft_putstr_fd(void) {
@@ -1169,7 +1176,12 @@ static void	test_ft_putstr_fd(void) {
 }
 
 static void	putendl_fd_null_test(void) {
-	ft_putendl_fd(NULL, 1);
+	char	tmp[] = "/tmp/putendl_fd_null_test_XXXXXX";
+	int		fd = mkstemp(tmp);
+
+	ft_putendl_fd(NULL, fd);
+	close(fd);
+	unlink(tmp);
 }
 
 static void	test_ft_putendl_fd(void) {

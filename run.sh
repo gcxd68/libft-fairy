@@ -3,7 +3,7 @@
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 PINK='\033[0;95m'
-YELLOW='\033[1;33m'
+YELLOW='\033[0;33m'
 RESET='\033[0m'
 
 VERBOSE=0
@@ -27,7 +27,7 @@ echo_color() {
 }
 
 cleanup() {
-	echo -e -n "🧹 Cleaning up...\t"
+	echo -e -n "🧹 Cleaning up...\t    "
 	rm -f *.o $BASIC_TESTER_NAME $LEAK_TESTER_NAME $BONUS_BASIC_TESTER_NAME $BONUS_LEAK_TESTER_NAME .results
 	make -C $LIBFT_DIR fclean > /dev/null 2>&1
 	echo "Done"
@@ -36,14 +36,38 @@ cleanup() {
 
 trap cleanup EXIT INT TERM
 
+check_external_functions() {
+	local func=$1
+	local allowed=$2
+	local obj_file="$LIBFT_DIR/${func}.o"
+	if [ ! -f "$obj_file" ]; then
+		return 0
+	fi
+	local externals=$(nm -u "$obj_file" 2>/dev/null | awk '{print $2}')
+	local forbidden=""
+	for ext in $externals; do
+		if [[ "$ext" == ft_* ]]; then
+			continue
+		fi
+		if [[ ! " $allowed " =~ " $ext " ]]; then
+			forbidden="$forbidden $ext"
+		fi
+	done
+	if [ -n "$forbidden" ]; then
+		echo "$func: forbidden function detected:$forbidden"
+		return 1
+	fi
+	return 0
+}
+
 main() {
 	echo ""
-	echo_color "╔════════════════════════════╗" "$PINK"
-	echo_color "║       LIBFT-FAIRY 🧚       ║" "$PINK"
-	echo_color "╚════════════════════════════╝" "$PINK"
+	echo_color "╔══════════════════════════════╗" "$PINK"
+	echo_color "║        LIBFT-FAIRY 🧚        ║" "$PINK"
+	echo_color "╚══════════════════════════════╝" "$PINK"
 	echo ""
 	
-	echo -e -n "📝 Checking norm...\t"
+	echo -e -n "📝 Checking norm...\t  "
 	NORM_OUTPUT=$(find $LIBFT_DIR -type d -name "$TESTER_DIR" -prune -o \
 		\( -name "*.c" -o -name "*.h" \) -type f -print | xargs -r norminette 2>&1)
 	if echo "$NORM_OUTPUT" | grep -q "Error"; then
@@ -54,22 +78,92 @@ main() {
 		echo ""
 	else
 		NORM_TEST_RES=0
-		echo "Done"
+		echo "  Done"
 	fi
 
-	echo -e -n "📦 Compiling libft...\t"
+	echo -e -n "📦 Building libft...   "
 	if make -C $LIBFT_DIR bonus > /dev/null 2>&1; then
 		BONUS_VERSION=1
-		echo "Done (bonus)"
+		echo -e "\t   Bonus"
 	elif make -C $LIBFT_DIR > /dev/null 2>&1; then
 		BONUS_VERSION=0
-		echo "Done (no bonus)"
+		echo_color "Mandatory" "$YELLOW"
 	else
-		echo_color "Failed" "$RED"
+		echo_color "\t  Failed" "$RED"
 		exit 1
 	fi
 
-	echo -e -n "🔨 Compiling tests...\t"
+echo -e -n "🔍 Checking externals...  "
+	EXTERN_TEST_RES=0
+	EXTERN_OUTPUT=""
+	no_extern_funcs="ft_striteri ft_isdigit ft_isalnum ft_isascii ft_isprint ft_strlen ft_memset ft_bzero ft_memcpy ft_memmove ft_strlcpy ft_strlcat ft_toupper ft_tolower ft_strchr ft_strrchr ft_strncmp ft_memchr ft_memcmp ft_strnstr ft_atoi"
+	for func in $no_extern_funcs; do
+		FUNC_OUTPUT=$(check_external_functions "$func" "" 2>&1)
+		if [ $? -ne 0 ]; then
+			EXTERN_TEST_RES=1
+			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
+		fi
+	done
+	malloc_funcs="ft_strmapi ft_itoa ft_calloc ft_strdup ft_substr ft_strjoin ft_strtrim"
+	for func in $malloc_funcs; do
+		FUNC_OUTPUT=$(check_external_functions "$func" "malloc" 2>&1)
+		if [ $? -ne 0 ]; then
+			EXTERN_TEST_RES=1
+			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
+		fi
+	done
+	FUNC_OUTPUT=$(check_external_functions "ft_split" "malloc free" 2>&1)
+	if [ $? -ne 0 ]; then
+		EXTERN_TEST_RES=1
+		EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
+	fi
+	write_funcs="ft_putchar_fd ft_putstr_fd ft_putendl_fd ft_putnbr_fd"
+	for func in $write_funcs; do
+		FUNC_OUTPUT=$(check_external_functions "$func" "write" 2>&1)
+		if [ $? -ne 0 ]; then
+			EXTERN_TEST_RES=1
+			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
+		fi
+	done
+	if [ $BONUS_VERSION -eq 1 ]; then
+		bonus_no_extern="ft_lstiter ft_lstadd_front ft_lstsize ft_lstlast ft_lstadd_back"
+		for func in $bonus_no_extern; do
+			FUNC_OUTPUT=$(check_external_functions "$func" "" 2>&1)
+			if [ $? -ne 0 ]; then
+				EXTERN_TEST_RES=1
+				EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
+			fi
+		done
+		FUNC_OUTPUT=$(check_external_functions "ft_lstnew" "malloc" 2>&1)
+		if [ $? -ne 0 ]; then
+			EXTERN_TEST_RES=1
+			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
+		fi
+		FUNC_OUTPUT=$(check_external_functions "ft_lstdelone" "free" 2>&1)
+		if [ $? -ne 0 ]; then
+			EXTERN_TEST_RES=1
+			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
+		fi
+		FUNC_OUTPUT=$(check_external_functions "ft_lstclear" "free" 2>&1)
+		if [ $? -ne 0 ]; then
+			EXTERN_TEST_RES=1
+			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
+		fi
+		FUNC_OUTPUT=$(check_external_functions "ft_lstmap" "malloc free" 2>&1)
+		if [ $? -ne 0 ]; then
+			EXTERN_TEST_RES=1
+			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
+		fi
+	fi
+	if [ $EXTERN_TEST_RES -eq 0 ]; then
+		echo "  Done"
+	else
+		echo_color "Failed" "$RED"
+		echo ""
+		echo -e "$EXTERN_OUTPUT"
+	fi
+
+	echo -e -n "🔨 Building tests...\t  "
 	VERBOSE_FLAG=""
 	if [ $VERBOSE -eq 1 ]; then
 		VERBOSE_FLAG="-DVERBOSE=1"
@@ -92,13 +186,13 @@ main() {
 	fi
 	if [ $BASIC_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_COMPILATION_RES -eq 0 ] \
 		&& [ $LEAK_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_COMPILATION_RES -eq 0 ]; then
-		echo "Done"
+		echo "  Done"
 	else
 		echo_color "Failed" "$RED"
 		exit 1
 	fi
 
-	echo -e -n "🧪 Running tests...\t"
+	echo -e -n "🧪 Running tests...\t  "
 	./$BASIC_TESTER_NAME > .results 2>&1
 	BASIC_TESTS_RES=$?
 	BONUS_BASIC_TESTS_RES=0
@@ -133,7 +227,7 @@ main() {
 	fi
 	if [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && \
 	   [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]; then
-		echo "Done"
+		echo "  Done"
 	else
 		echo_color "Failed" "$RED"
 	fi
@@ -141,18 +235,18 @@ main() {
 	cat .results
 	echo ""
 
-	[ $NORM_TEST_RES -eq 0 ] && [ $BASIC_TESTS_RES -eq 0 ] && \
-	[ $BONUS_BASIC_TESTS_RES -eq 0 ] && [ $LEAK_TESTS_RES -eq 0 ] && \
-	[ $BONUS_LEAK_TESTS_RES -eq 0 ]
+	[ $NORM_TEST_RES -eq 0 ] && [ $EXTERN_TEST_RES -eq 0 ] && \
+	[ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && \
+	[ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]
 	EXIT_CODE=$?
 	if [ $EXIT_CODE -eq 0 ]; then
-		echo_color "╔════════════════════════════╗" "$GREEN"
-		echo_color "║     OH MY, YOU PASSED!     ║" "$GREEN"
-		echo_color "╚════════════════════════════╝" "$GREEN"
+		echo_color "╔══════════════════════════════╗" "$GREEN"
+		echo_color "║      OH MY, YOU PASSED!      ║" "$GREEN"
+		echo_color "╚══════════════════════════════╝" "$GREEN"
 	else
-		echo_color "╔════════════════════════════╗" "$RED"
-		echo_color "║    OH NO... YOU FAILED!    ║" "$RED"
-		echo_color "╚════════════════════════════╝" "$RED"
+		echo_color "╔══════════════════════════════╗" "$RED"
+		echo_color "║     OH NO... YOU FAILED!     ║" "$RED"
+		echo_color "╚══════════════════════════════╝" "$RED"
 	fi
 	echo ""
 	return $EXIT_CODE
