@@ -15,7 +15,7 @@ extern int	g_malloc_fail_at;
 extern int	g_tests_failed;
 
 int			forked_test(void (*test_func)(void));
-int			all_tests_passed(const int *passed, size_t n);
+int			all_tests_passed(const int *passed, const size_t num_tests);
 void		print_test_results(char *function_name, const size_t num_tests, const char *tests[], const int passed[]);
 void		*__real_malloc(size_t size);
 void		*__wrap_malloc(size_t size);

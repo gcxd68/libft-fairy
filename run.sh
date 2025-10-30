@@ -75,19 +75,19 @@ main() {
 		VERBOSE_FLAG="-DVERBOSE=1"
 	fi
 	gcc -Wall -Wextra -Werror -no-pie $VERBOSE_FLAG -Wl,--wrap=malloc basic_tests.c utils.c \
-		-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME #>/dev/null 2>&1
+		-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME >/dev/null 2>&1
 	BASIC_TESTS_COMPILATION_RES=$?
 	gcc -Wall -Wextra -Werror -no-pie -Wl,--wrap=malloc leak_tests.c utils.c \
-		-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME #>/dev/null 2>&1
+		-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME >/dev/null 2>&1
 	LEAK_TESTS_COMPILATION_RES=$?
 	BONUS_BASIC_TESTS_COMPILATION_RES=0
 	BONUS_LEAK_TESTS_COMPILATION_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
 		gcc -Wall -Wextra -Werror -no-pie $VERBOSE_FLAG -Wl,--wrap=malloc basic_tests_bonus.c utils.c \
-			-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_BASIC_TESTER_NAME #>/dev/null 2>&1
+			-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_BASIC_TESTER_NAME >/dev/null 2>&1
 		BONUS_BASIC_TESTS_COMPILATION_RES=$?
 		gcc -Wall -Wextra -Werror -no-pie -Wl,--wrap=malloc leak_tests_bonus.c utils.c \
-			-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_LEAK_TESTER_NAME #>/dev/null 2>&1
+			-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_LEAK_TESTER_NAME >/dev/null 2>&1
 		BONUS_LEAK_TESTS_COMPILATION_RES=$?
 	fi
 	if [ $BASIC_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_COMPILATION_RES -eq 0 ] \
