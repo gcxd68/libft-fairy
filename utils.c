@@ -28,9 +28,9 @@ int	forked_test(void (*test_func)(void)) {
 	return 0;
 }
 
-int	all_tests_passed(const int *passed, size_t n) {
-	for (size_t i = 0; i < n; i++) {
-		if (passed[i] == 0)
+int	all_tests_passed(const int *passed, const size_t num_tests) {
+	for (size_t i = 0; i < num_tests; i++) {
+		if (!passed[i])
 			return 0;
 	}
 	return 1;
