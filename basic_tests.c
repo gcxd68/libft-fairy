@@ -418,7 +418,7 @@ static void	test_ft_toupper(void) {
 		"'{' to 255"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[3] = {1, 1, 1};
+	int				passed[] = {1, 1, 1};
 	int				c = -2;
 
 	while (passed[0] && ++c < 'a')
@@ -444,7 +444,7 @@ static void	test_ft_tolower(void) {
 		"'[' to 255"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[3] = {1, 1, 1};
+	int				passed[] = {1, 1, 1};
 	int				c = -2;
 
 	while (passed[0] && ++c < 'A')
@@ -468,8 +468,17 @@ static void	ft_strchr_null_test(void) {
 }
 
 static void	test_ft_strchr(void) {
-	const char	str[] = "Hello\xC8World";
-	const int	passed[6] = {
+	const char		*tests[] = {
+		"find 'o'",
+		"find 'W'",
+		"find '\\0'",
+		"not found 'x'",
+		"find unsigned char (200)",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	const char		str[] = "Hello\xC8World";
+	const int		passed[] = {
 		ft_strchr(str, 'o') == strchr(str, 'o'),
 		ft_strchr(str, 'W') == strchr(str, 'W'),
 		ft_strchr(str, '\0') == strchr(str, '\0'),
@@ -478,15 +487,11 @@ static void	test_ft_strchr(void) {
 		forked_test(ft_strchr_null_test)
 	};
 
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strchr");
-	print_result("Test find 'o'", passed[0]);
-	print_result("Test find 'W'", passed[1]);
-	print_result("Test find '\\0'", passed[2]);
-	print_result("Test not found 'x'", passed[3]);
-	print_result("Test unsigned char comparison (200)", passed[4]);
-	print_result("Test NULL", passed[5]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_strrchr_null_test(void) {
@@ -494,8 +499,17 @@ static void	ft_strrchr_null_test(void) {
 }
 
 static void	test_ft_strrchr(void) {
-	const char	str[] = "Hello\xC8World\xC8!";
-	const int	passed[6] = {
+	const char		*tests[] = {
+		"find last 'o'",
+		"find 'W'",
+		"find '\\0'",
+		"not found 'x'",
+		"find unsigned char (200)",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	const char		str[] = "Hello\xC8World\xC8!";
+	const int		passed[] = {
 		ft_strrchr(str, 'o') == strrchr(str, 'o'),
 		ft_strrchr(str, 'W') == strrchr(str, 'W'),
 		ft_strrchr(str, '\0') == strrchr(str, '\0'),
@@ -504,15 +518,11 @@ static void	test_ft_strrchr(void) {
 		forked_test(ft_strrchr_null_test)
 	};
 
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strrchr");
-	print_result("Test find last 'o'", passed[0]);
-	print_result("Test find 'W'", passed[1]);
-	print_result("Test find '\\0'", passed[2]);
-	print_result("Test not found 'x'", passed[3]);
-	print_result("Test unsigned char comparison (200)", passed[4]);
-	print_result("Test NULL", passed[5]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_strncmp_size_max_test(void) {
@@ -527,7 +537,20 @@ static void	ft_strncmp_null_test(void) {
 }
 
 static void	test_ft_strncmp(void) {
-	const int	passed[10] = {
+	const char		*tests[] = {
+		"equal strings",
+		"different strings",
+		"partial compare",
+		"n = 0",
+		"with \\0",
+		"n > strlen",
+		"unsigned char comparison",
+		"unsigned char 255 vs 127",
+		"SIZE_MAX",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	const int		passed[] = {
 		!ft_strncmp("Hello", "Hello", 5),
 		ft_strncmp("Hello", "World", 5),
 		!ft_strncmp("Hello", "Help", 3),
@@ -540,19 +563,11 @@ static void	test_ft_strncmp(void) {
 		forked_test(ft_strncmp_null_test)
 	};
 
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strncmp");
-	print_result("Test equal strings", passed[0]);
-	print_result("Test different strings", passed[1]);
-	print_result("Test partial compare", passed[2]);
-	print_result("Test n=0", passed[3]);
-	print_result("Test with \\0", passed[4]);
-	print_result("Test n > strlen", passed[5]);
-	print_result("Test unsigned char comparison", passed[6]);
-	print_result("Test unsigned char 255 vs 127", passed[7]);
-	print_result("Test SIZE_MAX", passed[8]);
-	print_result("Test NULL", passed[9]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_memchr_nullchar_test(void) {
@@ -561,9 +576,18 @@ static void	ft_memchr_nullchar_test(void) {
 }
 
 static void	test_ft_memchr(void) {
+	const char			*tests[] = {
+		"find last 'o'",
+		"find 'W'",
+		"find '\\0'",
+		"not found 'x'",
+		"find unsigned char (200)",
+		"NULL"
+	};
+	const size_t		num_tests = sizeof(tests) / sizeof(*tests);
 	const char			*str = "Hello, World!";
 	const unsigned char	bin[] = {0, 128, 255, 42};
-	const int			passed[6] = {
+	const int			passed[] = {
 		ft_memchr(str, 'o', 13) == memchr(str, 'o', 13),
 		ft_memchr(str, 'W', 13) == memchr(str, 'W', 13),
 		!ft_memchr(str, 'x', 13),
@@ -572,24 +596,28 @@ static void	test_ft_memchr(void) {
 		ft_memchr(bin, 255, sizeof(bin)) == memchr(bin, 255, sizeof(bin))
 	};
 
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_memchr");
-	print_result("Test find 'o'", passed[0]);
-	print_result("Test find 'W'", passed[1]);
-	print_result("Test not found", passed[2]);
-	print_result("Test n=0", passed[3]);
-	print_result("Test find '\\0'", passed[4]);
-	print_result("Test unsigned char comparison (255)", passed[5]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
-
 static void	test_ft_memcmp(void) {
-	char		buf1[] = {1, 2, 3, 4, 5};
-	char		buf2[] = {1, 2, 3, 4, 6};
-	char		high1[] = {'A', '\200', 0};
-	char		high2[] = {'A', '\0', 0};
-	const int	passed[6] = {
+	const char		*tests[] = {
+		"equal",
+		"different",
+		"n = 0",
+		"binary data",
+		"unsigned char > 127 (\\200 vs \\0)",
+		"unsigned char symmetry"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	char			buf1[] = {1, 2, 3, 4, 5};
+	char			buf2[] = {1, 2, 3, 4, 6};
+	char			high1[] = {'A', '\200', 0};
+	char			high2[] = {'A', '\0', 0};
+	const int		passed[] = {
 		!ft_memcmp("Hello", "Hello", 5),
 		ft_memcmp("Hello", "World", 5),
 		!ft_memcmp("Hello", "World", 0),
@@ -598,15 +626,11 @@ static void	test_ft_memcmp(void) {
 		ft_memcmp(high2, high1, 2) < 0
 	};
 
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_memcmp");
-	print_result("Test equal", passed[0]);
-	print_result("Test different", passed[1]);
-	print_result("Test n=0", passed[2]);
-	print_result("Test binary data", passed[3]);
-	print_result("Test unsigned char >127 (\\200 vs \\0)", passed[4]);
-	print_result("Test unsigned char symmetry", passed[5]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_strnstr_len_too_short(void) {
@@ -614,8 +638,16 @@ static void	ft_strnstr_len_too_short(void) {
 }
 
 static void	test_ft_strnstr(void) {
-	const char	*haystack = "Hello, World!";
-	const int	passed[5] = {
+	const char		*tests[] = {
+		"find 'World'",
+		"find 'o'",
+		"not found",
+		"empty needle",
+		"len too short"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	const char		*haystack = "Hello, World!";
+	const int		passed[] = {
 		ft_strnstr(haystack, "World", 13) != NULL,
 		ft_strnstr(haystack, "o", 13) != NULL,
 		!ft_strnstr(haystack, "xyz", 13),
@@ -623,14 +655,11 @@ static void	test_ft_strnstr(void) {
 		!forked_test(ft_strnstr_len_too_short)
 	};
 
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strnstr");
-	print_result("Test find 'World'", passed[0]);
-	print_result("Test find 'o'", passed[1]);
-	print_result("Test not found", passed[2]);
-	print_result("Test empty needle", passed[3]);
-	print_result("Test len too short", passed[4]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_atoi_null_test(void) {
@@ -638,7 +667,21 @@ static void	ft_atoi_null_test(void) {
 }
 
 static void	test_ft_atoi(void) {
-	const int	passed[11] = {
+	const char		*tests[] = {
+		"'  \\t\\n\\v\\f\\r +42   $'",
+		"'\\v \\t\\r  \\n    \\f-42   *'",
+		"'0'",
+		"'++2'",
+		"'--4'",
+		"'-+9'",
+		"'+-8'",
+		"' \\t-R66'",
+		"INT_MAX",
+		"INT_MIN",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	const int		passed[] = {
 		ft_atoi("  \t\n\v\f\r +42   $") == 42,
 		ft_atoi("\v \t\r  \n    \f-42   *") == -42,
 		!ft_atoi("0"),
@@ -652,20 +695,11 @@ static void	test_ft_atoi(void) {
 		forked_test(ft_atoi_null_test)
 	};
 
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_atoi");
-	print_result("Test '  \\t\\n\\v\\f\\r +42'", passed[0]);
-	print_result("Test '-42*'", passed[1]);
-	print_result("Test '0'", passed[2]);
-	print_result("Test '++2'", passed[3]);
-	print_result("Test '--4'", passed[4]);
-	print_result("Test '-+9'", passed[5]);
-	print_result("Test '+-8'", passed[6]);
-	print_result("Test '\\t-R66'", passed[7]);
-	print_result("Test INT_MAX", passed[8]);
-	print_result("Test INT_MIN", passed[9]);
-	print_result("Test NULL", passed[10]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_calloc_overflow_test(void) {
@@ -699,8 +733,16 @@ static void	ft_calloc_zero_size_test(void) {
 }
 
 static void	test_ft_calloc(void) {
-	int	*arr = ft_calloc(5, sizeof(int));
-	int	passed[5];
+	const char		*tests[] = {
+		"all zeros'",
+		"allocated",
+		"overflow",
+		"count = 0",
+		"size = 0"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[5];
+	int				*arr = ft_calloc(5, sizeof(int));
 
 	passed[0] = 1;
 	for (int i = 0; i < 5; i++)
@@ -713,14 +755,11 @@ static void	test_ft_calloc(void) {
 	passed[2] = !forked_test(ft_calloc_overflow_test);
 	passed[3] = !forked_test(ft_calloc_zero_count_test);
 	passed[4] = !forked_test(ft_calloc_zero_size_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_calloc");
-	print_result("Test all zeros", passed[0]);
-	print_result("Test allocated", passed[1]);
-	print_result("Test overflow", passed[2]);
-	print_result("Test count = 0", passed[3]);
-	print_result("Test size = 0", passed[4]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_strdup_empty_test(void) {
@@ -731,8 +770,14 @@ static void	ft_strdup_empty_test(void) {
 }
 
 static void	test_ft_strdup(void) {
-	char	*dup = ft_strdup("Hello");
-	int		passed[3];
+	const char		*tests[] = {
+		"basic dup",
+		"short string",
+		"empty string"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[3];
+	char			*dup = ft_strdup("Hello");
 
 	passed[0] = !strcmp(dup, "Hello");
 	free(dup);
@@ -740,12 +785,11 @@ static void	test_ft_strdup(void) {
 	passed[1] = !strcmp(dup, "42");
 	free(dup);
 	passed[2] = !forked_test(ft_strdup_empty_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strdup");
-	print_result("Test basic dup", passed[0]);
-	print_result("Test short string", passed[1]);
-	print_result("Test empty string", passed[2]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_substr_null_test(void) {
@@ -782,8 +826,20 @@ static void	ft_substr_start_max_test(void) {
 }
 
 static void	test_ft_substr(void) {
-	char	*sub = ft_substr("Hello, World!", 7, 5);
-	int		passed[9];
+	const char		*tests[] = {
+		"basic substr",
+		"from start",
+		"start > len",
+		"len too long",
+		"len = 0",
+		"empty string alloc",
+		"start past end",
+		"start = UINT_MAX",
+		"NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[9];
+	char			*sub = ft_substr("Hello, World!", 7, 5);
 
 	passed[0] = !strcmp(sub, "World");
 	free(sub);
@@ -799,22 +855,15 @@ static void	test_ft_substr(void) {
 	sub = ft_substr("test", 0, 0);
 	passed[4] = !strcmp(sub, "");
 	free(sub);
-	passed[5] = !forked_test(ft_substr_null_test);
-	passed[6] = !forked_test(ft_substr_empty_test);
-	passed[7] = !forked_test(ft_substr_start_past_end_test);
-	passed[8] = !forked_test(ft_substr_start_max_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	passed[5] = !forked_test(ft_substr_empty_test);
+	passed[6] = !forked_test(ft_substr_start_past_end_test);
+	passed[7] = !forked_test(ft_substr_start_max_test);
+	passed[8] = !forked_test(ft_substr_null_test);
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_substr");
-	print_result("Test basic substr", passed[0]);
-	print_result("Test from start", passed[1]);
-	print_result("Test start > len", passed[2]);
-	print_result("Test len too long", passed[3]);
-	print_result("Test len = 0", passed[4]);
-	print_result("Test NULL", passed[5]);
-	print_result("Test empty string alloc", passed[6]);
-	print_result("Test start past end", passed[7]);
-	print_result("Test start = UINT_MAX", passed[8]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_strjoin_null_s1_test(void) {
@@ -830,10 +879,19 @@ static void	ft_strjoin_null_both_test(void) {
 }
 
 static void	test_ft_strjoin(void) {
-	char	*joined;
-	int		passed[7];
+	const char		*tests[] = {
+		"basic join",
+		"empty s1",
+		"empty s2",
+		"short strings",
+		"NULL s1",
+		"NULL s2",
+		"both NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[7];
+	char			*joined = ft_strjoin("Hello", " World");
 
-	joined = ft_strjoin("Hello", " World");
 	passed[0] = !strcmp(joined, "Hello World");
 	free(joined);
 	joined = ft_strjoin("", "Hello");
@@ -848,16 +906,11 @@ static void	test_ft_strjoin(void) {
 	passed[4] = !forked_test(ft_strjoin_null_s1_test);
 	passed[5] = !forked_test(ft_strjoin_null_s2_test);
 	passed[6] = !forked_test(ft_strjoin_null_both_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strjoin");
-	print_result("Test basic join", passed[0]);
-	print_result("Test empty s1", passed[1]);
-	print_result("Test empty s2", passed[2]);
-	print_result("Test short strings", passed[3]);
-	print_result("Test NULL s1", passed[4]);
-	print_result("Test NULL s2", passed[5]);
-	print_result("Test both NULL", passed[6]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_strtrim_empty_string_test(void) {
@@ -881,6 +934,19 @@ static void	ft_strtrim_null_both_test(void) {
 }
 
 static void	test_ft_strtrim(void) {
+	const char		*tests[] = {
+		"spaces",
+		"custom set",
+		"no trim",
+		"multiple occurrences",
+		"no set",
+		"empty string",
+		"all trim",
+		"NULL input",
+		"NULL set",
+		"both NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	char	*trimmed = ft_strtrim("   Hello   ", " ");
 	int		passed[10];
 
@@ -903,19 +969,11 @@ static void	test_ft_strtrim(void) {
 	passed[7] = !forked_test(ft_strtrim_null_input_test);
 	passed[8] = !forked_test(ft_strtrim_null_set_test);
 	passed[9] = !forked_test(ft_strtrim_null_both_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strtrim");
-	print_result("Test spaces", passed[0]);
-	print_result("Test custom set", passed[1]);
-	print_result("Test no trim", passed[2]);
-	print_result("Test multiple occurrences", passed[3]);
-	print_result("Test no set", passed[4]);
-	print_result("Test empty string", passed[5]);
-	print_result("Test all trim", passed[6]);
-	print_result("Test NULL input", passed[7]);
-	print_result("Test NULL set", passed[8]);
-	print_result("Test both NULL", passed[9]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	ft_split_null_test(void) {
@@ -930,10 +988,30 @@ static void	ft_split_malloc_fail_test(void) {
 }
 
 static void	test_ft_split(void) {
-	char	**arr;
-	int		passed[18];
+	const char		*tests[] = {
+		"basic split",
+		"multiple delimiters",
+		"empty string",
+		"empty string with 'x'",
+		"all delimiters",
+		"delimiter = '\\0'",
+		"empty string with '\\0'",
+		"only spaces",
+		"no delimiter found",
+		"consecutive delimiters",
+		"delimiter = 255 (\\xFF)",
+		"delimiter = -1",
+		"NULL",
+		"malloc fail #1 (array)",
+		"malloc fail #2 (word 1)",
+		"malloc fail #3 (word 2)",
+		"malloc fail #4 (word 3)",
+		"malloc fail #5 (other)"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[18];
+	char			**arr = ft_split("Hello World 42", ' ');
 
-	arr = ft_split("Hello World 42", ' ');
 	passed[0] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
 	safe_free_arr(arr);
 	arr = ft_split("___Hello___World___", '_');
@@ -975,32 +1053,24 @@ static void	test_ft_split(void) {
 	for (int i = 13; i < 18; i++)
 		passed[i] = !forked_test(ft_split_malloc_fail_test);
 	g_malloc_wrap_enabled = 0;
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_split");
-	print_result("Test basic split", passed[0]);
-	print_result("Test multiple delimiters", passed[1]);
-	print_result("Test empty string", passed[2]);
-	print_result("Test empty string with 'x'", passed[3]);
-	print_result("Test all delimiters", passed[4]);
-	print_result("Test delimiter = '\\0'", passed[5]);
-	print_result("Test empty string with '\\0'", passed[6]);
-	print_result("Test only spaces", passed[7]);
-	print_result("Test no delimiter found", passed[8]);
-	print_result("Test consecutive delimiters", passed[9]);
-	print_result("Test delimiter = 255 (\\xFF)", passed[10]);
-	print_result("Test delimiter = -1", passed[11]);
-	print_result("Test NULL", passed[12]);
-	print_result("Test malloc fail #1 (array)", passed[13]);
-	print_result("Test malloc fail #2 (word 1)", passed[14]);
-	print_result("Test malloc fail #3 (word 2)", passed[15]);
-	print_result("Test malloc fail #4 (word 3)", passed[16]);
-	print_result("Test malloc fail #5 (other)", passed[17]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	test_ft_itoa(void) {
-	char	*str = ft_itoa(42);
-	int		passed[5];
+	const char		*tests[] = {
+		"42",
+		"-42",
+		"0",
+		"INT_MIN",
+		"INT_MAX"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[5];
+	char			*str = ft_itoa(42);
 
 	passed[0] = !strcmp(str, "42");
 	free(str);
@@ -1016,14 +1086,11 @@ static void	test_ft_itoa(void) {
 	str = ft_itoa(2147483647);
 	passed[4] = !strcmp(str, "2147483647");
 	free(str);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_itoa");
-	print_result("Test 42", passed[0]);
-	print_result("Test -42", passed[1]);
-	print_result("Test 0", passed[2]);
-	print_result("Test INT_MIN", passed[3]);
-	print_result("Test INT_MAX", passed[4]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static char	mapi_func(unsigned int i, char c) {
@@ -1043,8 +1110,16 @@ static void	ft_strmapi_null_both_test(void) {
 }
 
 static void	test_ft_strmapi(void) {
-	char	*result = ft_strmapi("abc", mapi_func);
-	int		passed[5];
+	const char		*tests[] = {
+		"basic",
+		"empty string",
+		"NULL input",
+		"f = NULL",
+		"both NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[5];
+	char			*result = ft_strmapi("abc", mapi_func);
 
 	passed[0] = result && result[0] == 'a' && result[1] == 'c' && result[2] == 'e';
 	free(result);
@@ -1054,14 +1129,11 @@ static void	test_ft_strmapi(void) {
 	passed[2] = !forked_test(ft_strmapi_null_input_test);
 	passed[3] = !forked_test(ft_strmapi_null_func_test);
 	passed[4] = !forked_test(ft_strmapi_null_both_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_strmapi");
-	print_result("Test basic", passed[0]);
-	print_result("Test empty string", passed[1]);
-	print_result("Test NULL input", passed[2]);
-	print_result("Test f = NULL", passed[3]);
-	print_result("Test both NULL", passed[4]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static void	iteri_func(unsigned int i, char *c) {
@@ -1081,21 +1153,26 @@ static void	ft_striteri_null_both_test(void) {
 }
 
 static void	test_ft_striteri(void) {
-	char	str[] = "abc";
-	int		passed[4];
+	const char		*tests[] = {
+		"basic",
+		"NULL input",
+		"f = NULL",
+		"both NULL"
+	};
+	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[4];
+	char			str[] = "abc";
 
 	ft_striteri(str, iteri_func);
 	passed[0] = str[0] == 'a' && str[1] == 'c' && str[2] == 'e';
 	passed[1] = !forked_test(ft_striteri_null_input_test);
 	passed[2] = !forked_test(ft_striteri_null_func_test);
 	passed[3] = !forked_test(ft_striteri_null_both_test);
-	if (all_tests_passed(passed, sizeof(passed) / sizeof(*passed)) && !VERBOSE)
+	if (all_tests_passed(passed, num_tests) && !VERBOSE)
 		return;
 	print_test_header("ft_striteri");
-	print_result("Test basic striteri", passed[0]);
-	print_result("Test NULL input", passed[1]);
-	print_result("Test f = NULL", passed[2]);
-	print_result("Test both NULL", passed[3]);
+	for (size_t i = 0; i < num_tests; i++)
+		print_result(tests[i], passed[i]);
 }
 
 static int	test_fd_output(void (*func)(void *, int), void *input, 
