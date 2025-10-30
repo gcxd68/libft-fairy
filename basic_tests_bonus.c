@@ -198,10 +198,7 @@ static void	test_ft_lstdelone(void) {
 	g_freed_count = 0;
 	ft_lstdelone(to_del, free_count);
 	passed[0] = (g_freed_count == 1);
-	int correct = (*(int *)lst->content == 1)
-		&& (*(int *)lst->next->content == 3)
-		&& lst->next->next == NULL;
-	passed[1] = correct;
+	passed[1] = (*(int *)lst->content == 1) && (*(int *)lst->next->content == 3) && !lst->next->next;
 	safe_lstclear(&lst, free);
 	passed[2] = !forked_test(ft_lstdelone_null_node_test);
 	passed[3] = !forked_test(ft_lstdelone_null_func_test);
@@ -277,9 +274,7 @@ static void	test_ft_lstiter(void) {
 	t_list			*lst = create_test_list(1, 2, 3);
 
 	ft_lstiter(lst, iter_func);
-	passed[0] = *(int *)lst->content == 2
-		&& *(int *)lst->next->content == 3
-		&& *(int *)lst->next->next->content == 4;
+	passed[0] = *(int *)lst->content == 2 && *(int *)lst->next->content == 3 && *(int *)lst->next->next->content == 4;
 	safe_lstclear(&lst, free);
 	passed[1] = !forked_test(ft_lstiter_null_list_test);
 	passed[2] = !forked_test(ft_lstiter_null_func_test);
@@ -336,9 +331,7 @@ static void	test_ft_lstmap(void) {
 	t_list			*lst = create_test_list(1, 2, 3);
 	t_list			*new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
 
-	passed[0] = new_lst && *(int *)new_lst->content == 2
-		&& *(int *)new_lst->next->content == 4
-		&& *(int *)new_lst->next->next->content == 6;
+	passed[0] = new_lst && *(int *)new_lst->content == 2 && *(int *)new_lst->next->content == 4 && *(int *)new_lst->next->next->content == 6;
 	safe_lstclear(&new_lst, free);
 	safe_lstclear(&lst, free);
 	passed[1] = !forked_test(ft_lstmap_null_list_test);

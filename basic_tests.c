@@ -207,12 +207,11 @@ static void	test_ft_bzero(void) {
 		"bzero all"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[num_tests];
+	int				passed[] = {1, 1};
 	char			str[10];
 
 	memset(str, 'A', 10);
 	ft_bzero(str, 5);
-	passed[0] = 1;
 	for (int i = 0; passed[0] && i < 5; i++)
 		if (str[i])
 			passed[0] = 0;
@@ -220,7 +219,6 @@ static void	test_ft_bzero(void) {
 		if (str[i] != 'A')
 			passed[0] = 0;
 	ft_bzero(str, 10);
-	passed[1] = 1;
 	for (int i = 0; passed[1] && i < 10; i++)
 		if (str[i])
 			passed[1] = 0;
