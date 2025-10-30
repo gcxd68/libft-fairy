@@ -21,6 +21,9 @@ LEAK_TESTER_NAME=".leak_tests"
 BONUS_BASIC_TESTER_NAME=".basic_tests_bonus"
 BONUS_LEAK_TESTER_NAME=".leak_tests_bonus"
 TESTER_DIR=$(basename "$(pwd)")
+TMP_DIR="/tmp/libft_fairy_$$"
+
+mkdir -p "$TMP_DIR"
 
 echo_color() {
 	echo -e "${2}${1}${RESET}"
@@ -28,7 +31,8 @@ echo_color() {
 
 cleanup() {
 	echo -e -n "🧹 Cleaning up...\t    "
-	rm -f *.o $BASIC_TESTER_NAME $LEAK_TESTER_NAME $BONUS_BASIC_TESTER_NAME $BONUS_LEAK_TESTER_NAME .results
+	rm -rf "$TMP_DIR" *.o $BASIC_TESTER_NAME $LEAK_TESTER_NAME \
+		$BONUS_BASIC_TESTER_NAME $BONUS_LEAK_TESTER_NAME .results
 	make -C $LIBFT_DIR fclean > /dev/null 2>&1
 	echo "Done"
 	echo ""
@@ -40,18 +44,12 @@ check_external_functions() {
 	local func=$1
 	local allowed=$2
 	local obj_file="$LIBFT_DIR/${func}.o"
-	if [ ! -f "$obj_file" ]; then
-		return 0
-	fi
+	[ ! -f "$obj_file" ] && return 0
 	local externals=$(nm -u "$obj_file" 2>/dev/null | awk '{print $2}')
 	local forbidden=""
 	for ext in $externals; do
-		if [[ "$ext" == ft_* ]]; then
-			continue
-		fi
-		if [[ ! " $allowed " =~ " $ext " ]]; then
-			forbidden="$forbidden $ext"
-		fi
+		[[ "$ext" == ft_* || "$ext" == __* ]] && continue
+		[[ ! " $allowed " =~ " $ext " ]] && forbidden="$forbidden $ext"
 	done
 	if [ -n "$forbidden" ]; then
 		echo "$func: forbidden function detected:$forbidden"
@@ -60,13 +58,57 @@ check_external_functions() {
 	return 0
 }
 
+check_externals_batch() {
+	local funcs=$1
+	local allowed=$2
+	local output=""
+	local failed=0
+	for func in $funcs; do
+		local result
+		result=$(check_external_functions "$func" "$allowed" 2>&1)
+		if [ $? -ne 0 ]; then
+			failed=1
+			output="${output}${result}\n"
+		fi
+	done
+	echo -e "$output"
+	return $failed
+}
+
+run_basic_test() {
+	local tester=$1
+	local out_file=$2
+	local append=$3
+	if [ "$append" = "1" ]; then
+		$tester >> "$TMP_DIR/stdout.tmp" 2>"$TMP_DIR/stderr.tmp"
+	else
+		$tester > "$TMP_DIR/stdout.tmp" 2>"$TMP_DIR/stderr.tmp"
+	fi
+	local exit_code=$?
+	cat "$TMP_DIR/stdout.tmp" >> "$out_file"
+	cat "$TMP_DIR/stderr.tmp" >> "$out_file"
+	grep "Segmentation fault" "$TMP_DIR/stderr.tmp" 2>/dev/null || true
+	return $exit_code
+}
+
+run_valgrind_test() {
+	local tester=$1
+	local log_file=$2
+	{ valgrind --leak-check=full --show-leak-kinds=all \
+		--errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
+		--log-file="$log_file" "$tester" > /dev/null; } 2>"$TMP_DIR/valgrind_stderr.tmp"
+	local exit_code=$?
+	grep "Segmentation fault" "$TMP_DIR/valgrind_stderr.tmp" 2>/dev/null || true
+	return $exit_code
+}
+
 main() {
 	echo ""
 	echo_color "╔══════════════════════════════╗" "$PINK"
 	echo_color "║        LIBFT-FAIRY 🧚        ║" "$PINK"
 	echo_color "╚══════════════════════════════╝" "$PINK"
 	echo ""
-	
+
 	echo -e -n "📝 Checking norm...\t  "
 	NORM_OUTPUT=$(find $LIBFT_DIR -type d -name "$TESTER_DIR" -prune -o \
 		\( -name "*.c" -o -name "*.h" \) -type f -print | xargs -r norminette 2>&1)
@@ -93,67 +135,29 @@ main() {
 		exit 1
 	fi
 
-echo -e -n "🔍 Checking externals...  "
+	echo -e -n "🔍 Checking externals...  "
 	EXTERN_TEST_RES=0
 	EXTERN_OUTPUT=""
-	no_extern_funcs="ft_striteri ft_isdigit ft_isalnum ft_isascii ft_isprint ft_strlen ft_memset ft_bzero ft_memcpy ft_memmove ft_strlcpy ft_strlcat ft_toupper ft_tolower ft_strchr ft_strrchr ft_strncmp ft_memchr ft_memcmp ft_strnstr ft_atoi"
-	for func in $no_extern_funcs; do
-		FUNC_OUTPUT=$(check_external_functions "$func" "" 2>&1)
-		if [ $? -ne 0 ]; then
-			EXTERN_TEST_RES=1
-			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
-		fi
-	done
+	no_extern="ft_striteri ft_isdigit ft_isalnum ft_isascii ft_isprint ft_strlen ft_memset ft_bzero ft_memcpy ft_memmove ft_strlcpy ft_strlcat ft_toupper ft_tolower ft_strchr ft_strrchr ft_strncmp ft_memchr ft_memcmp ft_strnstr ft_atoi"
 	malloc_funcs="ft_strmapi ft_itoa ft_calloc ft_strdup ft_substr ft_strjoin ft_strtrim"
-	for func in $malloc_funcs; do
-		FUNC_OUTPUT=$(check_external_functions "$func" "malloc" 2>&1)
-		if [ $? -ne 0 ]; then
-			EXTERN_TEST_RES=1
-			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
-		fi
-	done
-	FUNC_OUTPUT=$(check_external_functions "ft_split" "malloc free" 2>&1)
-	if [ $? -ne 0 ]; then
-		EXTERN_TEST_RES=1
-		EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
-	fi
 	write_funcs="ft_putchar_fd ft_putstr_fd ft_putendl_fd ft_putnbr_fd"
-	for func in $write_funcs; do
-		FUNC_OUTPUT=$(check_external_functions "$func" "write" 2>&1)
-		if [ $? -ne 0 ]; then
-			EXTERN_TEST_RES=1
-			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
-		fi
-	done
+	result=$(check_externals_batch "$no_extern" "")
+	[ $? -ne 0 ] && EXTERN_TEST_RES=1 && EXTERN_OUTPUT="$EXTERN_OUTPUT$result"
+	result=$(check_externals_batch "$malloc_funcs" "malloc")
+	[ $? -ne 0 ] && EXTERN_TEST_RES=1 && EXTERN_OUTPUT="$EXTERN_OUTPUT$result"
+	result=$(check_external_functions "ft_split" "malloc free" 2>&1)
+	[ $? -ne 0 ] && EXTERN_TEST_RES=1 && EXTERN_OUTPUT="${EXTERN_OUTPUT}${result}\n"
+	result=$(check_externals_batch "$write_funcs" "write")
+	[ $? -ne 0 ] && EXTERN_TEST_RES=1 && EXTERN_OUTPUT="$EXTERN_OUTPUT$result"
 	if [ $BONUS_VERSION -eq 1 ]; then
 		bonus_no_extern="ft_lstiter ft_lstadd_front ft_lstsize ft_lstlast ft_lstadd_back"
-		for func in $bonus_no_extern; do
-			FUNC_OUTPUT=$(check_external_functions "$func" "" 2>&1)
-			if [ $? -ne 0 ]; then
-				EXTERN_TEST_RES=1
-				EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
-			fi
+		result=$(check_externals_batch "$bonus_no_extern" "")
+		[ $? -ne 0 ] && EXTERN_TEST_RES=1 && EXTERN_OUTPUT="$EXTERN_OUTPUT$result"
+		for func_pair in "ft_lstnew:malloc" "ft_lstdelone:free" "ft_lstclear:free" "ft_lstmap:malloc free"; do
+			IFS=':' read -r func allowed <<< "$func_pair"
+			result=$(check_external_functions "$func" "$allowed" 2>&1)
+			[ $? -ne 0 ] && EXTERN_TEST_RES=1 && EXTERN_OUTPUT="${EXTERN_OUTPUT}${result}\n"
 		done
-		FUNC_OUTPUT=$(check_external_functions "ft_lstnew" "malloc" 2>&1)
-		if [ $? -ne 0 ]; then
-			EXTERN_TEST_RES=1
-			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
-		fi
-		FUNC_OUTPUT=$(check_external_functions "ft_lstdelone" "free" 2>&1)
-		if [ $? -ne 0 ]; then
-			EXTERN_TEST_RES=1
-			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
-		fi
-		FUNC_OUTPUT=$(check_external_functions "ft_lstclear" "free" 2>&1)
-		if [ $? -ne 0 ]; then
-			EXTERN_TEST_RES=1
-			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
-		fi
-		FUNC_OUTPUT=$(check_external_functions "ft_lstmap" "malloc free" 2>&1)
-		if [ $? -ne 0 ]; then
-			EXTERN_TEST_RES=1
-			EXTERN_OUTPUT="$EXTERN_OUTPUT$FUNC_OUTPUT\n"
-		fi
 	fi
 	if [ $EXTERN_TEST_RES -eq 0 ]; then
 		echo "  Done"
@@ -165,23 +169,19 @@ echo -e -n "🔍 Checking externals...  "
 
 	echo -e -n "🔨 Building tests...\t  "
 	VERBOSE_FLAG=""
-	if [ $VERBOSE -eq 1 ]; then
-		VERBOSE_FLAG="-DVERBOSE=1"
-	fi
-	gcc -Wall -Wextra -Werror -no-pie $VERBOSE_FLAG -Wl,--wrap=malloc basic_tests.c utils.c \
-		-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME >/dev/null 2>&1
+	[ $VERBOSE -eq 1 ] && VERBOSE_FLAG="-DVERBOSE=1"
+	COMPILE_FLAGS="-Wall -Wextra -Werror -no-pie $VERBOSE_FLAG -Wl,--wrap=malloc"
+	gcc $COMPILE_FLAGS basic_tests.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME >/dev/null 2>&1
 	BASIC_TESTS_COMPILATION_RES=$?
-	gcc -Wall -Wextra -Werror -no-pie -Wl,--wrap=malloc leak_tests.c utils.c \
-		-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME >/dev/null 2>&1
+	gcc $COMPILE_FLAGS leak_tests.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME >/dev/null 2>&1
 	LEAK_TESTS_COMPILATION_RES=$?
 	BONUS_BASIC_TESTS_COMPILATION_RES=0
 	BONUS_LEAK_TESTS_COMPILATION_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
-		gcc -Wall -Wextra -Werror -no-pie $VERBOSE_FLAG -Wl,--wrap=malloc basic_tests_bonus.c utils.c \
-			-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_BASIC_TESTER_NAME >/dev/null 2>&1
+		gcc $COMPILE_FLAGS basic_tests_bonus.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_BASIC_TESTER_NAME >/dev/null 2>&1
 		BONUS_BASIC_TESTS_COMPILATION_RES=$?
-		gcc -Wall -Wextra -Werror -no-pie -Wl,--wrap=malloc leak_tests_bonus.c utils.c \
-			-L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_LEAK_TESTER_NAME >/dev/null 2>&1
+		
+		gcc $COMPILE_FLAGS leak_tests_bonus.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_LEAK_TESTER_NAME >/dev/null 2>&1
 		BONUS_LEAK_TESTS_COMPILATION_RES=$?
 	fi
 	if [ $BASIC_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_COMPILATION_RES -eq 0 ] \
@@ -193,51 +193,74 @@ echo -e -n "🔍 Checking externals...  "
 	fi
 
 	echo -e -n "🧪 Running tests...\t  "
-	./$BASIC_TESTER_NAME > .results 2>&1
+	./$BASIC_TESTER_NAME > "$TMP_DIR/basic_output.tmp" 2>&1
 	BASIC_TESTS_RES=$?
+	if grep -q "Segmentation fault" "$TMP_DIR/basic_output.tmp" 2>/dev/null; then
+		cat "$TMP_DIR/basic_output.tmp" | sed 's/^.*Segmentation fault/\n&/' > .results
+	else
+		cat "$TMP_DIR/basic_output.tmp" > .results
+	fi
 	BONUS_BASIC_TESTS_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
-		./$BONUS_BASIC_TESTER_NAME >> .results 2>&1
+		./$BONUS_BASIC_TESTER_NAME > "$TMP_DIR/bonus_basic_output.tmp" 2>&1
 		BONUS_BASIC_TESTS_RES=$?
+		if grep -q "Segmentation fault" "$TMP_DIR/bonus_basic_output.tmp" 2>/dev/null; then
+			cat "$TMP_DIR/bonus_basic_output.tmp" | sed 's/^.*Segmentation fault/\n&/' >> .results
+		else
+			cat "$TMP_DIR/bonus_basic_output.tmp" >> .results
+		fi
 	fi
-	valgrind --leak-check=full --show-leak-kinds=all \
+	{ valgrind --leak-check=full --show-leak-kinds=all \
 		--errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
-		--log-file=/tmp/valgrind_output.log ./$LEAK_TESTER_NAME > /dev/null 2>&1
+		--log-file="$TMP_DIR/valgrind_output.log" ./$LEAK_TESTER_NAME > /dev/null; } > "$TMP_DIR/leak_output.tmp" 2>&1
 	LEAK_TESTS_RES=$?
+	if grep -q "Segmentation fault" "$TMP_DIR/leak_output.tmp" 2>/dev/null; then
+		cat "$TMP_DIR/leak_output.tmp" | sed 's/^.*Segmentation fault/\n&/' >> .results
+	else
+		cat "$TMP_DIR/leak_output.tmp" >> .results
+	fi
 	BONUS_LEAK_TESTS_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
-		valgrind --leak-check=full --show-leak-kinds=all \
+		{ valgrind --leak-check=full --show-leak-kinds=all \
 			--errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
-			--log-file=/tmp/bonus_valgrind_output.log ./$BONUS_LEAK_TESTER_NAME > /dev/null 2>&1
+			--log-file="$TMP_DIR/bonus_valgrind_output.log" ./$BONUS_LEAK_TESTER_NAME > /dev/null; } > "$TMP_DIR/bonus_leak_output.tmp" 2>&1
 		BONUS_LEAK_TESTS_RES=$?
+		if grep -q "Segmentation fault" "$TMP_DIR/bonus_leak_output.tmp" 2>/dev/null; then
+			cat "$TMP_DIR/bonus_leak_output.tmp" | sed 's/^.*Segmentation fault/\n&/' >> .results
+		else
+			cat "$TMP_DIR/bonus_leak_output.tmp" >> .results
+		fi
 	fi
 	if [ $LEAK_TESTS_RES -ne 0 ] || [ $VERBOSE -eq 1 ]; then
-		echo "" >> .results
-		echo "════════════════════════════════════════" >> .results
-		echo "VALGRIND OUTPUT (mandatory)" >> .results
-		echo "════════════════════════════════════════" >> .results
-		cat /tmp/valgrind_output.log >> .results
+		{
+			echo ""
+			echo "════════════════════════════════════════"
+			echo "VALGRIND OUTPUT (mandatory)"
+			echo "════════════════════════════════════════"
+			cat "$TMP_DIR/valgrind_output.log"
+		} >> .results
 	fi
 	if [ $BONUS_LEAK_TESTS_RES -ne 0 ] || [ $VERBOSE -eq 1 ]; then
-		echo "" >> .results
-		echo "════════════════════════════════════════" >> .results
-		echo "VALGRIND OUTPUT (bonus)" >> .results
-		echo "════════════════════════════════════════" >> .results
-		cat /tmp/bonus_valgrind_output.log >> .results
+		{
+			echo ""
+			echo "════════════════════════════════════════"
+			echo "VALGRIND OUTPUT (bonus)"
+			echo "════════════════════════════════════════"
+			cat "$TMP_DIR/bonus_valgrind_output.log"
+		} >> .results
 	fi
-	if [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && \
-	   [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]; then
+	if [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] \
+		&& [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]; then
 		echo "  Done"
 	else
 		echo_color "Failed" "$RED"
 	fi
-
 	cat .results
 	echo ""
 
-	[ $NORM_TEST_RES -eq 0 ] && [ $EXTERN_TEST_RES -eq 0 ] && \
-	[ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] && \
-	[ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]
+	[ $NORM_TEST_RES -eq 0 ] && [ $EXTERN_TEST_RES -eq 0 ] \
+	&& [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] \
+	&& [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]
 	EXIT_CODE=$?
 	if [ $EXIT_CODE -eq 0 ]; then
 		echo_color "╔══════════════════════════════╗" "$GREEN"
