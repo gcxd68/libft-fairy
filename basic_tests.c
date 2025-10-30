@@ -182,7 +182,7 @@ static void	test_ft_memset(void) {
 		"NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[4];
+	int				passed[num_tests];
 	char			str1[10] = {0};
 	char			str2[10] = {0};
 	void			*ret;
@@ -207,7 +207,7 @@ static void	test_ft_bzero(void) {
 		"bzero all"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[2];
+	int				passed[num_tests];
 	char			str[10];
 
 	memset(str, 'A', 10);
@@ -241,7 +241,7 @@ static void	test_ft_memcpy(void) {
 		"NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[3];
+	int				passed[num_tests];
 	char			src[] = "Hello, World!";
 	char			dst1[20] = {0};
 	char			dst2[20] = {0};
@@ -273,7 +273,7 @@ static void	test_ft_memmove(void) {
 		"NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[7];
+	int				passed[num_tests];
 	char			str1[] = "Hello, World!";
 	char			str2[] = "Hello, World!";
 	char			dst1[20] = {0};
@@ -317,7 +317,7 @@ static void	test_ft_strlcpy(void) {
 		"size 0"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[3];
+	int				passed[num_tests];
 	char			dst[10];
 	size_t			len;
 
@@ -343,7 +343,7 @@ static void	test_ft_strlcat(void) {
 		"no room for concat"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[8];
+	int				passed[num_tests];
 	char			dst[20];
 	size_t			len;
 	
@@ -678,7 +678,7 @@ static void	test_ft_calloc(void) {
 		"size = 0"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[5];
+	int				passed[num_tests];
 	int				*arr = ft_calloc(5, sizeof(int));
 
 	passed[0] = 1;
@@ -710,7 +710,7 @@ static void	test_ft_strdup(void) {
 		"empty string"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[3];
+	int				passed[num_tests];
 	char			*dup = ft_strdup("Hello");
 
 	passed[0] = !strcmp(dup, "Hello");
@@ -769,7 +769,7 @@ static void	test_ft_substr(void) {
 		"NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[9];
+	int				passed[num_tests];
 	char			*sub = ft_substr("Hello, World!", 7, 5);
 
 	passed[0] = !strcmp(sub, "World");
@@ -817,7 +817,7 @@ static void	test_ft_strjoin(void) {
 		"both NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[7];
+	int				passed[num_tests];
 	char			*joined = ft_strjoin("Hello", " World");
 
 	passed[0] = !strcmp(joined, "Hello World");
@@ -872,8 +872,8 @@ static void	test_ft_strtrim(void) {
 		"both NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	char	*trimmed = ft_strtrim("   Hello   ", " ");
-	int		passed[10];
+	int				passed[num_tests];
+	char			*trimmed = ft_strtrim("   Hello   ", " ");
 
 	passed[0] = !strcmp(trimmed, "Hello");
 	free(trimmed);
@@ -931,7 +931,7 @@ static void	test_ft_split(void) {
 		"malloc fail #5 (other)"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[18];
+	int				passed[num_tests];
 	char			**arr = ft_split("Hello World 42", ' ');
 
 	passed[0] = arr && !strcmp(arr[0], "Hello") && !strcmp(arr[1], "World") && !strcmp(arr[2], "42") && !arr[3];
@@ -988,7 +988,7 @@ static void	test_ft_itoa(void) {
 		"INT_MAX"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[5];
+	int				passed[num_tests];
 	char			*str = ft_itoa(42);
 
 	passed[0] = !strcmp(str, "42");
@@ -1034,7 +1034,7 @@ static void	test_ft_strmapi(void) {
 		"both NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[5];
+	int				passed[num_tests];
 	char			*result = ft_strmapi("abc", mapi_func);
 
 	passed[0] = result && result[0] == 'a' && result[1] == 'c' && result[2] == 'e';
@@ -1073,7 +1073,7 @@ static void	test_ft_striteri(void) {
 		"both NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[4];
+	int				passed[num_tests];
 	char			str[] = "abc";
 
 	ft_striteri(str, iteri_func);

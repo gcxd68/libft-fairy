@@ -24,7 +24,7 @@ static void	test_ft_lstnew(void) {
 		"with NULL content"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[2];
+	int				passed[num_tests];
 	int				content = 42;
 	t_list			*node = ft_lstnew(&content);
 
@@ -61,12 +61,12 @@ static void	test_ft_lstadd_front(void) {
 		"NULL both"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+	int				passed[num_tests];
 	int				c1 = 1, c2 = 2;
 	t_list			*n1 = safe_lstnew(&c1);
 	t_list			*n2 = safe_lstnew(&c2);
 	t_list			*lst = n1;
 	t_list			*empty, *node;
-	int				passed[5];
 
 	ft_lstadd_front(&lst, n2);
 	passed[0] = lst == n2 && *(int *)lst->content == 2 && *(int *)lst->next->content == 1;
@@ -144,7 +144,7 @@ static void	test_ft_lstadd_back(void) {
 		"NULL both"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[5];
+	int				passed[num_tests];
 	int				c1 = 1, c2 = 2;
 	t_list			*lst = safe_lstnew(&c1);
 	t_list			*new = safe_lstnew(&c2);
@@ -190,7 +190,7 @@ static void	test_ft_lstdelone(void) {
 		"NULL both"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[5];
+	int				passed[num_tests];
 	t_list			*lst = create_test_list(1, 2, 3);
 	t_list			*to_del = lst->next;
 
@@ -233,7 +233,7 @@ static void	test_ft_lstclear(void) {
 		"NULL both"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[4];
+	int				passed[num_tests];
 	t_list			*lst = create_test_list(1, 2, 3);
 
 	g_freed_count = 0;
@@ -273,7 +273,7 @@ static void	test_ft_lstiter(void) {
 		"NULL both"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[4];
+	int				passed[num_tests];
 	t_list			*lst = create_test_list(1, 2, 3);
 
 	ft_lstiter(lst, iter_func);
@@ -332,7 +332,7 @@ static void	test_ft_lstmap(void) {
 		"malloc fail #6 (content 3)"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[10];
+	int				passed[num_tests];
 	t_list			*lst = create_test_list(1, 2, 3);
 	t_list			*new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
 
