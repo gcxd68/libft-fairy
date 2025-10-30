@@ -36,16 +36,15 @@ int	all_tests_passed(const int *passed, size_t n) {
 	return 1;
 }
 
-void	print_test_header(const char *function_name) {
+void	print_test_results(char *function_name, const size_t num_tests, const char *tests[], const int passed[]) {
 	printf("\n========================================\n");
 	printf("%s\n", function_name);
 	printf("========================================\n");
-}
-
-void	print_result(const char *test_name, int passed) {
-	printf("%s" RESET "  Test %s\n", passed ? GREEN "[OK]" : RED "[KO]", test_name);
-	if (!passed)
-		g_tests_failed++;
+	for (size_t i = 0; i < num_tests; i++) {
+		printf("%s" RESET "  Test %s\n", passed[i] ? GREEN "[OK]" : RED "[KO]", tests[i]);
+		if (!passed[i])
+			g_tests_failed++;
+	}
 }
 
 void	*__wrap_malloc(size_t size) {

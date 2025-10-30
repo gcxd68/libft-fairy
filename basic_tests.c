@@ -34,11 +34,8 @@ static void	test_ft_isalpha(void) {
 	while (passed[4] && c < 256)
 		if (ft_isalpha(c++))
 			passed[4] = 0;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_isalpha");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_isalpha", num_tests, tests, passed);
 }
 
 static void	test_ft_isdigit(void) {
@@ -60,11 +57,8 @@ static void	test_ft_isdigit(void) {
 	while (passed[2] && c < 256)
 		if (ft_isdigit(c++))
 			passed[2] = 0;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_isdigit");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_isdigit", num_tests, tests, passed);
 }
 
 static void	test_ft_isalnum(void) {
@@ -102,11 +96,8 @@ static void	test_ft_isalnum(void) {
 	while (passed[6] && c < 256)
 		if (ft_isalnum(c++))
 			passed[6] = 0;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_isalnum");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_isalnum", num_tests, tests, passed);
 }
 
 static void	test_ft_isascii(void) {
@@ -127,11 +118,8 @@ static void	test_ft_isascii(void) {
 	while (passed[2] && c < 256)
 		if (ft_isascii(c++))
 			passed[2] = 0;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_isascii");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_isascii", num_tests, tests, passed);
 }
 
 static void	test_ft_isprint(void) {
@@ -153,11 +141,8 @@ static void	test_ft_isprint(void) {
 	while (passed[2] && c < 256)
 		if (ft_isprint(c++))
 			passed[2] = 0;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_isprint");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_isprint", num_tests, tests, passed);
 }
 
 static void	ft_strlen_null_test(void) {
@@ -181,11 +166,8 @@ static void	test_ft_strlen(void) {
 		forked_test(ft_strlen_null_test)
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strlen");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strlen", num_tests, tests, passed);
 }
 
 static void	ft_memset_null_test(void) {
@@ -215,11 +197,8 @@ static void	test_ft_memset(void) {
 	ft_memset(str2, 200, 10);
 	passed[2] = !memcmp(str1, str2, 10);
 	passed[3] = forked_test(ft_memset_null_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_memset");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_memset", num_tests, tests, passed);
 }
 
 static void	test_ft_bzero(void) {
@@ -245,11 +224,8 @@ static void	test_ft_bzero(void) {
 	for (int i = 0; passed[1] && i < 10; i++)
 		if (str[i])
 			passed[1] = 0;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_bzero");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_bzero", num_tests, tests, passed);
 }
 
 static void	ft_memcpy_null_test(void) {
@@ -276,11 +252,8 @@ static void	test_ft_memcpy(void) {
 	ft_memcpy(dst1, "42", 2);
 	passed[1] = dst1[0] == '4' && dst1[1] == '2';
 	passed[2] = forked_test(ft_memcpy_null_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_memcpy");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_memcpy", num_tests, tests, passed);
 }
 
 static void	ft_memmove_null_test(void) {
@@ -333,11 +306,8 @@ static void	test_ft_memmove(void) {
 	memmove(str2 + 1, str2, 5);
 	passed[5] = !strcmp(str1, str2);
 	passed[6] = forked_test(ft_memmove_null_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_memmove");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_memmove", num_tests, tests, passed);
 }
 
 static void	test_ft_strlcpy(void) {
@@ -357,11 +327,8 @@ static void	test_ft_strlcpy(void) {
 	passed[1] = !strcmp(dst, "Hello") && len == 13;
 	len = ft_strlcpy(dst, "42", 0);
 	passed[2] = len == 2;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strlcpy");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strlcpy", num_tests, tests, passed);
 }
 
 static void	test_ft_strlcat(void) {
@@ -404,11 +371,8 @@ static void	test_ft_strlcat(void) {
 	strcpy(dst, "Hello");
 	len = ft_strlcat(dst, "X", 6);
 	passed[7] = !strcmp(dst, "Hello") && len == 6;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strlcat");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strlcat", num_tests, tests, passed);
 }
 
 static void	test_ft_toupper(void) {
@@ -430,11 +394,8 @@ static void	test_ft_toupper(void) {
 	while (passed[2] && ++c < 256)
 		if (ft_toupper(c) != c)
 			passed[2] = 0;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_toupper");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_toupper", num_tests, tests, passed);
 }
 
 static void	test_ft_tolower(void) {
@@ -456,11 +417,8 @@ static void	test_ft_tolower(void) {
 	while (passed[2] && ++c < 256)
 		if (ft_tolower(c) != c)
 			passed[2] = 0;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_tolower");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_tolower", num_tests, tests, passed);
 }
 
 static void	ft_strchr_null_test(void) {
@@ -487,11 +445,8 @@ static void	test_ft_strchr(void) {
 		forked_test(ft_strchr_null_test)
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strchr");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strchr", num_tests, tests, passed);
 }
 
 static void	ft_strrchr_null_test(void) {
@@ -518,11 +473,8 @@ static void	test_ft_strrchr(void) {
 		forked_test(ft_strrchr_null_test)
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strrchr");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strrchr", num_tests, tests, passed);
 }
 
 static void	ft_strncmp_size_max_test(void) {
@@ -563,11 +515,8 @@ static void	test_ft_strncmp(void) {
 		forked_test(ft_strncmp_null_test)
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strncmp");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strncmp", num_tests, tests, passed);
 }
 
 static void	ft_memchr_nullchar_test(void) {
@@ -596,11 +545,8 @@ static void	test_ft_memchr(void) {
 		ft_memchr(bin, 255, sizeof(bin)) == memchr(bin, 255, sizeof(bin))
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_memchr");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_memchr", num_tests, tests, passed);
 }
 
 static void	test_ft_memcmp(void) {
@@ -626,11 +572,8 @@ static void	test_ft_memcmp(void) {
 		ft_memcmp(high2, high1, 2) < 0
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_memcmp");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_memcmp", num_tests, tests, passed);
 }
 
 static void	ft_strnstr_len_too_short(void) {
@@ -655,11 +598,8 @@ static void	test_ft_strnstr(void) {
 		!forked_test(ft_strnstr_len_too_short)
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strnstr");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strnstr", num_tests, tests, passed);
 }
 
 static void	ft_atoi_null_test(void) {
@@ -695,11 +635,8 @@ static void	test_ft_atoi(void) {
 		forked_test(ft_atoi_null_test)
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_atoi");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_atoi", num_tests, tests, passed);
 }
 
 static void	ft_calloc_overflow_test(void) {
@@ -755,11 +692,8 @@ static void	test_ft_calloc(void) {
 	passed[2] = !forked_test(ft_calloc_overflow_test);
 	passed[3] = !forked_test(ft_calloc_zero_count_test);
 	passed[4] = !forked_test(ft_calloc_zero_size_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_calloc");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_calloc", num_tests, tests, passed);
 }
 
 static void	ft_strdup_empty_test(void) {
@@ -785,11 +719,8 @@ static void	test_ft_strdup(void) {
 	passed[1] = !strcmp(dup, "42");
 	free(dup);
 	passed[2] = !forked_test(ft_strdup_empty_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strdup");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strdup", num_tests, tests, passed);
 }
 
 static void	ft_substr_null_test(void) {
@@ -859,11 +790,8 @@ static void	test_ft_substr(void) {
 	passed[6] = !forked_test(ft_substr_start_past_end_test);
 	passed[7] = !forked_test(ft_substr_start_max_test);
 	passed[8] = !forked_test(ft_substr_null_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_substr");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_substr", num_tests, tests, passed);
 }
 
 static void	ft_strjoin_null_s1_test(void) {
@@ -906,11 +834,8 @@ static void	test_ft_strjoin(void) {
 	passed[4] = !forked_test(ft_strjoin_null_s1_test);
 	passed[5] = !forked_test(ft_strjoin_null_s2_test);
 	passed[6] = !forked_test(ft_strjoin_null_both_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strjoin");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strjoin", num_tests, tests, passed);
 }
 
 static void	ft_strtrim_empty_string_test(void) {
@@ -969,11 +894,8 @@ static void	test_ft_strtrim(void) {
 	passed[7] = !forked_test(ft_strtrim_null_input_test);
 	passed[8] = !forked_test(ft_strtrim_null_set_test);
 	passed[9] = !forked_test(ft_strtrim_null_both_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strtrim");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strtrim", num_tests, tests, passed);
 }
 
 static void	ft_split_null_test(void) {
@@ -1053,11 +975,8 @@ static void	test_ft_split(void) {
 	for (int i = 13; i < 18; i++)
 		passed[i] = !forked_test(ft_split_malloc_fail_test);
 	g_malloc_wrap_enabled = 0;
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_split");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_split", num_tests, tests, passed);
 }
 
 static void	test_ft_itoa(void) {
@@ -1086,11 +1005,8 @@ static void	test_ft_itoa(void) {
 	str = ft_itoa(2147483647);
 	passed[4] = !strcmp(str, "2147483647");
 	free(str);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_itoa");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_itoa", num_tests, tests, passed);
 }
 
 static char	mapi_func(unsigned int i, char c) {
@@ -1129,11 +1045,8 @@ static void	test_ft_strmapi(void) {
 	passed[2] = !forked_test(ft_strmapi_null_input_test);
 	passed[3] = !forked_test(ft_strmapi_null_func_test);
 	passed[4] = !forked_test(ft_strmapi_null_both_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_strmapi");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_strmapi", num_tests, tests, passed);
 }
 
 static void	iteri_func(unsigned int i, char *c) {
@@ -1168,11 +1081,8 @@ static void	test_ft_striteri(void) {
 	passed[1] = !forked_test(ft_striteri_null_input_test);
 	passed[2] = !forked_test(ft_striteri_null_func_test);
 	passed[3] = !forked_test(ft_striteri_null_both_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_striteri");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_striteri", num_tests, tests, passed);
 }
 
 static int	test_fd_output(void (*func)(void *, int), void *input, 
@@ -1235,11 +1145,8 @@ static void	test_ft_putchar_fd(void) {
 		test_fd_output(wrapper_putchar, &c, "0", 1)
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_putchar_fd");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_putchar_fd", num_tests, tests, passed);
 }
 
 static void	putstr_fd_null_test(void) {
@@ -1259,11 +1166,8 @@ static void	test_ft_putstr_fd(void) {
 		!forked_test(putstr_fd_null_test)
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_putstr_fd");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_putstr_fd", num_tests, tests, passed);
 }
 
 static void	putendl_fd_null_test(void) {
@@ -1283,11 +1187,8 @@ static void	test_ft_putendl_fd(void) {
 		!forked_test(putendl_fd_null_test)
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_putendl_fd");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_putendl_fd", num_tests, tests, passed);
 }
 
 static void	test_ft_putnbr_fd(void) {
@@ -1307,11 +1208,8 @@ static void	test_ft_putnbr_fd(void) {
 		test_fd_output(wrapper_putnbr, &(int){2147483647}, "2147483647", 10)
 	};
 
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_putnbr_fd");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_putnbr_fd", num_tests, tests, passed);
 }
 
 int	main(void) {

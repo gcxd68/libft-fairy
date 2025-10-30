@@ -31,11 +31,8 @@ static void	test_ft_lstnew(void) {
 	passed[0] = node && node->content == &content && !node->next;
 	free(node);
 	passed[1] = !forked_test(ft_lstnew_null_content_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_lstnew (bonus)");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_lstnew (bonus)", num_tests, tests, passed);
 }
 
 static void	ft_lstadd_front_null_list_test(void) {
@@ -83,11 +80,8 @@ static void	test_ft_lstadd_front(void) {
 	passed[2] = !forked_test(ft_lstadd_front_null_list_test);
 	passed[3] = !forked_test(ft_lstadd_front_null_new_test);
 	passed[4] = !forked_test(ft_lstadd_front_null_both_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_lstadd_front (bonus)");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_lstadd_front (bonus)", num_tests, tests, passed);
 }
 
 static void	test_ft_lstsize(void) {
@@ -103,11 +97,8 @@ static void	test_ft_lstsize(void) {
 	};
 
 	safe_lstclear(&lst, free);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_lstsize (bonus)");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_lstsize (bonus)", num_tests, tests, passed);
 }
 
 static void	test_ft_lstlast(void) {
@@ -123,11 +114,8 @@ static void	test_ft_lstlast(void) {
 	};
 
 	safe_lstclear(&lst, free);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_lstlast (bonus)");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_lstlast (bonus)", num_tests, tests, passed);
 }
 
 static void	ft_lstadd_back_null_list_test(void) {
@@ -174,11 +162,8 @@ static void	test_ft_lstadd_back(void) {
 	passed[2] = !forked_test(ft_lstadd_back_null_list_test);
 	passed[3] = !forked_test(ft_lstadd_back_null_new_test);
 	passed[4] = !forked_test(ft_lstadd_back_null_both_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_lstadd_back (bonus)");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_lstadd_back (bonus)", num_tests, tests, passed);
 }
 
 static void	ft_lstdelone_null_node_test(void) {
@@ -221,11 +206,8 @@ static void	test_ft_lstdelone(void) {
 	passed[2] = !forked_test(ft_lstdelone_null_node_test);
 	passed[3] = !forked_test(ft_lstdelone_null_func_test);
 	passed[4] = !forked_test(ft_lstdelone_null_both_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_lstdelone (bonus)");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_lstdelone (bonus)", num_tests, tests, passed);
 }
 
 static void	ft_lstclear_null_list_test(void) {
@@ -260,11 +242,8 @@ static void	test_ft_lstclear(void) {
 	passed[1] = !forked_test(ft_lstclear_null_list_test);
 	passed[2] = !forked_test(ft_lstclear_null_func_test);
 	passed[3] = !forked_test(ft_lstclear_null_both_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_lstclear (bonus)");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_lstclear (bonus)", num_tests, tests, passed);
 }
 
 static void	iter_func(void *content) {
@@ -305,11 +284,8 @@ static void	test_ft_lstiter(void) {
 	passed[1] = !forked_test(ft_lstiter_null_list_test);
 	passed[2] = !forked_test(ft_lstiter_null_func_test);
 	passed[3] = !forked_test(ft_lstiter_null_both_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_lstiter (bonus)");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_lstiter (bonus)", num_tests, tests, passed);
 }
 
 static void	ft_lstmap_null_list_test(void) {
@@ -371,11 +347,8 @@ static void	test_ft_lstmap(void) {
 	g_malloc_fail_at = 0;
 	for (int i = 4; i < 10; i++)
 		passed[i] = !forked_test(ft_lstmap_malloc_fail_test);
-	if (all_tests_passed(passed, num_tests) && !VERBOSE)
-		return;
-	print_test_header("ft_lstmap (bonus)");
-	for (size_t i = 0; i < num_tests; i++)
-		print_result(tests[i], passed[i]);
+	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+		print_test_results("ft_lstmap (bonus)", num_tests, tests, passed);
 }
 
 int	main(void) {
