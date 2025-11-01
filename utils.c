@@ -40,8 +40,6 @@ void	safe_lstadd_back(t_list **lst, t_list *new) {
 		*lst = new;
 }
 
-
-
 void	safe_lstclear(t_list **lst, void (*del)(void*)) {
 	t_list	*tmp;
 
@@ -62,6 +60,15 @@ void	del_func_dummy(void *content) {
 
 #include <stdlib.h>
 
+void	*map_func_dynamic_content(void *content) {
+	int	*new = malloc(sizeof(int));
+
+	if (!new)
+		return NULL;
+	*new = *(int *)content * 2;
+	return new;
+}
+
 void	safe_free_arr(char ***arr) {
 	if (*arr) {
 		for (int i = 0; (*arr)[i]; i++) {
@@ -71,15 +78,6 @@ void	safe_free_arr(char ***arr) {
 		free(*arr);
 		*arr = NULL;
 	}
-}
-
-void	*map_func_dynamic_content(void *content) {
-	int	*new = malloc(sizeof(int));
-
-	if (!new)
-		return NULL;
-	*new = *(int *)content * 2;
-	return new;
 }
 
 void	safe_lstdelone(t_list *lst, void (*del)(void*)) {
