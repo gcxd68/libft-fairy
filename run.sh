@@ -323,7 +323,6 @@ main() {
 		echo_color "  Failed" "$RED"
 		echo ""
 		echo -e "$EXTERN_OUTPUT"
-		echo ""
 	fi
 
 	echo -e -n "🔨 Building tests..."
