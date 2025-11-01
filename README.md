@@ -69,7 +69,7 @@ The tester displays a comprehensive validation process:
 
 ```
 ╔═══════════════════════════╗
-║       LIBFT-FAIRY 🧚       ║
+║       LIBFT-FAIRY 🧚      ║
 ╚═══════════════════════════╝
 
 📝 Checking norm...         Done
