@@ -260,6 +260,12 @@ main() {
 		((MAKE_ERRORS++))
 		MAKE_ISSUES+="Unnecessary relink detected when running make twice"$'\n'
 	fi
+	if [ $BONUS_VERSION -eq 1 ]; then
+		if ! grep -Eq '_bonus\.c' "$MAKEFILE_PATH"; then
+			((MAKE_ERRORS++))
+			MAKE_ISSUES+="Bonus functions are not located in a file ending with _bonus.c"$'\n'
+		fi
+	fi
 	if [ $MAKE_ERRORS -eq 0 ]; then
 		echo -e "\t    Done"
 	else
@@ -274,13 +280,13 @@ main() {
 	MAKE_OUTPUT=$($MAKE_CMD 2>&1)
 	MAKE_RES=$?
 	if [ $MAKE_RES -eq 0 ]; then
-	    echo -e "\t    Done"
+		echo -e "\t    Done"
 	else
-	    echo_color "\t  Failed" "$RED"
-	    echo ""
-	    echo -e "$MAKE_OUTPUT"
-	    echo ""
-	    exit 1
+		echo_color "\t  Failed" "$RED"
+		echo ""
+		echo -e "$MAKE_OUTPUT"
+		echo ""
+		exit 1
 	fi
 
 	echo -e -n "🔍 Checking externals..."
