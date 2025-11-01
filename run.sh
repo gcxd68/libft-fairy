@@ -308,23 +308,37 @@ main() {
 		echo_color "  Failed" "$RED"
 		echo ""
 		echo -e "$EXTERN_OUTPUT"
+		echo ""
 	fi
 
 	echo -e -n "🔨 Building tests..."
 	VERBOSE_FLAG=""
 	[ $VERBOSE -eq 1 ] && VERBOSE_FLAG="-DVERBOSE=1"
 	COMPILE_FLAGS="-Wall -Wextra -Werror -no-pie $VERBOSE_FLAG -Wl,--wrap=malloc"
-	gcc $COMPILE_FLAGS basic_tests.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BASIC_TESTER_NAME >/dev/null 2>&1
+	BUILD_ERRORS=""
+	compile_test() {
+		local src_file=$1
+		local output_file=$2
+		local label=$3
+
+		local compile_output
+		if ! compile_output=$(gcc $COMPILE_FLAGS "$src_file" utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o "$output_file" 2>&1); then
+			BUILD_ERRORS+="$label compilation failed:\n$compile_output"$'\n'
+			return 1
+		fi
+		return 0
+	}
+	compile_test basic_tests.c "$BASIC_TESTER_NAME" "basic_tests"
 	BASIC_TESTS_COMPILATION_RES=$?
-	gcc $COMPILE_FLAGS leak_tests.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $LEAK_TESTER_NAME >/dev/null 2>&1
+	compile_test leak_tests.c "$LEAK_TESTER_NAME" "leak_tests"
 	LEAK_TESTS_COMPILATION_RES=$?
 	BONUS_BASIC_TESTS_COMPILATION_RES=0
 	BONUS_LEAK_TESTS_COMPILATION_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
-		gcc $COMPILE_FLAGS basic_tests_bonus.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_BASIC_TESTER_NAME >/dev/null 2>&1
+		compile_test basic_tests_bonus.c "$BONUS_BASIC_TESTER_NAME" "bonus basic_tests"
 		BONUS_BASIC_TESTS_COMPILATION_RES=$?
-		
-		gcc $COMPILE_FLAGS leak_tests_bonus.c utils.c -L$LIBFT_DIR -lft -I$LIBFT_DIR -o $BONUS_LEAK_TESTER_NAME >/dev/null 2>&1
+
+		compile_test leak_tests_bonus.c "$BONUS_LEAK_TESTER_NAME" "bonus leak_tests"
 		BONUS_LEAK_TESTS_COMPILATION_RES=$?
 	fi
 	if [ $BASIC_TESTS_COMPILATION_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_COMPILATION_RES -eq 0 ] \
@@ -332,6 +346,8 @@ main() {
 		echo -e "\t    Done"
 	else
 		echo_color "\t  Failed" "$RED"
+		echo ""
+		echo -e "$BUILD_ERRORS"
 		exit 1
 	fi
 
