@@ -404,7 +404,7 @@ main() {
 			cat "$TMP_DIR/valgrind_output.log"
 		} >> .results
 	fi
-	if [ $BONUS_LEAK_TESTS_RES -ne 0 ] || [ $VERBOSE -eq 1 ]; then
+	if [ $BONUS_LEAK_TESTS_RES -ne 0 ] || ( [ $VERBOSE -eq 1 ] && [ $BONUS_VERSION -eq 1 ] ); then
 		{
 			echo ""
 			echo "════════════════════════════════════════"
