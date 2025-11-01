@@ -177,7 +177,10 @@ main() {
 		display="${proto##*::}"
 		if ! grep -Pq "$regex" "$LIBFT_H"; then
 			((errors++))
-			error_messages+="Missing or malformed prototype, expected:\t$display"$'\n'
+			if [ $errors -eq 1 ]; then
+				error_messages+="Missing or malformed prototype(s), expected:"$'\n'
+			fi
+			error_messages+="$display"$'\n'
 		fi
 	done
 	PROTO_TEST_RES=$errors
@@ -200,7 +203,10 @@ main() {
 			display="${proto##*::}"
 			if ! grep -Pq "$regex" "$LIBFT_H"; then
 				((errors++))
-				error_messages+="Missing or malformed prototyp, expected:\t$display"$'\n'
+				if [ $PROTO_TEST_RES -eq 0 ] && [ $errors -eq 1 ]; then
+					error_messages+="Missing or malformed prototype(s), expected:"$'\n'
+				fi
+				error_messages+="$display"$'\n'
 			fi
 		done
 		BONUS_PROTO_TEST_RES=$errors
@@ -257,7 +263,6 @@ main() {
 		echo_color "\t  Failed" "$RED"
 		echo ""
 		echo -e "$MAKE_ISSUES"
-		exit 1
 	fi
 
 	echo -ne "📦 Building libft..."
