@@ -249,11 +249,14 @@ main() {
 		((MAKE_ERRORS++))
 		MAKE_ISSUES+="Missing rule: \$(NAME)"$'\n'
 	fi
-	{
-		make -C "$LIBFT_DIR" > /dev/null 2>&1
-		make_output=$(make -C "$LIBFT_DIR" 2>&1)
-	} || true
-	if echo "$make_output" | grep -qE 'gcc|cc|ar|clang'; then
+	make -C "$LIBFT_DIR" > /dev/null 2>&1 || true
+	lib_file=$(grep -E '^\$\(NAME\)\s*:' "$MAKEFILE_PATH" | awk '{print $1}' | tr -d ':')
+	[ -z "$lib_file" ] && lib_file="libft.a"
+	lib_file="$LIBFT_DIR/$lib_file"
+	timestamp_before=$(stat -c %Y "$lib_file" 2>/dev/null || echo 0)
+	make_output=$(make -C "$LIBFT_DIR" 2>&1 || true)
+	timestamp_after=$(stat -c %Y "$lib_file" 2>/dev/null || echo 0)
+	if [ "$timestamp_after" -ne "$timestamp_before" ]; then
 		((MAKE_ERRORS++))
 		MAKE_ISSUES+="Unnecessary relink detected when running make twice"$'\n'
 	fi
