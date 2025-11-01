@@ -263,8 +263,12 @@ main() {
 	if [ $BONUS_VERSION -eq 1 ]; then
 		if ! grep -Eq '_bonus\.c' "$MAKEFILE_PATH"; then
 			((MAKE_ERRORS++))
-			MAKE_ISSUES+="Bonus functions are not located in a file ending with _bonus.c"$'\n'
+			MAKE_ISSUES+="Missing *_bonus.c file(s) in bonus version"$'\n'
 		fi
+	fi
+	if grep -Eq '\*\.c' "$MAKEFILE_PATH" || grep -Eq '\*\.o' "$MAKEFILE_PATH"; then
+		((MAKE_ERRORS++))
+		MAKE_ISSUES+="Forbidden wildcard inclusion detected (*.c or *.o)"$'\n'
 	fi
 	if [ $MAKE_ERRORS -eq 0 ]; then
 		echo -e "\t    Done"
