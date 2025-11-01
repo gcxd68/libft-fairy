@@ -474,6 +474,8 @@ static void	test_ft_strrchr(void) {
 		print_test_results("ft_strrchr", num_tests, tests, passed);
 }
 
+#include <stdlib.h>
+
 static void	ft_strncmp_size_max_test(void) {
 	const size_t	size_max = ~(size_t)0;
 
@@ -1084,6 +1086,7 @@ static void	test_ft_striteri(void) {
 
 #include <stdio.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 static int	test_fd_output(void (*func)(void *, int), void *input, 
 							const char *expected, size_t read_len) {

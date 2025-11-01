@@ -1,4 +1,5 @@
 #include "libft_fairy.h"
+#include <stdlib.h>
 
 static char	mapi_func(unsigned int i, char c) {
 	return c + i;

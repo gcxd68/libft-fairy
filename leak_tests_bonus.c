@@ -1,5 +1,6 @@
 #include "libft_fairy.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 static void	leak_test_ft_lstnew(void) {
 	int	*content = malloc(sizeof(int));
@@ -58,17 +59,17 @@ static void	ft_lstmap_shared_content_test(void)
 }
 
 static void	*map_func_static_content(void *content) {
-	const int	value = (int)(intptr_t)content;
+	const int	value = (int)(size_t)content;
 
-	return (void *)(intptr_t)(value * 10);
+	return (void *)(size_t)(value * 10);
 }
 
 static void	ft_lstmap_static_content_test(void)
 {
-	t_list	*lst = safe_lstnew((void *)(intptr_t)1);
+	t_list	*lst = safe_lstnew((void *)(size_t)1);
 
-	safe_lstadd_back(&lst, safe_lstnew((void *)(intptr_t)2));
-	safe_lstadd_back(&lst, safe_lstnew((void *)(intptr_t)3));
+	safe_lstadd_back(&lst, safe_lstnew((void *)(size_t)2));
+	safe_lstadd_back(&lst, safe_lstnew((void *)(size_t)3));
 	g_malloc_count = 0;
 	++g_malloc_fail_at;
 	g_malloc_wrap_enabled = 1;

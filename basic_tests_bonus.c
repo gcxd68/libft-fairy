@@ -1,4 +1,5 @@
 #include "libft_fairy.h"
+#include <stdlib.h>
 
 #ifndef VERBOSE
 # define VERBOSE 0
