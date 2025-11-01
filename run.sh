@@ -271,11 +271,16 @@ main() {
 	echo -ne "📦 Building libft..."
 	MAKE_CMD="make -C $LIBFT_DIR"
 	[ $BONUS_VERSION -eq 1 ] && MAKE_CMD="$MAKE_CMD bonus"
-	if $MAKE_CMD > /dev/null 2>&1; then
-		echo -e "\t    Done"
+	MAKE_OUTPUT=$($MAKE_CMD 2>&1)
+	MAKE_RES=$?
+	if [ $MAKE_RES -eq 0 ]; then
+	    echo -e "\t    Done"
 	else
-		echo_color "\t  Failed" "$RED"
-		exit 1
+	    echo_color "\t  Failed" "$RED"
+	    echo ""
+	    echo -e "$MAKE_OUTPUT"
+	    echo ""
+	    exit 1
 	fi
 
 	echo -e -n "🔍 Checking externals..."
