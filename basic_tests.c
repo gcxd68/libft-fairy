@@ -152,7 +152,7 @@ static void	test_ft_strlen(void) {
 		"'hello'",
 		"'42'",
 		"long string",
-		"NULL"
+		"NULL (should crash)"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	const int		passed[] = {
@@ -178,7 +178,7 @@ static void	test_ft_memset(void) {
 		"basic memset",
 		"with 0",
 		"unsigned char (200)",
-		"NULL"
+		"NULL (should crash)"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	int				passed[num_tests];
@@ -235,7 +235,7 @@ static void	test_ft_memcpy(void) {
 	const char		*tests[] = {
 		"basic memcpy",
 		"partial copy",
-		"NULL"
+		"NULL (should crash)"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	int				passed[num_tests];
@@ -267,7 +267,7 @@ static void	test_ft_memmove(void) {
 		"dst == src",
 		"n = 0",
 		"minimal overlap",
-		"NULL"
+		"NULL (should crash)"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	int				passed[num_tests];
@@ -429,7 +429,7 @@ static void	test_ft_strchr(void) {
 		"find '\\0'",
 		"not found 'x'",
 		"find unsigned char (200)",
-		"NULL"
+		"NULL (should crash)"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	const char		str[] = "Hello\xC8World";
@@ -457,7 +457,7 @@ static void	test_ft_strrchr(void) {
 		"find '\\0'",
 		"not found 'x'",
 		"find unsigned char (200)",
-		"NULL"
+		"NULL (should crash)"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	const char		str[] = "Hello\xC8World\xC8!";
@@ -498,7 +498,7 @@ static void	test_ft_strncmp(void) {
 		"unsigned char comparison",
 		"unsigned char 255 vs 127",
 		"SIZE_MAX",
-		"NULL"
+		"NULL (should crash)"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	const int		passed[] = {
@@ -617,7 +617,7 @@ static void	test_ft_atoi(void) {
 		"' \\t-R66'",
 		"INT_MAX",
 		"INT_MIN",
-		"NULL"
+		"NULL (should crash)"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	const int		passed[] = {
