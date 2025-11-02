@@ -366,7 +366,7 @@ main() {
 	fi
 
 	echo -e -n "🧪 Running tests..."
-	./$BASIC_TESTER_NAME > "$TMP_DIR/basic_output.tmp" 2>&1
+	{ ./$BASIC_TESTER_NAME; }> "$TMP_DIR/basic_output.tmp" 2>&1
 	BASIC_TESTS_RES=$?
 	if grep -q "Segmentation fault" "$TMP_DIR/basic_output.tmp" 2>/dev/null; then
 		cat "$TMP_DIR/basic_output.tmp" | sed 's/^.*Segmentation fault/\n&/' > .results
@@ -375,7 +375,7 @@ main() {
 	fi
 	BONUS_BASIC_TESTS_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
-		./$BONUS_BASIC_TESTER_NAME > "$TMP_DIR/bonus_basic_output.tmp" 2>&1
+		{ ./$BONUS_BASIC_TESTER_NAME; } > "$TMP_DIR/bonus_basic_output.tmp" 2>&1
 		BONUS_BASIC_TESTS_RES=$?
 		if grep -q "Segmentation fault" "$TMP_DIR/bonus_basic_output.tmp" 2>/dev/null; then
 			cat "$TMP_DIR/bonus_basic_output.tmp" | sed 's/^.*Segmentation fault/\n&/' >> .results
