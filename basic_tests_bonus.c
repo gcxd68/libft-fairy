@@ -251,6 +251,14 @@ static void	test_ft_lstdelone(void)
 		print_test_results("ft_lstdelone (bonus)", num_tests, tests, passed);
 }
 
+static void	ft_lstclear_basic_test(void) {
+	t_list	*lst = create_test_list(1, 2, 3);
+
+	g_freed_count = 0;
+	ft_lstclear(&lst, free_count);
+	if (lst || g_freed_count != 3)
+		abort();
+}
 
 static void	ft_lstclear_null_list_test(void) {
 	ft_lstclear(NULL, free);
@@ -275,15 +283,13 @@ static void	test_ft_lstclear(void) {
 		"NULL both"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[num_tests];
-	t_list			*lst = create_test_list(1, 2, 3);
+	int				passed[] = {
+		!forked_test(ft_lstclear_basic_test),
+		!forked_test(ft_lstclear_null_list_test),
+		!forked_test(ft_lstclear_null_func_test),
+		!forked_test(ft_lstclear_null_both_test)
+	};
 
-	g_freed_count = 0;
-	ft_lstclear(&lst, free_count);
-	passed[0] = !lst && g_freed_count == 3;
-	passed[1] = !forked_test(ft_lstclear_null_list_test);
-	passed[2] = !forked_test(ft_lstclear_null_func_test);
-	passed[3] = !forked_test(ft_lstclear_null_both_test);
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstclear (bonus)", num_tests, tests, passed);
 }
