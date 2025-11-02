@@ -655,6 +655,18 @@ static void	ft_strchr_find_null_test(void) {
 		abort();
 }
 
+static void	ft_strchr_find_first_char_test(void) {
+	const char str[] = "Hello\xC8World\xC8!";
+	if (ft_strchr(str, 'H') != strchr(str, 'H'))
+		abort();
+}
+
+static void	ft_strchr_find_last_char_test(void) {
+	const char str[] = "Hello\xC8World\xC8!";
+	if (ft_strchr(str, '!') != strchr(str, '!'))
+		abort();
+}
+
 static void	ft_strchr_not_found_test(void) {
 	const char str[] = "Hello\xC8World";
 	if (ft_strchr(str, 'x'))
@@ -676,6 +688,8 @@ static void	test_ft_strchr(void) {
 		"find 'o'",
 		"find 'W'",
 		"find '\\0'",
+		"find first char",
+		"find last char",
 		"not found 'x'",
 		"find unsigned char (200)",
 		"NULL (should crash)"
@@ -685,6 +699,8 @@ static void	test_ft_strchr(void) {
 		!forked_test(ft_strchr_find_o_test),
 		!forked_test(ft_strchr_find_W_test),
 		!forked_test(ft_strchr_find_null_test),
+		!forked_test(ft_strchr_find_first_char_test),
+		!forked_test(ft_strchr_find_last_char_test),
 		!forked_test(ft_strchr_not_found_test),
 		!forked_test(ft_strchr_uchar_test),
 		forked_test(ft_strchr_null_test)
@@ -716,6 +732,18 @@ static void	ft_strrchr_find_null_test(void) {
 		abort();
 }
 
+static void	ft_strrchr_find_first_char_test(void) {
+	const char str[] = "Hello\xC8World\xC8!";
+	if (ft_strrchr(str, 'H') != strrchr(str, 'H'))
+		abort();
+}
+
+static void	ft_strrchr_find_last_char_test(void) {
+	const char str[] = "Hello\xC8World\xC8!";
+	if (ft_strrchr(str, '!') != strrchr(str, '!'))
+		abort();
+}
+
 static void	ft_strrchr_not_found_test(void) {
 	const char str[] = "Hello\xC8World\xC8!";
 	if (ft_strrchr(str, 'x'))
@@ -737,6 +765,8 @@ static void	test_ft_strrchr(void) {
 		"find last 'o'",
 		"find 'W'",
 		"find '\\0'",
+		"find first char",
+		"find last char",
 		"not found 'x'",
 		"find unsigned char (200)",
 		"NULL (should crash)"
@@ -746,6 +776,8 @@ static void	test_ft_strrchr(void) {
 		!forked_test(ft_strrchr_find_last_o_test),
 		!forked_test(ft_strrchr_find_W_test),
 		!forked_test(ft_strrchr_find_null_test),
+		!forked_test(ft_strrchr_find_first_char_test),
+		!forked_test(ft_strrchr_find_last_char_test),
 		!forked_test(ft_strrchr_not_found_test),
 		!forked_test(ft_strrchr_uchar_test),
 		forked_test(ft_strrchr_null_test)
