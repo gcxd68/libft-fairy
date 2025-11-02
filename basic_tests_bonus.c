@@ -101,36 +101,54 @@ static void	test_ft_lstadd_front(void) {
 		print_test_results("ft_lstadd_front (bonus)", num_tests, tests, passed);
 }
 
+static void	ft_lstsize_basic_test(void) {
+	t_list	*lst = create_test_list(1, 2, 3);
+
+	if (ft_lstsize(lst) != 3)
+		abort();
+}
+
+static void	ft_lstsize_null_test(void) {
+	ft_lstsize(NULL);
+}
+
 static void	test_ft_lstsize(void) {
 	const char		*tests[] = {
-		"size 3",
-		"size NULL"
+		"basic",
+		"NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	t_list			*lst = create_test_list(1, 2, 3);
 	const int		passed[] = {
-		ft_lstsize(lst) == 3,
-		!ft_lstsize(NULL)
+		!forked_test(ft_lstsize_basic_test),
+		!forked_test(ft_lstsize_null_test)
 	};
 
-	safe_lstclear(&lst, free);
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstsize (bonus)", num_tests, tests, passed);
 }
 
+static void ft_lstlast_basic_test(void) {
+	t_list	*lst = create_test_list(1, 2, 3);
+
+	if (ft_lstlast(lst) != lst->next->next)
+		abort();
+}
+
+static void ft_lstlast_null_test(void) {
+	ft_lstlast(NULL);
+}
+
 static void	test_ft_lstlast(void) {
 	const char		*tests[] = {
-		"last",
+		"basic",
 		"NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	t_list			*lst = create_test_list(1, 2, 3);
 	const int		passed[] = {
-		ft_lstlast(lst) == lst->next->next,
-		!ft_lstlast(NULL)
+		!forked_test(ft_lstlast_basic_test),
+		!forked_test(ft_lstlast_null_test)
 	};
 
-	safe_lstclear(&lst, free);
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstlast (bonus)", num_tests, tests, passed);
 }
