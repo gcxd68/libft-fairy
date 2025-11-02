@@ -42,6 +42,27 @@ static void	test_ft_lstnew(void) {
 		print_test_results("ft_lstnew (bonus)", num_tests, tests, passed);
 }
 
+static void	ft_lstadd_front_basic_test(void) {
+	int		c1 = 1, c2 = 2;
+	t_list	*n1 = safe_lstnew(&c1);
+	t_list	*n2 = safe_lstnew(&c2);
+	t_list	*lst = n1;
+
+	ft_lstadd_front(&lst, n2);
+	if (lst != n2 || *(int *)lst->content != 2 || *(int *)lst->next->content != 1)
+		abort();
+}
+
+static void	ft_lstadd_front_empty_list_test(void) {
+	int		content = 1;
+	t_list	*empty = NULL;
+	t_list	*node = safe_lstnew(&content);
+
+	ft_lstadd_front(&empty, node);
+	if (empty != node || empty->next)
+		abort();
+}
+
 static void	ft_lstadd_front_null_list_test(void) {
 	t_list	*node = safe_lstnew(&(int){42});
 
@@ -61,32 +82,21 @@ static void	ft_lstadd_front_null_both_test(void) {
 
 static void	test_ft_lstadd_front(void) {
 	const char		*tests[] = {
-		"add front",
+		"basic",
 		"add to empty list",
 		"NULL list",
 		"NULL new",
 		"NULL both"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[num_tests];
-	int				c1 = 1, c2 = 2;
-	t_list			*n1 = safe_lstnew(&c1);
-	t_list			*n2 = safe_lstnew(&c2);
-	t_list			*lst = n1;
-	t_list			*empty, *node;
+	int				passed[] = {
+		!forked_test(ft_lstadd_front_basic_test),
+		!forked_test(ft_lstadd_front_empty_list_test),
+		!forked_test(ft_lstadd_front_null_list_test),
+		!forked_test(ft_lstadd_front_null_new_test),
+		!forked_test(ft_lstadd_front_null_both_test)
+	};
 
-	ft_lstadd_front(&lst, n2);
-	passed[0] = lst == n2 && *(int *)lst->content == 2 && *(int *)lst->next->content == 1;
-	free(n1);
-	free(n2);
-	empty = NULL;
-	node = safe_lstnew(&c1);
-	ft_lstadd_front(&empty, node);
-	passed[1] = empty == node && empty->next == NULL;
-	free(node);
-	passed[2] = !forked_test(ft_lstadd_front_null_list_test);
-	passed[3] = !forked_test(ft_lstadd_front_null_new_test);
-	passed[4] = !forked_test(ft_lstadd_front_null_both_test);
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstadd_front (bonus)", num_tests, tests, passed);
 }
