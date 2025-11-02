@@ -12,6 +12,14 @@ static void	free_count(void *content) {
 	g_freed_count++;
 }
 
+static void	ft_lstnew_basic_test(void) {
+	int		content = 42;
+	t_list	*node = ft_lstnew(&content);
+
+	if (!node || node->content != &content || node->next)
+		abort();
+}
+
 static void	ft_lstnew_null_content_test(void) {
 	t_list	*node = ft_lstnew(NULL);
 
@@ -21,17 +29,15 @@ static void	ft_lstnew_null_content_test(void) {
 
 static void	test_ft_lstnew(void) {
 	const char		*tests[] = {
-		"with content",
+		"basic",
 		"with NULL content"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[num_tests];
-	int				content = 42;
-	t_list			*node = ft_lstnew(&content);
+	int				passed[] = {
+		!forked_test(ft_lstnew_basic_test),
+		!forked_test(ft_lstnew_null_content_test)
+	};
 
-	passed[0] = node && node->content == &content && !node->next;
-	free(node);
-	passed[1] = !forked_test(ft_lstnew_null_content_test);
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstnew (bonus)", num_tests, tests, passed);
 }
