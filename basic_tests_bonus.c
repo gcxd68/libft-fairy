@@ -298,6 +298,14 @@ static void	iter_func(void *content) {
 	(*(int *)content)++;
 }
 
+static void	ft_lstiter_basic_test(void) {
+	t_list	*lst = create_test_list(1, 2, 3);
+
+	ft_lstiter(lst, iter_func);
+	if (*(int *)lst->content != 2 || *(int *)lst->next->content != 3 || *(int *)lst->next->next->content != 4)
+		abort();
+}
+
 static void	ft_lstiter_null_list_test(void) {
 	ft_lstiter(NULL, iter_func);
 }
@@ -315,21 +323,19 @@ static void	ft_lstiter_null_both_test(void) {
 
 static void	test_ft_lstiter(void) {
 	const char		*tests[] = {
-		"iter",
+		"basic",
 		"NULL list",
 		"NULL function",
 		"NULL both"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[num_tests];
-	t_list			*lst = create_test_list(1, 2, 3);
+	int				passed[] = {
+		!forked_test(ft_lstiter_basic_test),
+		!forked_test(ft_lstiter_null_list_test),
+		!forked_test(ft_lstiter_null_func_test),
+		!forked_test(ft_lstiter_null_both_test)
+	};
 
-	ft_lstiter(lst, iter_func);
-	passed[0] = *(int *)lst->content == 2 && *(int *)lst->next->content == 3 && *(int *)lst->next->next->content == 4;
-	safe_lstclear(&lst, free);
-	passed[1] = !forked_test(ft_lstiter_null_list_test);
-	passed[2] = !forked_test(ft_lstiter_null_func_test);
-	passed[3] = !forked_test(ft_lstiter_null_both_test);
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstiter (bonus)", num_tests, tests, passed);
 }
