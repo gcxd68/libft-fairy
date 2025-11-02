@@ -107,7 +107,7 @@ static void	test_ft_lstsize(void) {
 		"size NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	t_list	*lst = create_test_list(1, 2, 3);
+	t_list			*lst = create_test_list(1, 2, 3);
 	const int		passed[] = {
 		ft_lstsize(lst) == 3,
 		!ft_lstsize(NULL)
@@ -193,12 +193,33 @@ static void	test_ft_lstadd_back(void) {
 		print_test_results("ft_lstadd_back (bonus)", num_tests, tests, passed);
 }
 
+static void	ft_lstdelone_free_once_test(void) {
+	t_list *lst = create_test_list(1, 2, 3);
+	t_list *to_del = lst->next;
+
+	lst->next = lst->next->next;
+	g_freed_count = 0;
+	ft_lstdelone(to_del, free_count);
+	if (g_freed_count != 1)
+		abort();
+}
+
+static void	ft_lstdelone_remaining_nodes_test(void) {
+	t_list *lst = create_test_list(1, 2, 3);
+	t_list *to_del = lst->next;
+
+	lst->next = lst->next->next;
+	ft_lstdelone(to_del, free);
+	if ((*(int *)lst->content != 1) || (*(int *)lst->next->content != 3) || lst->next->next)
+		abort();
+}
+
 static void	ft_lstdelone_null_node_test(void) {
 	ft_lstdelone(NULL, free);
 }
 
 static void	ft_lstdelone_null_func_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+	t_list *lst = create_test_list(1, 2, 3);
 
 	ft_lstdelone(lst, NULL);
 	safe_lstclear(&lst, free);
@@ -208,7 +229,8 @@ static void	ft_lstdelone_null_both_test(void) {
 	ft_lstdelone(NULL, NULL);
 }
 
-static void	test_ft_lstdelone(void) {
+static void	test_ft_lstdelone(void)
+{
 	const char		*tests[] = {
 		"free once",
 		"correct remaining nodes",
@@ -217,22 +239,18 @@ static void	test_ft_lstdelone(void) {
 		"NULL both"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[num_tests];
-	t_list			*lst = create_test_list(1, 2, 3);
-	t_list			*to_del = lst->next;
+	const int		passed[] = {
+		!forked_test(ft_lstdelone_free_once_test),
+		!forked_test(ft_lstdelone_remaining_nodes_test),
+		!forked_test(ft_lstdelone_null_node_test),
+		!forked_test(ft_lstdelone_null_func_test),
+		!forked_test(ft_lstdelone_null_both_test)
+	};
 
-	lst->next = lst->next->next;
-	g_freed_count = 0;
-	ft_lstdelone(to_del, free_count);
-	passed[0] = (g_freed_count == 1);
-	passed[1] = (*(int *)lst->content == 1) && (*(int *)lst->next->content == 3) && !lst->next->next;
-	safe_lstclear(&lst, free);
-	passed[2] = !forked_test(ft_lstdelone_null_node_test);
-	passed[3] = !forked_test(ft_lstdelone_null_func_test);
-	passed[4] = !forked_test(ft_lstdelone_null_both_test);
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstdelone (bonus)", num_tests, tests, passed);
 }
+
 
 static void	ft_lstclear_null_list_test(void) {
 	ft_lstclear(NULL, free);
