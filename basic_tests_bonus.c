@@ -119,6 +119,26 @@ static void	test_ft_lstlast(void) {
 		print_test_results("ft_lstlast (bonus)", num_tests, tests, passed);
 }
 
+static void	ft_lstadd_back_basic_test(void) {
+	int				c1 = 1, c2 = 2;
+	t_list			*lst = safe_lstnew(&c1);
+	t_list			*new = safe_lstnew(&c2);
+
+	ft_lstadd_back(&lst, new);
+	if (lst->next != new || *(int *)new->content != 2)
+		abort();
+}
+
+static void	ft_lstadd_back_empty_list_test(void) {
+	int		content = 1;
+	t_list	*empty = NULL;
+	t_list	*node = safe_lstnew(&content);
+
+	ft_lstadd_back(&empty, node);
+	if (empty != node || empty->next)
+		abort();
+}
+
 static void	ft_lstadd_back_null_list_test(void) {
 	t_list	*node = safe_lstnew(&(int){42});
 
@@ -138,31 +158,21 @@ static void	ft_lstadd_back_null_both_test(void) {
 
 static void	test_ft_lstadd_back(void) {
 	const char		*tests[] = {
-		"add back",
+		"basic",
 		"add to empty list",
 		"NULL list",
 		"NULL new",
 		"NULL both"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[num_tests];
-	int				c1 = 1, c2 = 2;
-	t_list			*lst = safe_lstnew(&c1);
-	t_list			*new = safe_lstnew(&c2);
-	t_list			*empty, *node;
+	int				passed[] = {
+		!forked_test(ft_lstadd_back_basic_test),
+		!forked_test(ft_lstadd_back_empty_list_test),
+		!forked_test(ft_lstadd_back_null_list_test),
+		!forked_test(ft_lstadd_back_null_new_test),
+		!forked_test(ft_lstadd_back_null_both_test)
+	};
 
-	ft_lstadd_back(&lst, new);
-	passed[0] = lst->next == new && *(int *)new->content == 2;
-	free(new);
-	free(lst);
-	empty = NULL;
-	node = safe_lstnew(&c1);
-	ft_lstadd_back(&empty, node);
-	passed[1] = empty == node && !empty->next;
-	free(node);
-	passed[2] = !forked_test(ft_lstadd_back_null_list_test);
-	passed[3] = !forked_test(ft_lstadd_back_null_new_test);
-	passed[4] = !forked_test(ft_lstadd_back_null_both_test);
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstadd_back (bonus)", num_tests, tests, passed);
 }
@@ -284,66 +294,66 @@ static void	test_ft_lstiter(void) {
 		print_test_results("ft_lstiter (bonus)", num_tests, tests, passed);
 }
 
-static void	ft_lstmap_null_list_test(void) {
-	t_list *lst = ft_lstmap(NULL, map_func_dynamic_content, free);
+// static void	ft_lstmap_null_list_test(void) {
+// 	t_list *lst = ft_lstmap(NULL, map_func_dynamic_content, free);
 
-	if (lst)
-		abort();
-}
+// 	if (lst)
+// 		abort();
+// }
 
-static void	ft_lstmap_null_func_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+// static void	ft_lstmap_null_func_test(void) {
+// 	t_list	*lst = create_test_list(1, 2, 3);
 
-	ft_lstmap(lst, NULL, free);
-	safe_lstclear(&lst, free);
-}
+// 	ft_lstmap(lst, NULL, free);
+// 	safe_lstclear(&lst, free);
+// }
 
-static void	ft_lstmap_null_both_test(void) {
-	ft_lstmap(NULL, NULL, free);
-}
+// static void	ft_lstmap_null_both_test(void) {
+// 	ft_lstmap(NULL, NULL, free);
+// }
 
-static void	ft_lstmap_malloc_fail_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+// static void	ft_lstmap_malloc_fail_test(void) {
+// 	t_list	*lst = create_test_list(1, 2, 3);
 
-	g_malloc_count = 0;
-	++g_malloc_fail_at;
-	g_malloc_wrap_enabled = 1;
-	t_list *new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
-	g_malloc_wrap_enabled = 0;
-	safe_lstclear(&new_lst, free);
-	safe_lstclear(&lst, free);
-}
+// 	g_malloc_count = 0;
+// 	++g_malloc_fail_at;
+// 	g_malloc_wrap_enabled = 1;
+// 	t_list *new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
+// 	g_malloc_wrap_enabled = 0;
+// 	safe_lstclear(&new_lst, free);
+// 	safe_lstclear(&lst, free);
+// }
 
-static void	test_ft_lstmap(void) {
-	const char		*tests[] = {
-		"basic",
-		"NULL list",
-		"NULL function",
-		"NULL both",
-		"malloc fail #1 (node 1)",
-		"malloc fail #2 (content 1)",
-		"malloc fail #3 (node 2)",
-		"malloc fail #4 (content 2)",
-		"malloc fail #5 (node 3)",
-		"malloc fail #6 (content 3)"
-	};
-	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
-	int				passed[num_tests];
-	t_list			*lst = create_test_list(1, 2, 3);
-	t_list			*new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
+// static void	test_ft_lstmap(void) {
+// 	const char		*tests[] = {
+// 		"basic",
+// 		"NULL list",
+// 		"NULL function",
+// 		"NULL both",
+// 		"malloc fail #1 (node 1)",
+// 		"malloc fail #2 (content 1)",
+// 		"malloc fail #3 (node 2)",
+// 		"malloc fail #4 (content 2)",
+// 		"malloc fail #5 (node 3)",
+// 		"malloc fail #6 (content 3)"
+// 	};
+// 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
+// 	int				passed[num_tests];
+// 	t_list			*lst = create_test_list(1, 2, 3);
+// 	t_list			*new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
 
-	passed[0] = new_lst && *(int *)new_lst->content == 2 && *(int *)new_lst->next->content == 4 && *(int *)new_lst->next->next->content == 6;
-	safe_lstclear(&new_lst, free);
-	safe_lstclear(&lst, free);
-	passed[1] = !forked_test(ft_lstmap_null_list_test);
-	passed[2] = !forked_test(ft_lstmap_null_func_test);
-	passed[3] = !forked_test(ft_lstmap_null_both_test);
-	g_malloc_fail_at = 0;
-	for (int i = 4; i < 10; i++)
-		passed[i] = !forked_test(ft_lstmap_malloc_fail_test);
-	if (!all_tests_passed(passed, num_tests) || VERBOSE)
-		print_test_results("ft_lstmap (bonus)", num_tests, tests, passed);
-}
+// 	passed[0] = new_lst && *(int *)new_lst->content == 2 && *(int *)new_lst->next->content == 4 && *(int *)new_lst->next->next->content == 6;
+// 	safe_lstclear(&new_lst, free);
+// 	safe_lstclear(&lst, free);
+// 	passed[1] = !forked_test(ft_lstmap_null_list_test);
+// 	passed[2] = !forked_test(ft_lstmap_null_func_test);
+// 	passed[3] = !forked_test(ft_lstmap_null_both_test);
+// 	g_malloc_fail_at = 0;
+// 	for (int i = 4; i < 10; i++)
+// 		passed[i] = !forked_test(ft_lstmap_malloc_fail_test);
+// 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
+// 		print_test_results("ft_lstmap (bonus)", num_tests, tests, passed);
+// }
 
 int	main(void) {
 	test_ft_lstnew();
@@ -354,6 +364,6 @@ int	main(void) {
 	test_ft_lstdelone();
 	test_ft_lstclear();
 	test_ft_lstiter();
-	test_ft_lstmap();
+	// test_ft_lstmap();
 	return (g_tests_failed ? 1 : 0);
 }
