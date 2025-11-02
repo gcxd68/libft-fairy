@@ -12,6 +12,10 @@ static void	free_count(void *content) {
 	g_freed_count++;
 }
 
+/* ************************************************************************** */
+/*                             ft_lstnew tests                                */
+/* ************************************************************************** */
+
 static void	ft_lstnew_basic_test(void) {
 	int		content = 42;
 	t_list	*node = ft_lstnew(&content);
@@ -41,6 +45,10 @@ static void	test_ft_lstnew(void) {
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstnew (bonus)", num_tests, tests, passed);
 }
+
+/* ************************************************************************** */
+/*                           ft_lstadd_front tests                            */
+/* ************************************************************************** */
 
 static void	ft_lstadd_front_basic_test(void) {
 	int		c1 = 1, c2 = 2;
@@ -101,6 +109,10 @@ static void	test_ft_lstadd_front(void) {
 		print_test_results("ft_lstadd_front (bonus)", num_tests, tests, passed);
 }
 
+/* ************************************************************************** */
+/*                              ft_lstsize tests                              */
+/* ************************************************************************** */
+
 static void	ft_lstsize_basic_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
@@ -127,6 +139,10 @@ static void	test_ft_lstsize(void) {
 		print_test_results("ft_lstsize (bonus)", num_tests, tests, passed);
 }
 
+/* ************************************************************************** */
+/*                              ft_lstlast tests                              */
+/* ************************************************************************** */
+
 static void ft_lstlast_basic_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
@@ -152,6 +168,10 @@ static void	test_ft_lstlast(void) {
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstlast (bonus)", num_tests, tests, passed);
 }
+
+/* ************************************************************************** */
+/*                            ft_lstadd_back tests                            */
+/* ************************************************************************** */
 
 static void	ft_lstadd_back_basic_test(void) {
 	int				c1 = 1, c2 = 2;
@@ -211,6 +231,10 @@ static void	test_ft_lstadd_back(void) {
 		print_test_results("ft_lstadd_back (bonus)", num_tests, tests, passed);
 }
 
+/* ************************************************************************** */
+/*                             ft_lstdelone tests                             */
+/* ************************************************************************** */
+
 static void	ft_lstdelone_free_once_test(void) {
 	t_list *lst = create_test_list(1, 2, 3);
 	t_list *to_del = lst->next;
@@ -269,6 +293,10 @@ static void	test_ft_lstdelone(void)
 		print_test_results("ft_lstdelone (bonus)", num_tests, tests, passed);
 }
 
+/* ************************************************************************** */
+/*                             ft_lstclear tests                              */
+/* ************************************************************************** */
+
 static void	ft_lstclear_basic_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
@@ -311,6 +339,10 @@ static void	test_ft_lstclear(void) {
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstclear (bonus)", num_tests, tests, passed);
 }
+
+/* ************************************************************************** */
+/*                              ft_lstiter tests                              */
+/* ************************************************************************** */
 
 static void	iter_func(void *content) {
 	(*(int *)content)++;
@@ -357,6 +389,10 @@ static void	test_ft_lstiter(void) {
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
 		print_test_results("ft_lstiter (bonus)", num_tests, tests, passed);
 }
+
+/* ************************************************************************** */
+/*                              ft_lstmap tests                               */
+/* ************************************************************************** */
 
 static void	ft_lstmap_basic_test(void) {
 	t_list			*lst = create_test_list(1, 2, 3);

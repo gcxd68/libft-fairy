@@ -1,9 +1,9 @@
 #include "libft_fairy.h"
 
 int	g_malloc_wrap_enabled = 0;
-int	g_malloc_zero = 0;
-int	g_malloc_count = 0;
-int	g_malloc_fail_at = 0;
+int	g_malloc_zero;
+int	g_malloc_count;
+int	g_malloc_fail_at;
 int	g_tests_failed = 0;
 
 void	*__wrap_malloc(size_t size) {
