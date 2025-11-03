@@ -306,6 +306,34 @@ static void	ft_lstclear_basic_test(void) {
 		abort();
 }
 
+static int	g_del_no_free_count;
+
+static void	del_no_free(void *content) {
+	if (content)
+	{
+		int *val = (int *)content;
+		*val = 0;
+		g_del_no_free_count++;
+	}
+}
+
+static void	ft_lstclear_del_no_free_test(void) {
+	int		*c1 = malloc(sizeof(int)); *c1 = 42;
+	int		*c2 = malloc(sizeof(int)); *c2 = 21;
+	int		*c3 = malloc(sizeof(int)); *c3 = 84;
+	t_list	*lst = ft_lstnew(c1);
+
+	ft_lstadd_back(&lst, ft_lstnew(c2));
+	ft_lstadd_back(&lst, ft_lstnew(c3));
+	g_del_no_free_count = 0;
+	ft_lstclear(&lst, del_no_free);
+	if (g_del_no_free_count != 3 || *c1 || *c2 || *c3)
+		abort();
+	free(c1);
+	free(c2);
+	free(c3);
+}
+
 static void	ft_lstclear_null_list_test(void) {
 	ft_lstclear(NULL, free);
 }
@@ -324,6 +352,7 @@ static void	ft_lstclear_null_both_test(void) {
 static void	test_ft_lstclear(void) {
 	const char		*tests[] = {
 		"basic",
+		"free instead of del",
 		"NULL list",
 		"NULL function",
 		"NULL both"
@@ -331,6 +360,7 @@ static void	test_ft_lstclear(void) {
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	int				passed[] = {
 		!forked_test(ft_lstclear_basic_test),
+		!forked_test(ft_lstclear_del_no_free_test),
 		!forked_test(ft_lstclear_null_list_test),
 		!forked_test(ft_lstclear_null_func_test),
 		!forked_test(ft_lstclear_null_both_test)
