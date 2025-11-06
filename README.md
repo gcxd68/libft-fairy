@@ -166,7 +166,7 @@ On failure, details of failed tests will be displayed, along with Valgrind logs 
 - `ft_lstdelone`: Single node deletion with custom del function
 - `ft_lstclear`: Complete list cleanup
 - `ft_lstiter`: Iteration with function application
-- `ft_lstmap`: Mapping with malloc failure handling (6 scenarios tested)
+- `ft_lstmap`: Mapping with malloc failure handling
 
 ### Edge Cases Tested
 
@@ -187,9 +187,9 @@ Dedicated leak tests for:
 - All allocation functions (ft_calloc, ft_strdup, ft_substr, ft_strjoin, ft_strtrim, ft_split, ft_itoa, ft_strmapi)
 - Bonus list functions (ft_lstnew, ft_lstdelone, ft_lstclear)
 - ft_lstmap with three content scenarios:
-  - Dynamic content (malloc'd)
-  - Shared content (no malloc)
-  - Static content (no malloc, casted integers)
+  - Static content
+  - Shared content
+  - Dynamic content – commented out by default (not tested by Moulinette)
 - Malloc failure cleanup validation
 
 ## 📁 Project Structure
