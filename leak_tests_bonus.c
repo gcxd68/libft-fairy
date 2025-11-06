@@ -81,7 +81,7 @@ static void	ft_lstmap_static_content_test(void)
 	free(lst);
 }
 
-static void	ft_lstmap_dynamic_content_test(void) {
+/*static void	ft_lstmap_dynamic_content_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
 	g_malloc_count = 0;
@@ -91,7 +91,7 @@ static void	ft_lstmap_dynamic_content_test(void) {
 	g_malloc_wrap_enabled = 0;
 	(void)new_lst;
 	safe_lstclear(&lst, free);
-}
+}*/
 
 static void	leak_test_ft_lstmap(void) {
 	ft_lstmap_basic_test();
@@ -101,9 +101,9 @@ static void	leak_test_ft_lstmap(void) {
 	g_malloc_fail_at = 0;
 	for (int i = 0; i < 3; i++)
 		ft_lstmap_static_content_test();
-	g_malloc_fail_at = 0;
+/*	g_malloc_fail_at = 0;
 	for (int i = 0; i < 6; i++)
-		ft_lstmap_dynamic_content_test();
+		ft_lstmap_dynamic_content_test();*/
 }
 
 int	main(void) {

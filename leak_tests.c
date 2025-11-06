@@ -18,9 +18,11 @@ static void	leak_test_ft_strdup(void) {
 }
 
 static void	leak_test_ft_substr(void) {
-	char	*sub = ft_substr("Hello World", 0, 5);
+	char	*sub1 = ft_substr("Hello World", 0, 5);
+	//char	*sub2 = ft_substr("hola", ~(unsigned int)0, ~(size_t)0);
 
-	free(sub);
+	free(sub1);
+	//free(sub2);
 }
 
 static void	leak_test_ft_strjoin(void) {

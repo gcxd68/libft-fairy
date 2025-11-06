@@ -1030,13 +1030,19 @@ static void	ft_strnstr_len_too_short_test(void) {
 		abort();
 }
 
+static void	ft_strnstr_len_zero_test(void) {
+	if (ft_strnstr("Hello", "H", 0))
+		abort();
+}
+
 static void	test_ft_strnstr(void) {
 	const char		*tests[] = {
 		"find 'World'",
 		"find 'o'",
 		"not found",
 		"empty needle",
-		"len too short"
+		"len too short",
+		"len = 0"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
 	const int		passed[] = {
@@ -1044,7 +1050,8 @@ static void	test_ft_strnstr(void) {
 		!forked_test(ft_strnstr_find_o_test),
 		!forked_test(ft_strnstr_not_found_test),
 		!forked_test(ft_strnstr_empty_needle_test),
-		!forked_test(ft_strnstr_len_too_short_test)
+		!forked_test(ft_strnstr_len_too_short_test),
+		!forked_test(ft_strnstr_len_zero_test)
 	};
 
 	if (!all_tests_passed(passed, num_tests) || VERBOSE)
@@ -1318,6 +1325,14 @@ static void	ft_substr_start_max_test(void) {
 	free(res);
 }
 
+static void	ft_substr_len_size_max_test(void) {
+	const size_t size_max = ~(size_t)0;
+	char *res = ft_substr("Hello", 0, size_max);
+	if (!res || strcmp(res, "Hello"))
+		abort();
+	free(res);
+}
+
 static void	ft_substr_null_test(void) {
 	ft_substr(NULL, 0, 5);
 }
@@ -1332,6 +1347,7 @@ static void	test_ft_substr(void) {
 		"empty string alloc",
 		"start past end",
 		"start = UINT_MAX",
+		"len = SIZE_MAX",
 		"NULL"
 	};
 	const size_t	num_tests = sizeof(tests) / sizeof(*tests);
@@ -1344,6 +1360,7 @@ static void	test_ft_substr(void) {
 		!forked_test(ft_substr_empty_test),
 		!forked_test(ft_substr_start_past_end_test),
 		!forked_test(ft_substr_start_max_test),
+		!forked_test(ft_substr_len_size_max_test),
 		!forked_test(ft_substr_null_test)
 	};
 
