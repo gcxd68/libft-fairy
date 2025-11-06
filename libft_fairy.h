@@ -33,6 +33,7 @@ void		del_func_dummy(void *content);
 void		*map_func_dynamic_content(void *content);
 void		safe_free_arr(char ***arr);
 void		print_test_results(char *function_name, const size_t num_tests, const char *tests[], const int passed[]);
+void		*xmalloc(size_t size);
 t_list		*create_test_list(int c1, int c2, int c3, int use_static);
 int			forked_test(void (*test_func)(void));
 

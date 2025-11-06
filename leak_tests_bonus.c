@@ -3,12 +3,8 @@
 #include <stdlib.h>
 
 static void	leak_test_ft_lstnew(void) {
-	int	*content = malloc(sizeof(int));
+	int	*content = xmalloc(sizeof(int));
 
-	if (!content) {
-		perror("libft-fairy: malloc failed");
-		exit(EXIT_FAILURE);
-	}
 	*content = 42;
 	t_list *node = ft_lstnew(content);
 	if (node)
@@ -19,19 +15,12 @@ static void	leak_test_ft_lstnew(void) {
 }
 
 static void	leak_test_ft_lstdelone(void) {
-	int		*content = malloc(sizeof(int));
+	int		*content = xmalloc(sizeof(int));
 
-	if (!content) {
-		perror("libft-fairy: malloc failed");
-		exit(EXIT_FAILURE);
-	}
 	*content = 42;
-	t_list *node = malloc(sizeof(t_list));
-	if (node)
-	{
-		node->content = content;
-		node->next = NULL;
-	}
+	t_list *node = xmalloc(sizeof(t_list));
+	node->content = content;
+	node->next = NULL;
 	ft_lstdelone(node, free);
 }
 

@@ -50,22 +50,23 @@ static void	test_ft_lstnew(void) {
 /*                           ft_lstadd_front tests                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
+
 static void	ft_lstadd_front_basic_test(void) {
 	int		c1 = 1, c2 = 2;
-	t_list	*n1 = malloc(sizeof(t_list));
+	t_list	*n1 = xmalloc(sizeof(t_list));
 	t_list	*n2 = malloc(sizeof(t_list));
 	t_list	*lst = n1;
 
-	if (n1)
-	{
-		n1->content = &c1;
-		n1->next = NULL;
+	if (!n2) {
+		free(n1);
+		perror("libft-fairy: malloc failed");
+		exit(EXIT_FAILURE);	
 	}
-	if (n2)
-	{
-		n2->content = &c2;
-		n2->next = NULL;
-	}
+	n1->content = &c1;
+	n1->next = NULL;
+	n2->content = &c2;
+	n2->next = NULL;
 	ft_lstadd_front(&lst, n2);
 	if (lst != n2 || *(int *)lst->content != 2 || *(int *)lst->next->content != 1)
 		abort();
@@ -74,26 +75,20 @@ static void	ft_lstadd_front_basic_test(void) {
 static void	ft_lstadd_front_empty_list_test(void) {
 	int		content = 1;
 	t_list	*empty = NULL;
-	t_list	*node = malloc(sizeof(t_list));
+	t_list	*node = xmalloc(sizeof(t_list));
 
-	if (node)
-	{
-		node->content = &content;
-		node->next = NULL;
-	}
+	node->content = &content;
+	node->next = NULL;
 	ft_lstadd_front(&empty, node);
 	if (empty != node || empty->next)
 		abort();
 }
 
 static void	ft_lstadd_front_null_list_test(void) {
-	t_list	*node = malloc(sizeof(t_list));
+	t_list	*node = xmalloc(sizeof(t_list));
 
-	if (node)
-	{
-		node->content = &(int){42};
-		node->next = NULL;
-	}
+	node->content = &(int){42};
+	node->next = NULL;
 	ft_lstadd_front(NULL, node);
 	free(node);
 }
@@ -195,19 +190,18 @@ static void	test_ft_lstlast(void) {
 
 static void	ft_lstadd_back_basic_test(void) {
 	int				c1 = 1, c2 = 2;
-	t_list			*lst = malloc(sizeof(t_list));
+	t_list			*lst = xmalloc(sizeof(t_list));
 	t_list			*new = malloc(sizeof(t_list));
 
-	if (lst)
-	{
-		lst->content = &c1;
-		lst->next = NULL;
+	if (!new) {
+		free(lst);
+		perror("libft-fairy: malloc failed");
+		exit(EXIT_FAILURE);	
 	}
-	if (new)
-	{
-		new->content = &c2;
-		new->next = NULL;
-	}
+	lst->content = &c1;
+	lst->next = NULL;
+	new->content = &c2;
+	new->next = NULL;
 	ft_lstadd_back(&lst, new);
 	if (lst->next != new || *(int *)new->content != 2)
 		abort();
@@ -216,26 +210,20 @@ static void	ft_lstadd_back_basic_test(void) {
 static void	ft_lstadd_back_empty_list_test(void) {
 	int		content = 1;
 	t_list	*empty = NULL;
-	t_list	*node = malloc(sizeof(t_list));
+	t_list	*node = xmalloc(sizeof(t_list));
 
-	if (node)
-	{
-		node->content = &content;
-		node->next = NULL;
-	}
+	node->content = &content;
+	node->next = NULL;
 	ft_lstadd_back(&empty, node);
 	if (empty != node || empty->next)
 		abort();
 }
 
 static void	ft_lstadd_back_null_list_test(void) {
-	t_list	*node = malloc(sizeof(t_list));
+	t_list	*node = xmalloc(sizeof(t_list));
 
-	if (node)
-	{
-		node->content = &(int){42};
-		node->next = NULL;
-	}
+	node->content = &(int){42};
+	node->next = NULL;
 	ft_lstadd_back(NULL, node);
 	free(node);
 }

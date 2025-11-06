@@ -62,8 +62,16 @@ void	print_test_results(char *function_name, const size_t num_tests, const char 
 	}
 }
 
-t_list *create_test_list(int c1, int c2, int c3, int use_static)
-{
+void	*xmalloc(size_t size) {
+	void	*ptr = malloc(size);
+
+	if (ptr)
+		return ptr;
+	perror("libft-fairy: malloc failed");
+	exit(EXIT_FAILURE);	
+}
+
+t_list	*create_test_list(int c1, int c2, int c3, int use_static) {
 	int *v1, *v2, *v3;
 
 	if (use_static)
