@@ -264,7 +264,13 @@ static void	ft_lstdelone_null_func_test(void) {
 	t_list *lst = create_test_list(1, 2, 3);
 
 	ft_lstdelone(lst, NULL);
-	safe_lstclear(&lst, free);
+	while (lst)
+	{
+		t_list *tmp = lst->next;
+		free(lst->content);
+		free(lst);
+		lst = tmp;
+	}
 }
 
 static void	ft_lstdelone_null_both_test(void) {
@@ -342,7 +348,13 @@ static void	ft_lstclear_null_func_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
 	ft_lstclear(&lst, NULL);
-	safe_lstclear(&lst, free);
+	while (lst)
+	{
+		t_list *tmp = lst->next;
+		free(lst->content);
+		free(lst);
+		lst = tmp;
+	}
 }
 
 static void	ft_lstclear_null_both_test(void) {
@@ -394,7 +406,13 @@ static void	ft_lstiter_null_func_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
 	ft_lstiter(lst, NULL);
-	safe_lstclear(&lst, free);
+	while (lst)
+	{
+		t_list *tmp = lst->next;
+		free(lst->content);
+		free(lst);
+		lst = tmp;
+	}
 }
 
 static void	ft_lstiter_null_both_test(void) {
@@ -443,7 +461,13 @@ static void	ft_lstmap_null_func_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 
 	ft_lstmap(lst, NULL, free);
-	safe_lstclear(&lst, free);
+	while (lst)
+	{
+		t_list *tmp = lst->next;
+		free(lst->content);
+		free(lst);
+		lst = tmp;
+	}
 }
 
 static void	ft_lstmap_null_both_test(void) {
@@ -458,8 +482,20 @@ static void	ft_lstmap_malloc_fail_test(void) {
 	g_malloc_wrap_enabled = 1;
 	t_list *new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
 	g_malloc_wrap_enabled = 0;
-	safe_lstclear(&new_lst, free);
-	safe_lstclear(&lst, free);
+	while (new_lst)
+	{
+		t_list *tmp = new_lst->next;
+		free(new_lst->content);
+		free(new_lst);
+		new_lst = tmp;
+	}
+	while (lst)
+	{
+		t_list *tmp = lst->next;
+		free(lst->content);
+		free(lst);
+		lst = tmp;
+	}
 }
 
 static void	test_ft_lstmap(void) {

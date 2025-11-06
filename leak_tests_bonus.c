@@ -11,7 +11,11 @@ static void	leak_test_ft_lstnew(void) {
 	}
 	*content = 42;
 	t_list *node = ft_lstnew(content);
-	safe_lstdelone(node, free);
+	if (node)
+	{
+		free(node->content);
+		free(node);
+	}
 }
 
 static void	leak_test_ft_lstdelone(void) {
@@ -37,8 +41,20 @@ static void	ft_lstmap_basic_test(void) {
 	t_list	*lst = create_test_list(1, 2, 3);
 	t_list	*new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
 
-	safe_lstclear(&new_lst, free);
-	safe_lstclear(&lst, free);
+	while (new_lst)
+	{
+		t_list *tmp = new_lst->next;
+		free(new_lst->content);
+		free(new_lst);
+		new_lst = tmp;
+	}
+	while (lst)
+	{
+		t_list *tmp = lst->next;
+		free(lst->content);
+		free(lst);
+		lst = tmp;
+	}
 }
 
 static void	*map_func_shared_content(void *content) {
@@ -55,7 +71,13 @@ static void	ft_lstmap_shared_content_test(void)
 	t_list *new_lst = ft_lstmap(lst, map_func_shared_content, del_func_dummy);
 	g_malloc_wrap_enabled = 0;
 	(void)new_lst;
-	safe_lstclear(&lst, free);
+	while (lst)
+	{
+		t_list *tmp = lst->next;
+		free(lst->content);
+		free(lst);
+		lst = tmp;
+	}
 }
 
 static void	*map_func_static_content(void *content) {
@@ -90,7 +112,13 @@ static void	ft_lstmap_static_content_test(void)
 	t_list *new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
 	g_malloc_wrap_enabled = 0;
 	(void)new_lst;
-	safe_lstclear(&lst, free);
+	while (lst)
+	{
+		t_list *tmp = lst->next;
+		free(lst->content);
+		free(lst);
+		lst = tmp;
+	}
 }*/
 
 static void	leak_test_ft_lstmap(void) {
