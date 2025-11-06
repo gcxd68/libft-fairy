@@ -1837,7 +1837,6 @@ static void	test_ft_striteri(void) {
 /*                        ft_putchar_fd tests                                 */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -1848,17 +1847,13 @@ static int	test_fd_output(void (*func)(void *, int), void *input,
 	int		fd = mkstemp(tmp);
 	int		result;
 
-	if (fd == -1) {
-		perror("libft-fairy: mkstemp failed");
-		exit(EXIT_FAILURE);
-	}
+	if (fd == -1)
+		error_exit("libft-fairy: mkstemp failed");
 	func(input, fd);
 	close(fd);
 	fd = open(tmp, O_RDONLY);
-	if (fd == -1) {
-		perror("libft-fairy: open failed");
-		exit(EXIT_FAILURE);
-	}
+	if (fd == -1)
+		error_exit("libft-fairy: open failed");
 	read(fd, buf, read_len);
 	buf[read_len] = '\0';
 	close(fd);

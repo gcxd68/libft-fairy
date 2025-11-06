@@ -1,5 +1,4 @@
 #include "libft_fairy.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 static void	leak_test_ft_lstnew(void) {

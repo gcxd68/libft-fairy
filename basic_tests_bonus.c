@@ -50,8 +50,6 @@ static void	test_ft_lstnew(void) {
 /*                           ft_lstadd_front tests                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-
 static void	ft_lstadd_front_basic_test(void) {
 	int		c1 = 1, c2 = 2;
 	t_list	*n1 = xmalloc(sizeof(t_list));
@@ -60,8 +58,7 @@ static void	ft_lstadd_front_basic_test(void) {
 
 	if (!n2) {
 		free(n1);
-		perror("libft-fairy: malloc failed");
-		exit(EXIT_FAILURE);	
+		error_exit("libft-fairy: malloc failed");
 	}
 	n1->content = &c1;
 	n1->next = NULL;
@@ -195,8 +192,7 @@ static void	ft_lstadd_back_basic_test(void) {
 
 	if (!new) {
 		free(lst);
-		perror("libft-fairy: malloc failed");
-		exit(EXIT_FAILURE);	
+		error_exit("libft-fairy: malloc failed");
 	}
 	lst->content = &c1;
 	lst->next = NULL;

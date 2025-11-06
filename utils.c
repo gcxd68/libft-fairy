@@ -62,13 +62,18 @@ void	print_test_results(char *function_name, const size_t num_tests, const char 
 	}
 }
 
+void	error_exit(char *msg) {
+	perror(msg);
+	exit(EXIT_FAILURE);
+}
+
 void	*xmalloc(size_t size) {
 	void	*ptr = malloc(size);
 
 	if (ptr)
 		return ptr;
-	perror("libft-fairy: malloc failed");
-	exit(EXIT_FAILURE);	
+	error_exit("libft-fairy: malloc failed");
+	return NULL;
 }
 
 t_list	*create_test_list(int c1, int c2, int c3, int use_static) {
@@ -87,9 +92,8 @@ t_list	*create_test_list(int c1, int c2, int c3, int use_static) {
 		v3 = malloc(sizeof(int));
 		if (!v1 || !v2 || !v3)
 		{
-			perror("libft-fairy: malloc failed");
 			free(v1); free(v2); free(v3);
-			exit(EXIT_FAILURE);
+			error_exit("libft-fairy: malloc failed");
 		}
 		*v1 = c1; *v2 = c2; *v3 = c3;
 	}
@@ -98,11 +102,10 @@ t_list	*create_test_list(int c1, int c2, int c3, int use_static) {
 	t_list *n3 = malloc(sizeof(t_list));
 	if (!n1 || !n2 || !n3)
 	{
-		perror("libft-fairy: malloc failed");
 		if (n1) free(n1); else if (!use_static) free(v1);
 		if (n2) free(n2); else if (!use_static) free(v2);
 		if (n3) free(n3); else if (!use_static) free(v3);
-		return NULL;
+		error_exit("libft-fairy: malloc failed");
 	}
 	n1->content = v1;
 	n2->content = v2;
@@ -122,10 +125,8 @@ int	forked_test(void (*test_func)(void)) {
 
 	fflush(stdout);
 	pid = fork();
-	if (pid == -1) {
-		perror("libft-fairy: fork failed");
-		exit(EXIT_FAILURE);
-	}
+	if (pid == -1)
+		error_exit("libft-fairy: fork failed");
 	if (!pid) {
 		test_func();
 		exit(EXIT_SUCCESS);
