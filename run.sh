@@ -221,7 +221,7 @@ main() {
 		echo -e "$error_messages"
 	fi
 
-	echo -e -n "⚙️  Checking Makefile..."
+	echo -e -n "🔧 Checking Makefile..."
 	MAKEFILE_PATH="$LIBFT_DIR/Makefile"
 	MAKE_ERRORS=0
 	MAKE_ISSUES=""
