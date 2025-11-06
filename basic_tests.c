@@ -1031,7 +1031,7 @@ static void	ft_strnstr_len_too_short_test(void) {
 }
 
 static void	ft_strnstr_len_zero_test(void) {
-	if (ft_strnstr("Hello", "H", 0))
+	if (ft_strnstr("Hello, World!", "World", 0))
 		abort();
 }
 
