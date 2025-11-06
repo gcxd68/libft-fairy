@@ -52,10 +52,20 @@ static void	test_ft_lstnew(void) {
 
 static void	ft_lstadd_front_basic_test(void) {
 	int		c1 = 1, c2 = 2;
-	t_list	*n1 = safe_lstnew(&c1);
-	t_list	*n2 = safe_lstnew(&c2);
+	t_list	*n1 = malloc(sizeof(t_list));
+	t_list	*n2 = malloc(sizeof(t_list));
 	t_list	*lst = n1;
 
+	if (n1)
+	{
+		n1->content = &c1;
+		n1->next = NULL;
+	}
+	if (n2)
+	{
+		n2->content = &c2;
+		n2->next = NULL;
+	}
 	ft_lstadd_front(&lst, n2);
 	if (lst != n2 || *(int *)lst->content != 2 || *(int *)lst->next->content != 1)
 		abort();
@@ -64,16 +74,26 @@ static void	ft_lstadd_front_basic_test(void) {
 static void	ft_lstadd_front_empty_list_test(void) {
 	int		content = 1;
 	t_list	*empty = NULL;
-	t_list	*node = safe_lstnew(&content);
+	t_list	*node = malloc(sizeof(t_list));
 
+	if (node)
+	{
+		node->content = &content;
+		node->next = NULL;
+	}
 	ft_lstadd_front(&empty, node);
 	if (empty != node || empty->next)
 		abort();
 }
 
 static void	ft_lstadd_front_null_list_test(void) {
-	t_list	*node = safe_lstnew(&(int){42});
+	t_list	*node = malloc(sizeof(t_list));
 
+	if (node)
+	{
+		node->content = &(int){42};
+		node->next = NULL;
+	}
 	ft_lstadd_front(NULL, node);
 	free(node);
 }
@@ -114,7 +134,7 @@ static void	test_ft_lstadd_front(void) {
 /* ************************************************************************** */
 
 static void	ft_lstsize_basic_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*lst = create_test_list(1, 2, 3, 0);
 
 	if (ft_lstsize(lst) != 3)
 		abort();
@@ -144,7 +164,7 @@ static void	test_ft_lstsize(void) {
 /* ************************************************************************** */
 
 static void ft_lstlast_basic_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*lst = create_test_list(1, 2, 3, 0);
 
 	if (ft_lstlast(lst) != lst->next->next)
 		abort();
@@ -175,9 +195,19 @@ static void	test_ft_lstlast(void) {
 
 static void	ft_lstadd_back_basic_test(void) {
 	int				c1 = 1, c2 = 2;
-	t_list			*lst = safe_lstnew(&c1);
-	t_list			*new = safe_lstnew(&c2);
+	t_list			*lst = malloc(sizeof(t_list));
+	t_list			*new = malloc(sizeof(t_list));
 
+	if (lst)
+	{
+		lst->content = &c1;
+		lst->next = NULL;
+	}
+	if (new)
+	{
+		new->content = &c2;
+		new->next = NULL;
+	}
 	ft_lstadd_back(&lst, new);
 	if (lst->next != new || *(int *)new->content != 2)
 		abort();
@@ -186,16 +216,26 @@ static void	ft_lstadd_back_basic_test(void) {
 static void	ft_lstadd_back_empty_list_test(void) {
 	int		content = 1;
 	t_list	*empty = NULL;
-	t_list	*node = safe_lstnew(&content);
+	t_list	*node = malloc(sizeof(t_list));
 
+	if (node)
+	{
+		node->content = &content;
+		node->next = NULL;
+	}
 	ft_lstadd_back(&empty, node);
 	if (empty != node || empty->next)
 		abort();
 }
 
 static void	ft_lstadd_back_null_list_test(void) {
-	t_list	*node = safe_lstnew(&(int){42});
+	t_list	*node = malloc(sizeof(t_list));
 
+	if (node)
+	{
+		node->content = &(int){42};
+		node->next = NULL;
+	}
 	ft_lstadd_back(NULL, node);
 	free(node);
 }
@@ -236,7 +276,7 @@ static void	test_ft_lstadd_back(void) {
 /* ************************************************************************** */
 
 static void	ft_lstdelone_free_once_test(void) {
-	t_list *lst = create_test_list(1, 2, 3);
+	t_list *lst = create_test_list(1, 2, 3, 0);
 	t_list *to_del = lst->next;
 
 	lst->next = lst->next->next;
@@ -247,7 +287,7 @@ static void	ft_lstdelone_free_once_test(void) {
 }
 
 static void	ft_lstdelone_remaining_nodes_test(void) {
-	t_list *lst = create_test_list(1, 2, 3);
+	t_list *lst = create_test_list(1, 2, 3, 0);
 	t_list *to_del = lst->next;
 
 	lst->next = lst->next->next;
@@ -261,7 +301,7 @@ static void	ft_lstdelone_null_node_test(void) {
 }
 
 static void	ft_lstdelone_null_func_test(void) {
-	t_list *lst = create_test_list(1, 2, 3);
+	t_list *lst = create_test_list(1, 2, 3, 0);
 
 	ft_lstdelone(lst, NULL);
 	while (lst)
@@ -304,7 +344,7 @@ static void	test_ft_lstdelone(void)
 /* ************************************************************************** */
 
 static void	ft_lstclear_basic_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*lst = create_test_list(1, 2, 3, 0);
 
 	g_freed_count = 0;
 	ft_lstclear(&lst, free_count);
@@ -324,17 +364,15 @@ static void	del_no_free(void *content) {
 }
 
 static void	ft_lstclear_del_no_free_test(void) {
-	int		*c1 = malloc(sizeof(int)); *c1 = 42;
-	int		*c2 = malloc(sizeof(int)); *c2 = 21;
-	int		*c3 = malloc(sizeof(int)); *c3 = 84;
-	t_list	*lst = ft_lstnew(c1);
+	t_list	*lst = create_test_list(42, 21, 84, 0);
+	int		*c1 = lst ? lst->content : NULL;
+	int		*c2 = lst && lst->next ? lst->next->content : NULL;
+	int		*c3 = lst && lst->next && lst->next->next ? lst->next->next->content : NULL;
 
-	ft_lstadd_back(&lst, ft_lstnew(c2));
-	ft_lstadd_back(&lst, ft_lstnew(c3));
 	g_del_no_free_count = 0;
 	ft_lstclear(&lst, del_no_free);
 	if (g_del_no_free_count != 3 || *c1 || *c2 || *c3)
-		abort();
+	    abort();
 	free(c1);
 	free(c2);
 	free(c3);
@@ -345,7 +383,7 @@ static void	ft_lstclear_null_list_test(void) {
 }
 
 static void	ft_lstclear_null_func_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*lst = create_test_list(1, 2, 3, 0);
 
 	ft_lstclear(&lst, NULL);
 	while (lst)
@@ -391,7 +429,7 @@ static void	iter_func(void *content) {
 }
 
 static void	ft_lstiter_basic_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*lst = create_test_list(1, 2, 3, 0);
 
 	ft_lstiter(lst, iter_func);
 	if (*(int *)lst->content != 2 || *(int *)lst->next->content != 3 || *(int *)lst->next->next->content != 4)
@@ -403,7 +441,7 @@ static void	ft_lstiter_null_list_test(void) {
 }
 
 static void	ft_lstiter_null_func_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*lst = create_test_list(1, 2, 3, 0);
 
 	ft_lstiter(lst, NULL);
 	while (lst)
@@ -443,7 +481,7 @@ static void	test_ft_lstiter(void) {
 /* ************************************************************************** */
 
 static void	ft_lstmap_basic_test(void) {
-	t_list			*lst = create_test_list(1, 2, 3);
+	t_list			*lst = create_test_list(1, 2, 3, 0);
 	t_list			*new_lst = ft_lstmap(lst, map_func_dynamic_content, free);
 
 	if (!new_lst || *(int *)new_lst->content != 2 || *(int *)new_lst->next->content != 4 || *(int *)new_lst->next->next->content != 6)
@@ -458,7 +496,7 @@ static void	ft_lstmap_null_list_test(void) {
 }
 
 static void	ft_lstmap_null_func_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*lst = create_test_list(1, 2, 3, 0);
 
 	ft_lstmap(lst, NULL, free);
 	while (lst)
@@ -475,7 +513,7 @@ static void	ft_lstmap_null_both_test(void) {
 }
 
 static void	ft_lstmap_malloc_fail_test(void) {
-	t_list	*lst = create_test_list(1, 2, 3);
+	t_list	*lst = create_test_list(1, 2, 3, 0);
 
 	g_malloc_count = 0;
 	++g_malloc_fail_at;

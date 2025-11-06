@@ -23,37 +23,6 @@ int	all_tests_passed(const int *passed, const size_t num_tests) {
 	return 1;
 }
 
-static t_list	*safe_lstlast(t_list *lst) {
-	if (!lst)
-		return (NULL);
-	while (lst->next)
-		lst = lst->next;
-	return (lst);
-}
-
-void	safe_lstadd_back(t_list **lst, t_list *new) {
-	if (!lst || !new)
-		return ;
-	if (*lst)
-		safe_lstlast(*lst)->next = new;
-	else
-		*lst = new;
-}
-
-void	safe_lstclear(t_list **lst, void (*del)(void*)) {
-	t_list	*tmp;
-
-	if (!lst || !del)
-		return ;
-	while (*lst)
-	{
-		tmp = (*lst)->next;
-		safe_lstdelone(*lst, del);
-		*lst = tmp;
-	}
-	*lst = NULL;
-}
-
 void	del_func_dummy(void *content) {
 	(void)content;
 }
@@ -80,23 +49,6 @@ void	safe_free_arr(char ***arr) {
 	}
 }
 
-void	safe_lstdelone(t_list *lst, void (*del)(void*)) {
-	if (!lst || !del)
-		return ;
-	del(lst->content);
-	free(lst);
-}
-
-t_list	*safe_lstnew(void *content) {
-	t_list	*node = malloc(sizeof(t_list));
-
-	if (!node)
-		return (NULL);
-	node->content = content;
-	node->next = NULL;
-	return (node);
-}
-
 #include <stdio.h>
 
 void	print_test_results(char *function_name, const size_t num_tests, const char *tests[], const int passed[]) {
@@ -110,30 +62,46 @@ void	print_test_results(char *function_name, const size_t num_tests, const char 
 	}
 }
 
-t_list *create_test_list(int c1, int c2, int c3)
+t_list *create_test_list(int c1, int c2, int c3, int use_static)
 {
-	int	*v1 = malloc(sizeof(int));
-	int	*v2 = malloc(sizeof(int));
-	int	*v3 = malloc(sizeof(int));
+	int *v1, *v2, *v3;
 
-	if (!v1 || !v2 || !v3) {
-		perror("libft-fairy: malloc failed");
-		free(v1); free(v2); free(v3);
-		exit(EXIT_FAILURE);
+	if (use_static)
+	{
+		static int s1, s2, s3;
+		s1 = c1; s2 = c2; s3 = c3;
+		v1 = &s1; v2 = &s2; v3 = &s3;
 	}
-	*v1 = c1; *v2 = c2; *v3 = c3;
-	t_list *n1 = safe_lstnew(v1);
-	t_list *n2 = safe_lstnew(v2);
-	t_list *n3 = safe_lstnew(v3);
-	if (!n1 || !n2 || !n3) {
+	else
+	{
+		v1 = malloc(sizeof(int));
+		v2 = malloc(sizeof(int));
+		v3 = malloc(sizeof(int));
+		if (!v1 || !v2 || !v3)
+		{
+			perror("libft-fairy: malloc failed");
+			free(v1); free(v2); free(v3);
+			exit(EXIT_FAILURE);
+		}
+		*v1 = c1; *v2 = c2; *v3 = c3;
+	}
+	t_list *n1 = malloc(sizeof(t_list));
+	t_list *n2 = malloc(sizeof(t_list));
+	t_list *n3 = malloc(sizeof(t_list));
+	if (!n1 || !n2 || !n3)
+	{
 		perror("libft-fairy: malloc failed");
-		if (n1) free(n1); else free(v1);
-		if (n2) free(n2); else free(v2);
-		if (n3) free(n3); else free(v3);
+		if (n1) free(n1); else if (!use_static) free(v1);
+		if (n2) free(n2); else if (!use_static) free(v2);
+		if (n3) free(n3); else if (!use_static) free(v3);
 		return NULL;
 	}
+	n1->content = v1;
+	n2->content = v2;
+	n3->content = v3;
 	n1->next = n2;
 	n2->next = n3;
+	n3->next = NULL;
 	return n1;
 }
 
