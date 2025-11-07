@@ -5,6 +5,7 @@ GREEN='\033[0;32m'
 PINK='\033[0;95m'
 YELLOW='\033[0;33m'
 RESET='\033[0m'
+TIMEOUT_SEC=2
 
 VERBOSE=0
 for arg in "$@"; do
@@ -366,7 +367,7 @@ main() {
 	fi
 
 	echo -e -n "🧪 Running tests..."
-	{ ./$BASIC_TESTER_NAME; }> "$TMP_DIR/basic_output.tmp" 2>&1
+	{ timeout ${TIMEOUT_SEC}s ./$BASIC_TESTER_NAME; }> "$TMP_DIR/basic_output.tmp" 2>&1
 	BASIC_TESTS_RES=$?
 	if grep -q "Segmentation fault" "$TMP_DIR/basic_output.tmp" 2>/dev/null; then
 		cat "$TMP_DIR/basic_output.tmp" | sed 's/^.*Segmentation fault/\n&/' > .results
@@ -375,7 +376,7 @@ main() {
 	fi
 	BONUS_BASIC_TESTS_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
-		{ ./$BONUS_BASIC_TESTER_NAME; } > "$TMP_DIR/bonus_basic_output.tmp" 2>&1
+		{ timeout ${TIMEOUT_SEC}s ./$BONUS_BASIC_TESTER_NAME; } > "$TMP_DIR/bonus_basic_output.tmp" 2>&1
 		BONUS_BASIC_TESTS_RES=$?
 		if grep -q "Segmentation fault" "$TMP_DIR/bonus_basic_output.tmp" 2>/dev/null; then
 			cat "$TMP_DIR/bonus_basic_output.tmp" | sed 's/^.*Segmentation fault/\n&/' >> .results
@@ -383,7 +384,7 @@ main() {
 			cat "$TMP_DIR/bonus_basic_output.tmp" >> .results
 		fi
 	fi
-	{ valgrind --leak-check=full --show-leak-kinds=all \
+	{ timeout ${TIMEOUT_SEC}s valgrind --leak-check=full --show-leak-kinds=all \
 		--errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
 		--log-file="$TMP_DIR/valgrind_output.log" ./$LEAK_TESTER_NAME > /dev/null; } > "$TMP_DIR/leak_output.tmp" 2>&1
 	LEAK_TESTS_RES=$?
@@ -394,7 +395,7 @@ main() {
 	fi
 	BONUS_LEAK_TESTS_RES=0
 	if [ $BONUS_VERSION -eq 1 ]; then
-		{ valgrind --leak-check=full --show-leak-kinds=all \
+		{ timeout ${TIMEOUT_SEC}s valgrind --leak-check=full --show-leak-kinds=all \
 			--errors-for-leak-kinds=all --error-exitcode=1 --track-origins=yes \
 			--log-file="$TMP_DIR/bonus_valgrind_output.log" ./$BONUS_LEAK_TESTER_NAME > /dev/null; } > "$TMP_DIR/bonus_leak_output.tmp" 2>&1
 		BONUS_LEAK_TESTS_RES=$?
@@ -404,7 +405,7 @@ main() {
 			cat "$TMP_DIR/bonus_leak_output.tmp" >> .results
 		fi
 	fi
-	if [ $LEAK_TESTS_RES -ne 0 ] || [ $VERBOSE -eq 1 ]; then
+	if ( [ $LEAK_TESTS_RES -ne 0 ] && [ $LEAK_TESTS_RES -ne 124 ] ) || [ $VERBOSE -eq 1 ]; then
 		{
 			echo ""
 			echo "════════════════════════════════════════"
@@ -413,7 +414,8 @@ main() {
 			cat "$TMP_DIR/valgrind_output.log"
 		} >> .results
 	fi
-	if [ $BONUS_LEAK_TESTS_RES -ne 0 ] || ( [ $VERBOSE -eq 1 ] && [ $BONUS_VERSION -eq 1 ] ); then
+	if ( [ $BONUS_LEAK_TESTS_RES -ne 0 ] && [ $BONUS_LEAK_TESTS_RES -ne 124 ] ) \
+		|| ( [ $VERBOSE -eq 1 ] && [ $BONUS_VERSION -eq 1 ] ); then
 		{
 			echo ""
 			echo "════════════════════════════════════════"
@@ -422,7 +424,10 @@ main() {
 			cat "$TMP_DIR/bonus_valgrind_output.log"
 		} >> .results
 	fi
-	if [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] \
+	if [ $BASIC_TESTS_RES -eq 124 ] || [ $BONUS_BASIC_TESTS_RES -eq 124 ] \
+		|| [ $LEAK_TESTS_RES -eq 124 ] || [ $BONUS_LEAK_TESTS_RES -eq 124 ]; then
+		echo_color "\t Timeout" "$YELLOW"
+	elif [ $BASIC_TESTS_RES -eq 0 ] && [ $BONUS_BASIC_TESTS_RES -eq 0 ] \
 		&& [ $LEAK_TESTS_RES -eq 0 ] && [ $BONUS_LEAK_TESTS_RES -eq 0 ]; then
 		echo -e "\t    Done"
 	else
