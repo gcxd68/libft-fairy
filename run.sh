@@ -405,7 +405,7 @@ main() {
 			cat "$TMP_DIR/bonus_leak_output.tmp" >> .results
 		fi
 	fi
-	if ( [ $LEAK_TESTS_RES -ne 0 ] && [ $LEAK_TESTS_RES -ne 124 ] ) || [ $VERBOSE -eq 1 ]; then
+	if [ $LEAK_TESTS_RES -ne 0 ] || [ $VERBOSE -eq 1 ]; then
 		{
 			echo ""
 			echo "════════════════════════════════════════"
@@ -414,8 +414,7 @@ main() {
 			cat "$TMP_DIR/valgrind_output.log"
 		} >> .results
 	fi
-	if ( [ $BONUS_LEAK_TESTS_RES -ne 0 ] && [ $BONUS_LEAK_TESTS_RES -ne 124 ] ) \
-		|| ( [ $VERBOSE -eq 1 ] && [ $BONUS_VERSION -eq 1 ] ); then
+	if [ $BONUS_LEAK_TESTS_RES -ne 0 ] || ( [ $VERBOSE -eq 1 ] && [ $BONUS_VERSION -eq 1 ] ); then
 		{
 			echo ""
 			echo "════════════════════════════════════════"
