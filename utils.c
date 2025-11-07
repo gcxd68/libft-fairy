@@ -119,6 +119,14 @@ t_list	*create_test_list(int c1, int c2, int c3, int use_static) {
 #include <unistd.h>
 #include <sys/wait.h>
 
+static pid_t	xwaitpid(pid_t pid, int *status, int options)
+{
+	pid_t    ret = waitpid(pid, status, options);
+	if (ret == -1)
+		error_exit("libft-fairy: waitpid failed");
+	return ret;
+}
+
 int	forked_test(void (*test_func)(void)) {
 	pid_t	pid;
 	int		status;
@@ -131,7 +139,7 @@ int	forked_test(void (*test_func)(void)) {
 		test_func();
 		exit(EXIT_SUCCESS);
 	}
-	waitpid(pid, &status, 0);
+	xwaitpid(pid, &status, 0);
 	if (WIFSIGNALED(status))
 		return 1;
 	return 0;
